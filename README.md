@@ -1,100 +1,180 @@
-# 八字計算器 - Python與iOS雙版本
+# 八字計算器 (BaZi Calculator)
 
-本項目包含兩個版本的八字計算器應用：
+中式八字（Four Pillars of Destiny）計算器，提供完整的八字排盤、格局分析、大運流年推算功能。
+
+- Web 界面（FastAPI）
+- MCP 服務器（支持 AI Agent 集成）
+- Docker 部署支持
+
+## 功能特色
+
+### 核心計算
+- 四柱排盤（年柱、月柱、日柱、時柱）
+- 地支藏干
+- 真太陽時校正（根據城市經緯度）
+- 旺衰判斷（根氣強度分析）
+- 十神計算
+- 神煞計算
+- 十二長生
+- 天干五合、地支關係
+- 大運計算（含移花接木）
+- 流年推算
+
+### 分析模塊
+- 格局判斷（支持兩格並存）
+- 宮位分析
+- 先天病源
+- 大運流年斷語
+- 整合分析（格局為核心）
+- 一柱論命（60 甲子斷語）
+- 干支象法（臟腑、意象、疾病預測）
+- 八字卦象
+
+## 快速開始
+
+### 安裝依賴
+
+```bash
+pip install -r requirements.txt
+```
+
+### 運行 Web 界面
+
+```bash
+python app.py
+# 訪問：http://127.0.0.1:8080
+```
+
+### 運行 MCP 服務器
+
+```bash
+python mcp_server.py
+# 訪問：http://localhost:8001/mcp
+```
+
+### Docker 部署
+
+```bash
+docker compose up --build
+```
 
 ## 項目結構
 
 ```
-├── README.md                    # 當前文件 - 項目總覽
-├── CLAUDE.md                   # 項目說明文檔
-├── requirements.txt            # Python依賴文件
-├── app.py                     # Python Web應用入口
-├── mcp_server.py              # MCP服務器
-├── bazi/                      # Python版八字計算核心模塊
-├── config/                    # 配置模塊
-├── templates/                 # Web界面模板
-├── static/                    # 靜態資源
-├── api/                       # API模塊
-├── tests/                     # 測試文件
+├── app.py                     # Web 應用入口（FastAPI）
+├── mcp_server.py              # MCP 服務器
+├── requirements.txt           # Python 依賴
+├── Dockerfile                 # Docker 鏡像
+├── docker-compose.yml         # Docker Compose
+├── smithery.yaml              # Smithery MCP 配置
 ├── region.json                # 城市經緯度數據
-├── query_longitude.py         # 城市經度查詢工具
-├── ios_version/               # iOS版本目錄
-│   └── BaZiCalculator/        # iOS版八字計算器完整項目
-│       ├── Sources/
-│       │   ├── App/
-│       │   ├── Core/
-│       │   ├── Models/
-│       │   ├── Services/
-│       │   └── UI/
-│       ├── Info.plist
-│       └── README.md
-└── ...
+├── bazi/                      # 核心計算模塊
+│   ├── core/                  # 主類與工具
+│   │   ├── calculator.py      # BaZiCalculator 主類
+│   │   ├── constants.py       # 天干地支、五行、神煞常數
+│   │   └── utils.py           # 真太陽時、農曆轉換
+│   ├── calculations/          # 計算模塊
+│   │   ├── pillar.py          # 四柱計算
+│   │   ├── canggan.py         # 地支藏干
+│   │   ├── relations.py       # 天干五合、地支關係
+│   │   ├── wangshuai.py       # 旺衰判斷
+│   │   ├── changsheng.py      # 十二長生
+│   │   ├── shishen.py         # 十神計算
+│   │   ├── shensha.py         # 神煞計算
+│   │   ├── ganzhi.py          # 干支生剋
+│   │   ├── jieqi.py           # 節氣信息
+│   │   ├── dayun.py           # 大運計算（含移花接木）
+│   │   └── liushijiazi.py     # 六十甲子計算
+│   ├── analysis/              # 分析模塊
+│   │   ├── geju.py            # 格局判斷（含兩格並存）
+│   │   ├── gongwei.py         # 宮位分析
+│   │   ├── bingyuan.py        # 先天病源
+│   │   ├── dayun_liunian.py   # 大運流年判斷
+│   │   ├── integrated.py      # 整合分析（格局為核心）
+│   │   ├── yizhu.py           # 一柱論命（60 甲子斷語）
+│   │   ├── ganzhi_xiang.py    # 干支象法（臟腑、意象、疾病）
+│   │   ├── duanyu_db.py       # 斷語數據庫
+│   │   └── bazi_gua.py        # 八字卦象
+│   ├── models/                # 數據模型
+│   │   ├── bazi_result.py
+│   │   └── birth_info.py
+│   ├── exceptions/            # 異常定義
+│   └── validators/            # 輸入驗證
+├── config/                    # 配置模塊
+│   └── settings.py
+├── api/                       # API 路由
+│   └── routes.py
+├── templates/                 # Web 模板
+│   ├── index.html
+│   └── result.html
+├── static/                    # 靜態資源
+│   ├── css/style.css
+│   └── js/app.js
+└── tests/                     # 測試
+    ├── test_config.py
+    ├── test_constants.py
+    ├── test_exceptions.py
+    ├── test_integration.py
+    ├── test_new_features.py
+    ├── test_relations.py
+    └── test_validators.py
 ```
 
-## Python版本 (主版本)
+## MCP 集成
 
-### 功能特色
-- Web界面，基於FastAPI
-- 完整的八字計算功能（四柱、藏干、旺衰、十神、格局等）
-- 真太陽時校正
-- 格局分析與十神判斷
-- 大運流年推算
-- 神煞分析
-- MCP服務器支持
+將八字計算器作為 MCP 服務器接入 AI Agent：
 
-### 運行方式
+```json
+{
+  "mcpServers": {
+    "bazi": {
+      "url": "http://localhost:8001/mcp"
+    }
+  }
+}
+```
+
+## 測試
+
 ```bash
-# 安裝依賴
-pip install -r requirements.txt
-
-# 運行Web應用
-python app.py
-
-# 訪問：http://127.0.0.1:8080
+pytest tests/ -v
 ```
 
-## iOS版本
+## 核心算法
 
-### 功能特色
-- 原生iOS應用，基於SwiftUI
-- 完整的八字計算功能
-- 完全離線運行，無需服務器
-- 精確的真太陽時計算
-- 直觀的用戶界面
-- 歷史記錄和數據持久化
+### 真太陽時
 
-### 開發環境
-- 需要在macOS上使用Xcode打開
-- 適用於iOS 15.0及以上版本
-- 支持iPhone和iPad
-
-### 項目結構
 ```
-BaZiCalculator/
-├── Sources/
-│   ├── App/           # 應用入口
-│   ├── Core/          # 核心計算邏輯
-│   ├── Models/        # 數據模型
-│   ├── Services/      # 服務層（位置、數據持久化等）
-│   └── UI/            # 用戶界面組件
-├── Info.plist         # 應用配置文件
-└── README.md          # 詳細說明文檔
+出生時間 + (城市經度 - 120°) × 4 分鐘
 ```
 
-## 技術對比
+### 大運計算
 
-| 方面 | Python版 | iOS版 |
-|------|----------|-------|
-| 運行環境 | Web瀏覽器 | iOS設備 |
-| 服務器依賴 | 需要 | 無需 |
-| 離線功能 | 需要本地服務 | 完全離線 |
-| 用戶體驗 | 網頁界面 | 原生App |
-| 平台支持 | 任意設備 | 僅iOS |
-| 數據存儲 | 服務器/本地 | 設備本地 |
+- 陽男陰女順排，陰男陽女逆排
+- 起運年齡 = 節氣天數 ÷ 3
 
-## 使用場景
+### 流年計算
 
-- **Python版**：適合開發調試、服務器部署、跨平台使用
-- **iOS版**：適合移動端使用、離線計算、原生體驗
+流年從出生年份連續順推，不每個大運重新計算：
 
-兩個版本都實現了相同的八字計算算法，確保計算結果的一致性。
+```python
+ln_gan_idx = (year_gan_idx + liunian_age) % 10
+ln_zhi_idx = (year_zhi_idx + liunian_age) % 12
+```
+
+### 格局判斷規則
+
+1. 天干官殺 → 月令藏干透干 → 月令主氣
+2. 官殺混雜：陰日干以七殺定格，陽日干官殺混雜破格
+3. 辰戌丑未土必須透干才能以土定格
+
+### 旺衰判斷（根氣強度）
+
+| 位置 | 強度 |
+|------|------|
+| 月支 | 4 |
+| 時支 | 3 |
+| 日支 | 2 |
+| 年支 | 1 |
+
+**總根氣：** ≥8 極旺 | 5-7 旺 | 3-4 中 | 1-2 微 | 0 虛浮

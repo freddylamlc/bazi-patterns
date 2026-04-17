@@ -7,7 +7,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 中式八字（Four Pillars of Destiny）計算器，包含：
 - Web 界面（FastAPI）
 - MCP 服務器
-- 完整八字排盤功能
+- 完整八字排盤、格局分析、大運流年功能
+
+GitHub: https://github.com/freddylamlc/bazi
 
 ## 常用命令
 
