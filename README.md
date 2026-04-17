@@ -178,3 +178,7 @@ ln_zhi_idx = (year_zhi_idx + liunian_age) % 12
 | 年支 | 1 |
 
 **總根氣：** ≥8 極旺 | 5-7 旺 | 3-4 中 | 1-2 微 | 0 虛浮
+
+## 鳴謝
+
+- [minionszyw](https://github.com/minionszyw) — 感謝其曾開源的八字相關項目，本項目借鑒了部分思路
