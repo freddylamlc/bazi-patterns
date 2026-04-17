@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八字算命 - 命盤排盤系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-stone-100 min-h-screen">
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-20 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="w-8 h-8 bg-stone-900 text-white flex items-center justify-center rounded-lg text-sm font-bold">八字</span>
+                <span class="text-lg font-serif font-bold text-stone-900">命盤排盤系統</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6">
+        <!-- 輸入表單 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6 mb-6">
+            <!-- 輸入模式切換 -->
+            <div class="flex gap-2 mb-4">
+                <button type="button" onclick="showDateInput()" id="btn-date-input" class="px-4 py-2 rounded-lg bg-stone-900 text-white font-medium">日期輸入</button>
+                <button type="button" onclick="showPillarInput()" id="btn-pillar-input" class="px-4 py-2 rounded-lg bg-stone-200 text-stone-700 font-medium">四柱輸入</button>
+            </div>
+
+            <!-- 日期輸入表單 -->
+            <form id="date-input-form" action="/calculate" method="post" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">姓名</label>
+                    <input type="text" name="name" placeholder="請輸入姓名（可選）"
+                        class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">性別</label>
+                    <select name="gender" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="男">男 (乾造)</option>
+                        <option value="女">女 (坤造)</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">曆法</label>
+                    <select name="calendar" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="公曆">公曆 (西曆)</option>
+                        <option value="農曆">農曆 (農曆)</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">出生城市</label>
+                    <input type="text" name="birth_city" value="香港" placeholder="例如：香港、深圳"
+                        class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">年份</label>
+                    <input type="number" name="year" value="1995" min="1900" max="2100"
+                        class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">月份</label>
+                    <input type="number" name="month" value="1" min="1" max="12"
+                        class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">日期</label>
+                    <input type="number" name="day" value="1" min="1" max="31"
+                        class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">時/分</label>
+                    <div class="flex gap-2">
+                        <input type="number" name="hour" value="12" min="0" max="23" placeholder="時"
+                            class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <input type="number" name="minute" value="0" min="0" max="59" placeholder="分"
+                            class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                    </div>
+                </div>
+
+                <button type="submit" class="lg:col-span-4 w-full bg-stone-900 text-white hover:bg-black font-medium py-3 rounded-lg text-base flex items-center justify-center gap-2 transition shadow-lg shadow-stone-200">
+                    <span>開始排盤</span>
+                </button>
+            </form>
+
+            <!-- 四柱輸入表單（隱藏） -->
+            <form id="pillar-input-form" action="/calculate_from_pillars" method="post" class="hidden grid grid-cols-2 md:grid-cols-4 lg:grid-cols-8 gap-3 items-end">
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">姓名</label>
+                    <input type="text" name="name" placeholder="姓名（可選）"
+                        class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">性別</label>
+                    <select name="gender" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="男">男 (乾造)</option>
+                        <option value="女">女 (坤造)</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">年干</label>
+                    <select name="year_gan" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="甲">甲</option>
+                        <option value="乙">乙</option>
+                        <option value="丙">丙</option>
+                        <option value="丁">丁</option>
+                        <option value="戊">戊</option>
+                        <option value="己">己</option>
+                        <option value="庚">庚</option>
+                        <option value="辛">辛</option>
+                        <option value="壬">壬</option>
+                        <option value="癸">癸</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">年支</label>
+                    <select name="year_zhi" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="子">子</option>
+                        <option value="丑">丑</option>
+                        <option value="寅">寅</option>
+                        <option value="卯">卯</option>
+                        <option value="辰">辰</option>
+                        <option value="巳">巳</option>
+                        <option value="午">午</option>
+                        <option value="未">未</option>
+                        <option value="申">申</option>
+                        <option value="酉">酉</option>
+                        <option value="戌">戌</option>
+                        <option value="亥">亥</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">月干</label>
+                    <select name="month_gan" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="甲">甲</option>
+                        <option value="乙">乙</option>
+                        <option value="丙">丙</option>
+                        <option value="丁">丁</option>
+                        <option value="戊">戊</option>
+                        <option value="己">己</option>
+                        <option value="庚">庚</option>
+                        <option value="辛">辛</option>
+                        <option value="壬">壬</option>
+                        <option value="癸">癸</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">月支</label>
+                    <select name="month_zhi" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="子">子</option>
+                        <option value="丑">丑</option>
+                        <option value="寅">寅</option>
+                        <option value="卯">卯</option>
+                        <option value="辰">辰</option>
+                        <option value="巳">巳</option>
+                        <option value="午">午</option>
+                        <option value="未">未</option>
+                        <option value="申">申</option>
+                        <option value="酉">酉</option>
+                        <option value="戌">戌</option>
+                        <option value="亥">亥</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">日干</label>
+                    <select name="day_gan" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="甲">甲</option>
+                        <option value="乙">乙</option>
+                        <option value="丙">丙</option>
+                        <option value="丁">丁</option>
+                        <option value="戊">戊</option>
+                        <option value="己">己</option>
+                        <option value="庚">庚</option>
+                        <option value="辛">辛</option>
+                        <option value="壬">壬</option>
+                        <option value="癸">癸</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">日支</label>
+                    <select name="day_zhi" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="子">子</option>
+                        <option value="丑">丑</option>
+                        <option value="寅">寅</option>
+                        <option value="卯">卯</option>
+                        <option value="辰">辰</option>
+                        <option value="巳">巳</option>
+                        <option value="午">午</option>
+                        <option value="未">未</option>
+                        <option value="申">申</option>
+                        <option value="酉">酉</option>
+                        <option value="戌">戌</option>
+                        <option value="亥">亥</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">時干</label>
+                    <select name="hour_gan" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="甲">甲</option>
+                        <option value="乙">乙</option>
+                        <option value="丙">丙</option>
+                        <option value="丁">丁</option>
+                        <option value="戊">戊</option>
+                        <option value="己">己</option>
+                        <option value="庚">庚</option>
+                        <option value="辛">辛</option>
+                        <option value="壬">壬</option>
+                        <option value="癸">癸</option>
+                    </select>
+                </div>
+
+                <div class="space-y-1">
+                    <label class="text-xs font-medium text-stone-500">時支</label>
+                    <select name="hour_zhi" class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <option value="子">子</option>
+                        <option value="丑">丑</option>
+                        <option value="寅">寅</option>
+                        <option value="卯">卯</option>
+                        <option value="辰">辰</option>
+                        <option value="巳">巳</option>
+                        <option value="午">午</option>
+                        <option value="未">未</option>
+                        <option value="申">申</option>
+                        <option value="酉">酉</option>
+                        <option value="戌">戌</option>
+                        <option value="亥">亥</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="lg:col-span-8 w-full bg-stone-900 text-white hover:bg-black font-medium py-3 rounded-lg text-base flex items-center justify-center gap-2 transition shadow-lg shadow-stone-200">
+                    <span>反推出生日時</span>
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

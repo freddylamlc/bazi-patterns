@@ -1,0 +1,200 @@
+/**
+ * 八字排盤系統 - 樣式表
+ * 使用 Tailwind CSS 為基礎，添加自定義樣式
+ */
+
+/* 基礎樣式 */
+body {
+    font-family: 'Noto Serif TC', 'Microsoft JhengHei', serif;
+}
+
+/* 四柱卡片 */
+.pillar-card {
+    transition: all 0.2s;
+}
+
+.pillar-card:hover {
+    transform: translateY(-2px);
+}
+
+/* 大運選擇 */
+.dayun-item {
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.dayun-item:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.dayun-item.active {
+    ring: 2px solid #4f46e5;
+    transform: scale(1.05);
+}
+
+/* 地支關係卡片 */
+.relation-card {
+    transition: all 0.2s;
+}
+
+.relation-card:hover {
+    transform: translateY(-2px);
+}
+
+/* 自定義滾動條 */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f5f5f4;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #a8a29e;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #78716c;
+}
+
+/* 天干地支圓形按鈕 */
+.gan-zhi-circle {
+    @apply w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold rounded-full;
+}
+
+/* 五行顏色類 */
+.wuxing-mu {
+    @apply bg-green-50 text-green-700 border-green-200;
+}
+
+.wuxing-huo {
+    @apply bg-red-50 text-red-700 border-red-200;
+}
+
+.wuxing-tu {
+    @apply bg-yellow-50 text-yellow-700 border-yellow-200;
+}
+
+.wuxing-jin {
+    @apply bg-gray-50 text-gray-700 border-gray-200;
+}
+
+.wuxing-shui {
+    @apply bg-blue-50 text-blue-700 border-blue-200;
+}
+
+/* 吉凶顏色類 */
+.ji-xiong-da-ji {
+    @apply bg-green-100 text-green-700;
+}
+
+.ji-xiong-ji-zhong-dai-xiong {
+    @apply bg-yellow-100 text-yellow-700;
+}
+
+.ji-xiong-xiong {
+    @apply bg-red-100 text-red-700;
+}
+
+.ji-xiong-bu-ji {
+    @apply bg-orange-100 text-orange-700;
+}
+
+/* 十神性格卡片 */
+.shishen-card {
+    @apply p-3 rounded-xl border;
+}
+
+.shishen-card.xiang-shen {
+    @apply bg-green-50 border-green-200;
+}
+
+.shishen-card.xiang-shen-bei-ke {
+    @apply bg-red-100 border-red-300 border-2;
+}
+
+.shishen-card.ji-shen-bei-zhi {
+    @apply bg-green-50 border-green-200;
+}
+
+.shishen-card.ji-shen-wu-zhi {
+    @apply bg-red-50 border-red-200;
+}
+
+.shishen-card.other {
+    @apply bg-stone-50 border-stone-200;
+}
+
+/* 格局成敗 */
+.ge-ju-cheng {
+    @apply bg-green-50 border-green-200;
+}
+
+.ge-ju-bu-cheng {
+    @apply bg-red-50 border-red-200;
+}
+
+.ge-ju-ban-cheng {
+    @apply bg-amber-50 border-amber-200;
+}
+
+/* 大運流年選擇 */
+.dayun-pillar-select,
+.liunian-pillar-select {
+    @apply cursor-pointer transition-all;
+}
+
+.dayun-pillar-select.selected,
+.liunian-pillar-select.selected {
+    @apply border-indigo-500 bg-indigo-50;
+}
+
+/* 加載動畫 */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* 響應式調整 */
+@media (max-width: 768px) {
+    .pillar-card {
+        min-width: 70px !important;
+    }
+
+    .gan-zhi-circle {
+        width: 8rem !important;
+        height: 8rem !important;
+        font-size: 1.5rem !important;
+    }
+}
+
+/* 打印樣式 */
+@media print {
+    header,
+    button,
+    .no-print {
+        display: none !important;
+    }
+
+    body {
+        background: white !important;
+    }
+
+    .pillar-card,
+    .section {
+        break-inside: avoid;
+    }
+}

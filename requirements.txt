@@ -1,0 +1,8 @@
+sxtwl
+mcp
+fastapi
+uvicorn
+python-docx
+jinja2
+pydantic-settings
+pytest

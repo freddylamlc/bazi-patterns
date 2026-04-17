@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ name }} 的命盤 - 八字排盤</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-stone-100 min-h-screen pb-20">
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-20 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/" class="flex items-center gap-2 text-stone-600 hover:text-stone-900 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    <span class="text-sm">返回</span>
+                </a>
+                <span class="w-px h-6 bg-stone-200"></span>
+                <span class="text-lg font-serif font-bold text-stone-900">{{ name }} 的命盤</span>
+            </div>
+            <div class="text-xs text-stone-400">
+                真太陽時：{{ solar_time }}
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6 space-y-6">
+        <!-- 基本信息 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                <div>
+                    <span class="text-stone-400 text-xs">性別</span>
+                    <div class="font-medium text-stone-800">{{ gender }}</div>
+                </div>
+                <div>
+                    <span class="text-stone-400 text-xs">公曆</span>
+                    <div class="font-medium text-stone-800">{{ solar_date }}</div>
+                </div>
+                <div>
+                    <span class="text-stone-400 text-xs">農曆</span>
+                    <div class="font-medium text-stone-800">{{ lunar_date }}</div>
+                </div>
+                <div>
+                    <span class="text-stone-400 text-xs">出生地</span>
+                    <div class="font-medium text-stone-800">{{ birth_city }}</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 八字四柱 + 大運流年 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+            <div class="px-5 py-3 border-b border-stone-100 bg-stone-50/50 flex justify-between items-center">
+                <h2 class="font-serif font-bold text-stone-800">八字命盤 (Natal Chart)</h2>
+                <div class="text-xs text-stone-400">{{ jie_qi }}</div>
+            </div>
+            <div class="p-4 overflow-x-auto">
+                <div class="flex flex-row justify-center gap-2">
+                    <!-- 四柱（時、日、月、年） -->
+                    {{ pillar_html | safe }}
+                    <!-- 大運柱 -->
+                    <div class="pillar-card flex flex-col items-center gap-1 p-2 bg-stone-50 rounded-xl border border-stone-200/50 min-w-[90px]">
+                        <span class="text-xs text-stone-400 font-medium tracking-widest uppercase">大運</span>
+                        <span class="text-[10px] text-stone-500 h-4" id="current-dayun-shishen">{{ dayun_shishen }}</span>
+                        <div class="w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold rounded-full {{ dayun_gan_class }} border-2" id="current-dayun-gan">
+                            {{ dayun_gan }}
+                        </div>
+                        <div class="w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold {{ dayun_zhi_class }}" id="current-dayun-zhi">
+                            {{ dayun_zhi }}
+                        </div>
+                        <div class="flex flex-col gap-0.5 mt-1 items-center w-full min-h-[3.2rem]" id="current-dayun-canggan">
+                            {{ dayun_canggan_html | safe }}
+                        </div>
+                        <div class="text-[9px] text-stone-500 font-medium" id="current-dayun-changsheng">{{ dayun_changsheng }}</div>
+                    </div>
+                    <!-- 流年柱 -->
+                    <div class="pillar-card flex flex-col items-center gap-1 p-2 bg-stone-50 rounded-xl border border-stone-200/50 min-w-[90px]">
+                        <span class="text-xs text-stone-400 font-medium tracking-widest uppercase">流年</span>
+                        <span class="text-[10px] text-stone-500 h-4" id="current-liunian-shishen">{{ liunian_shishen }}</span>
+                        <div class="w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold rounded-full {{ liunian_gan_class }} border-2" id="current-liunian-gan">
+                            {{ liunian_gan }}
+                        </div>
+                        <div class="w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold {{ liunian_zhi_class }}" id="current-liunian-zhi">
+                            {{ liunian_zhi }}
+                        </div>
+                        <div class="flex flex-col gap-0.5 mt-1 items-center w-full min-h-[3.2rem]" id="current-liunian-canggan">
+                            {{ liunian_canggan_html | safe }}
+                        </div>
+                        <div class="text-[9px] text-stone-500 font-medium" id="current-liunian-changsheng">{{ liunian_changsheng }}</div>
+                    </div>
+                    <!-- 流月柱 -->
+                    <div class="pillar-card flex flex-col items-center gap-1 p-2 bg-stone-50 rounded-xl border border-stone-200/50 min-w-[90px]">
+                        <span class="text-xs text-stone-400 font-medium tracking-widest uppercase">流月</span>
+                        <span class="text-[10px] text-stone-500 h-4" id="current-liuyue-shishen">{{ liuyue_shishen|default('') }}</span>
+                        <div class="w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold rounded-full {{ liuyue_gan_class|default('bg-stone-50 text-stone-700 border-2 border-stone-200') }}" id="current-liuyue-gan">
+                            {{ liuyue_gan|default('') }}
+                        </div>
+                        <div class="w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold {{ liuyue_zhi_class|default('text-stone-700') }}" id="current-liuyue-zhi">
+                            {{ liuyue_zhi|default('') }}
+                        </div>
+                        <div class="flex flex-col gap-0.5 mt-1 items-center w-full min-h-[3.2rem]" id="current-liuyue-canggan">
+                            {{ liuyue_canggan_html|default('') | safe }}
+                        </div>
+                        <div class="text-[9px] text-stone-500 font-medium" id="current-liuyue-changsheng">{{ liuyue_changsheng|default('') }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 大運 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">大運信息</h3>
+            <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                <span class="text-lg font-serif font-bold text-stone-800">{{ da_yun }}</span>
+            </div>
+        </section>
+
+        <!-- 十個大運 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+            <div class="px-5 py-3 border-b border-stone-100 bg-stone-50/50">
+                <h2 class="font-serif font-bold text-stone-800">大運（{{ dayun_gender }} {{ dayun_paifa }}）- 點擊選擇</h2>
+            </div>
+            <div class="p-4 overflow-x-auto">
+                <div class="flex justify-center gap-2 min-w-[800px]">
+                    {{ dayun_pillars_html | safe }}
+                </div>
+            </div>
+        </section>
+
+        <!-- 流年 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+            <div class="px-5 py-3 border-b border-stone-100 bg-stone-50/50">
+                <h2 class="font-serif font-bold text-stone-800">流年（根據選擇的大運）- 點擊選擇</h2>
+            </div>
+            <div class="p-4 overflow-x-auto">
+                <div id="liunian-pillar-container" class="flex justify-center gap-2 min-w-[800px]">
+                    <!-- 通過 JS 動態生成 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 流月 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+            <div class="px-5 py-3 border-b border-stone-100 bg-stone-50/50">
+                <h2 class="font-serif font-bold text-stone-800">流月（根據選擇的流年）- 點擊選擇</h2>
+            </div>
+            <div class="p-4 overflow-x-auto">
+                <div id="liuyue-pillar-container" class="flex justify-center gap-2 min-w-[800px]">
+                    <!-- 通過 JS 動態生成 -->
+                </div>
+            </div>
+        </section>
+
+        <!-- 刑沖會合 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">刑沖會合</h3>
+            <div class="flex flex-wrap gap-2">
+                {% if has_zhi_relations %}
+                    {{ zhi_relations_html | safe }}
+                {% else %}
+                    <span class="text-stone-400 text-sm">無沖刑會合</span>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- 大運流年沖刑穿破 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">大運流年沖刑穿破</h3>
+            <div id="dy-ln-zhi-relations" class="flex flex-wrap gap-2">
+                <!-- 动态内容将由 JavaScript 更新 -->
+            </div>
+        </section>
+
+        <!-- 天干五合 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">天干五合</h3>
+            <div id="tian-gan-wu-he" class="flex flex-wrap gap-2">
+                <!-- 动态内容将由 JavaScript 更新 -->
+            </div>
+        </section>
+
+        <!-- 十神性格 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">十神性格</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                {{ shishen_personality_html | safe }}
+            </div>
+        </section>
+
+        <!-- 命理精斷（十神組合） - Phase 2 -->
+        {% if shishen_combinations %}
+        <section class="bg-white rounded-2xl shadow-sm border border-indigo-100 p-5">
+            <h3 class="text-sm font-bold text-indigo-500 uppercase tracking-widest mb-4 flex items-center gap-2">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                命理精斷（十神組合）
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for item in shishen_combinations %}
+                <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-200">
+                    <div class="text-xs font-bold text-indigo-600 mb-1">{{ item.組合 }}</div>
+                    <div class="text-sm text-indigo-800 leading-relaxed">{{ item.斷語 }}</div>
+                </div>
+                {% endfor %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- 格局 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">格局判斷</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                    <div class="text-xs text-stone-500 mb-2">定格信息</div>
+                    <div class="space-y-2 text-sm">
+                        <div><span class="text-stone-400">格局：</span><span class="font-bold text-lg">{{ ge_ju_name }}</span></div>
+                        {% if ge_ju_forms %}
+                        <div><span class="text-stone-400">格局形式：</span><span class="text-indigo-600 font-medium">{{ ge_ju_forms }}</span></div>
+                        {% endif %}
+                        <div><span class="text-stone-400">用神：</span><span class="text-green-600 font-medium">{{ yong_shen }}</span></div>
+                        <div><span class="text-stone-400">用神性質：</span><span class="{{ yong_shen_xing_zhi_class }} font-medium">{{ yong_shen_xing_zhi }}</span></div>
+                        <div><span class="text-stone-400">用神方式：</span><span class="text-purple-600 font-medium">{{ yong_shen_fang_shi }}</span></div>
+                        <div><span class="text-stone-400">相神：</span><span class="text-blue-600 font-medium">{{ xiang_shen }}</span></div>
+                        <div><span class="text-stone-400">定格來源：</span><span class="text-stone-600">{{ ding_ge_lai_yuan }}</span></div>
+                        {% if xiang_shen_chong_tu %}
+                        <div><span class="text-red-600 font-medium">⚠️ {{ xiang_shen_chong_tu }}</span></div>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl {{ ge_cheng_bai_class }} border">
+                    <div class="text-xs {{ ge_cheng_bai_text_class }} font-medium mb-2">格局成敗</div>
+                    <div class="font-bold text-lg mb-2">{{ ge_cheng_bai }}</div>
+                    <div class="text-xs text-stone-600 space-y-1">
+                        {{ ge_cheng_bai_analysis_html | safe }}
+                    </div>
+                </div>
+            </div>
+            <div class="mt-4 flex flex-wrap gap-2">
+                <div class="px-3 py-2 rounded-lg text-sm bg-green-50 text-green-700 border border-green-200">
+                    <span class="font-medium">喜神：</span>
+                    {{ xi_shen_wu_xing }}
+                </div>
+                <div class="px-3 py-2 rounded-lg text-sm bg-red-50 text-red-700 border border-red-200">
+                    <span class="font-medium">忌神：</span>
+                    {{ ji_shen_wu_xing }}
+                </div>
+            </div>
+            {% if ge_ju_forms_detail_html %}
+            <div class="mt-4 p-4 rounded-xl bg-amber-50 border border-amber-200">
+                <div class="text-xs text-amber-600 font-medium mb-2">格局形式詳解</div>
+                <div class="space-y-2 text-sm">
+                    {{ ge_ju_forms_detail_html | safe }}
+                </div>
+            </div>
+            {% endif %}
+        </section>
+
+        <!-- 原局格局（先天命格） -->
+        {% if yuan_ju_ge_ju %}
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">原局格局（先天命格）</h3>
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+                    <div>
+                        <span class="text-stone-400 text-xs">格局類型</span>
+                        <div class="font-medium text-stone-800">{{ yuan_ju_ge_ju.get('格局類型', '原局') }}</div>
+                    </div>
+                    <div>
+                        <span class="text-stone-400 text-xs">格局</span>
+                        <div class="font-medium text-stone-800">{{ yuan_ju_ge_ju.get('格局', '無') }}</div>
+                    </div>
+                    <div>
+                        <span class="text-stone-400 text-xs">成敗</span>
+                        <div class="font-medium {{ 'text-green-600' if '成' in yuan_ju_ge_ju.get('成敗', '') else 'text-red-600' }}">{{ yuan_ju_ge_ju.get('成敗', '無') }}</div>
+                    </div>
+                    <div>
+                        <span class="text-stone-400 text-xs">定格來源</span>
+                        <div class="font-medium text-stone-800">{{ yuan_ju_ge_ju.get('定格來源', '') }}</div>
+                    </div>
+                </div>
+                <div class="grid grid-cols-3 gap-4 text-sm">
+                    <div class="p-3 rounded-lg bg-green-50 border border-green-200">
+                        <div class="text-xs text-green-600 mb-1">用神</div>
+                        <div class="font-bold text-green-800">{{ yuan_ju_ge_ju.get('用神', '無') }}</div>
+                        <div class="text-xs text-green-600">{{ yuan_ju_ge_ju.get('用神五行', '') }}</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-blue-50 border border-blue-200">
+                        <div class="text-xs text-blue-600 mb-1">相神</div>
+                        <div class="font-bold text-blue-800">{{ yuan_ju_ge_ju.get('相神', []) | join('、') }}</div>
+                        <div class="text-xs text-blue-600">{{ yuan_ju_ge_ju.get('相神衝突', '無') }}</div>
+                    </div>
+                    <div class="p-3 rounded-lg bg-red-50 border border-red-200">
+                        <div class="text-xs text-red-600 mb-1">忌神</div>
+                        <div class="font-bold text-red-800">{{ yuan_ju_ge_ju.get('忌神', []) | join('、') }}</div>
+                        <div class="text-xs text-red-600">{{ yuan_ju_ge_ju.get('忌神五行', []) | join('、') }}</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- 歲運格局（大運 + 流年） -->
+        {% if sui_yun_ge_ju %}
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">歲運格局（大運 + 流年）</h3>
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4 text-sm">
+                    <div>
+                        <span class="text-stone-400 text-xs">格局類型</span>
+                        <div class="font-medium text-stone-800">{{ sui_yun_ge_ju.get('格局類型', '歲運') }}</div>
+                    </div>
+                    <div>
+                        <span class="text-stone-400 text-xs">原局格局</span>
+                        <div class="font-medium text-stone-800">{{ sui_yun_ge_ju.get('原局格局', '無') }}</div>
+                    </div>
+                    <div>
+                        <span class="text-stone-400 text-xs">歲運狀態</span>
+                        <div class="font-medium {{ 'text-green-600' if sui_yun_ge_ju.get('歲運格局狀態') == '成格' else ('text-red-600' if sui_yun_ge_ju.get('歲運格局狀態') == '破格' else 'text-stone-600') }}" id="suiyun-status-display">{{ sui_yun_ge_ju.get('歲運格局狀態', '無') }}</div>
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                    <div class="text-xs text-amber-600 font-medium mb-2">綜合判斷</div>
+                    <div class="text-sm text-amber-800" id="suiyun-zonghe-display">{{ sui_yun_ge_ju.get('綜合判斷', '無特殊影響') }}</div>
+                </div>
+                <div id="suiyun-yingshi-container" class="p-4 rounded-xl bg-indigo-50 border border-indigo-200" style="display: {{ 'block' if sui_yun_ge_ju.get('應事') else 'none' }}">
+                    <div class="text-xs text-indigo-600 font-medium mb-2">應事</div>
+                    <div class="flex flex-wrap gap-2">
+                        {% for ying_shi in sui_yun_ge_ju.get('應事', []) %}
+                        <span class="px-3 py-1.5 rounded-lg bg-white border border-indigo-200 text-indigo-700 text-sm">{{ ying_shi }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                    <div class="text-xs text-stone-500 font-medium mb-2">斷語</div>
+                    <div class="text-sm text-stone-700" id="suiyun-duanyu-display">{{ sui_yun_ge_ju.get('斷語', '') }}</div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- 整合分析 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">整合分析（格局為核心）</h3>
+            <div class="space-y-4">
+                <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-200">
+                    <div class="text-xs text-indigo-600 font-medium mb-2">格局核心解讀</div>
+                    <div class="space-y-2 text-sm">
+                        <div><span class="text-stone-400">用神解讀：</span><span class="text-indigo-700">{{ yong_shen_jie_du }}</span></div>
+                        <div><span class="text-stone-400">忌神解讀：</span><span class="text-red-700">{{ ji_shen_jie_du }}</span></div>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                    <div class="text-xs text-slate-600 font-medium mb-2">格局喜忌</div>
+                    <div class="grid grid-cols-3 gap-2 text-sm">
+                        <div><span class="text-stone-400">用神：</span><span class="text-green-600">{{ yong_shen_core }}</span></div>
+                        <div><span class="text-stone-400">忌神：</span><span class="text-red-600">{{ ji_shen_core }}</span></div>
+                        <div><span class="text-stone-400">喜神：</span><span class="text-blue-600">{{ xi_shen_core }}</span></div>
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                    <div class="text-xs text-amber-600 font-medium mb-2">大運判斷</div>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <div class="px-3 py-1 rounded bg-green-50 text-green-700 text-sm">
+                            <span class="text-green-600">用神：</span>{{ yong_shen_core }}
+                        </div>
+                        <div class="px-3 py-1 rounded bg-blue-50 text-blue-700 text-sm">
+                            <span class="text-blue-600">相神：</span>{{ xiang_shen_core }}
+                        </div>
+                        <div class="px-3 py-1 rounded bg-red-50 text-red-700 text-sm">
+                            <span class="text-red-600">忌神：</span>{{ ji_shen_core_wu_xing }}
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm">
+                        {{ da_yun_pan_duan_html | safe }}
+                    </div>
+                </div>
+
+                <div class="p-4 rounded-xl bg-rose-50 border border-rose-200">
+                    <div class="text-xs text-rose-600 font-medium mb-2">流年判斷（近 10 年）</div>
+                    <div class="flex flex-wrap gap-2 mb-3">
+                        <div class="px-3 py-1 rounded bg-green-50 text-green-700 text-sm">
+                            <span class="text-green-600">用神：</span>{{ yong_shen_core }}
+                        </div>
+                        <div class="px-3 py-1 rounded bg-blue-50 text-blue-700 text-sm">
+                            <span class="text-blue-600">相神：</span>{{ xiang_shen_core }}
+                        </div>
+                        <div class="px-3 py-1 rounded bg-red-50 text-red-700 text-sm">
+                            <span class="text-red-600">忌神：</span>{{ ji_shen_core }}
+                        </div>
+                    </div>
+                    <div id="liunian-judgment-container-integrated" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <!-- 由 JavaScript 動態生成，根據選擇的大運變動 -->
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 兩格並存 -->
+        {% if liang_ge_bing_cun and liang_ge_bing_cun.get('雙格局') %}
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">兩格並存</h3>
+            <div class="space-y-4">
+                <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-200">
+                    <div class="text-xs text-indigo-600 font-medium mb-2">雙格局</div>
+                    <div class="text-sm text-indigo-800">{{ liang_ge_bing_cun.get('雙格局', '') }}</div>
+                </div>
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- 根氣強度 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">根氣強度（月支 4>時支 3>日支 2>年支 1）</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full border-collapse text-sm">
+                    <thead>
+                        <tr class="bg-stone-50">
+                            <th class="p-2 border border-stone-200 text-left">柱</th>
+                            <th class="p-2 border border-stone-200 text-left">地支</th>
+                            <th class="p-2 border border-stone-200 text-left">日主得根</th>
+                            <th class="p-2 border border-stone-200 text-left">根氣強度</th>
+                            <th class="p-2 border border-stone-200 text-left">藏干</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {{ gen_qi_table_html | safe }}
+                    </tbody>
+                </table>
+            </div>
+            <div class="mt-3 grid grid-cols-2 md:grid-cols-4 gap-2">
+                {{ gen_qi_total_html | safe }}
+            </div>
+            <div class="mt-3 p-3 bg-stone-50 rounded-lg border border-stone-200">
+                <div class="text-sm">
+                    <span class="text-stone-500">日主總根氣：</span>
+                    <span class="font-medium text-stone-700">{{ ri_zhu_gen_qi_zong }}</span>
+                    <span class="text-stone-400 mx-2">|</span>
+                    <span class="text-stone-500">根氣論斷：</span>
+                    <span class="font-medium text-stone-700">{{ gen_qi_lun_duan }}</span>
+                </div>
+            </div>
+        </section>
+
+        </section>
+
+        <!-- 移花接木 -->
+        {% if yi_hua_jie_mu %}
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">移花接木（歲運進階）</h3>
+            <div class="space-y-4">
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                    <div class="text-xs text-stone-500 font-medium mb-2">說明</div>
+                    <div class="text-sm text-stone-700">{{ yi_hua_jie_mu.get('說明', '') }}</div>
+                </div>
+                {% if yi_hua_jie_mu.get('四庫大運') and yi_hua_jie_mu.get('四庫大運')|length > 0 %}
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                    <div class="text-xs text-amber-600 font-medium mb-3">四庫大運（辰戌丑未）</div>
+                    <div class="space-y-2">
+                        {% for dayun in yi_hua_jie_mu.get('四庫大運', []) %}
+                        <div class="flex items-center gap-3">
+                            <span class="px-3 py-1.5 rounded-lg bg-white border border-amber-200 text-amber-700 font-bold text-lg">{{ dayun.大運 }}</span>
+                            <span class="text-xs text-amber-600">{{ dayun.說明 }}</span>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% else %}
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                    <div class="text-xs text-stone-500 font-medium mb-2">四庫大運</div>
+                    <div class="text-sm text-stone-600">大運中無辰、戌、丑、未四庫，平穩過渡</div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- 先天病源 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">先天病源分析</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                    <div class="text-xs text-stone-500 mb-2">月令：{{ yue_ling }}（當令五行：{{ dang_ling_wu_xing }}）</div>
+                    <div class="flex flex-wrap gap-2">
+                        {{ wu_xing_fen_bu_html | safe }}
+                    </div>
+                </div>
+                {% if wu_xing_guo_wang %}
+                <div class="p-4 rounded-xl bg-red-50 border border-red-200">
+                    <div class="text-xs text-red-600 font-medium mb-2">五行過旺</div>
+                    {{ wu_xing_guo_wang_html | safe }}
+                </div>
+                {% endif %}
+                {% if wu_xing_que_shi %}
+                <div class="p-4 rounded-xl bg-red-50 border border-red-200">
+                    <div class="text-xs text-red-600 font-medium mb-2">五行缺失</div>
+                    {{ wu_xing_que_shi_html | safe }}
+                </div>
+                {% endif %}
+                {% if gai_tou_jie_jiao %}
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                    <div class="text-xs text-amber-600 font-medium mb-2">蓋頭截腳</div>
+                    {{ gai_tou_jie_jiao_html | safe }}
+                </div>
+                {% endif %}
+            </div>
+        </section>
+
+        <!-- 六十甲子 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">六十甲子體象論</h3>
+            <div class="space-y-3">
+                <div class="flex items-center gap-4">
+                    <span class="text-stone-500 text-sm">日柱：</span>
+                    <span class="font-serif font-bold text-lg">{{ ri_zhu }}</span>
+                    <span class="text-stone-400 text-sm">（{{ suo_shu_xun }}）</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-stone-500 text-sm">旬成員：</span>
+                    <span class="text-sm">{{ xun_cheng_yuan }}</span>
+                </div>
+                <div class="flex items-start gap-4">
+                    <span class="text-stone-500 text-sm">六親類化：</span>
+                    <div class="flex flex-wrap gap-2">
+                        {{ liu_qin_lei_hua_html | safe }}
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 一柱論命 -->
+        {% if yi_zhu %}
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">一柱論命</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl bg-blue-50 border border-blue-200">
+                    <div class="text-xs text-blue-600 font-medium mb-2">所屬旬</div>
+                    <div class="text-sm text-blue-800">{{ yi_zhu.get('所屬旬', '') }}</div>
+                </div>
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                    <div class="text-xs text-stone-500 font-medium mb-2">空亡</div>
+                    <div class="text-sm text-stone-700">{{ yi_zhu.get('空亡', '') }}</div>
+                </div>
+                <div class="p-4 rounded-xl bg-pink-50 border border-pink-200 md:col-span-2">
+                    <div class="text-xs text-pink-600 font-medium mb-2">婚姻斷語</div>
+                    <div class="text-sm text-pink-800 leading-relaxed">{{ yi_zhu.get('婚姻斷語', '') }}</div>
+                </div>
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                    <div class="text-xs text-amber-600 font-medium mb-2">六親斷語</div>
+                    <div class="text-sm text-amber-800 leading-relaxed">{{ yi_zhu.get('六親斷語', '') }}</div>
+                </div>
+                <div class="p-4 rounded-xl bg-green-50 border border-green-200">
+                    <div class="text-xs text-green-600 font-medium mb-2">健康斷語</div>
+                    <div class="text-sm text-green-800 leading-relaxed">{{ yi_zhu.get('健康斷語', '') }}</div>
+                </div>
+                <div class="p-4 rounded-xl bg-purple-50 border border-purple-200 md:col-span-2">
+                    <div class="text-xs text-purple-600 font-medium mb-2">性格斷語</div>
+                    <div class="text-sm text-purple-800 leading-relaxed">{{ yi_zhu.get('性格斷語', '') }}</div>
+                </div>
+                <div class="p-4 rounded-xl bg-indigo-50 border border-indigo-200 md:col-span-2">
+                    <div class="text-xs text-indigo-600 font-medium mb-2">事業斷語</div>
+                    <div class="text-sm text-indigo-800 leading-relaxed">{{ yi_zhu.get('事業斷語', '') }}</div>
+                </div>
+                {% if yi_zhu.get('特殊斷語') %}
+                <div class="p-4 rounded-xl bg-red-50 border border-red-200 md:col-span-2">
+                    <div class="text-xs text-red-600 font-medium mb-2">特殊斷語</div>
+                    <div class="text-sm text-red-800 leading-relaxed">{{ yi_zhu.get('特殊斷語', '') }}</div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        {% endif %}
+
+        <!-- 神煞 -->
+        {% if has_shen_sha %}
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">神煞</h3>
+            <div class="mb-4">
+                <h4 class="text-xs font-bold text-green-600 uppercase tracking-widest mb-2">實用神煞 ({{ shi_yong_shen_sha_count }})</h4>
+                <div class="flex flex-wrap gap-2">
+                    {{ shi_yong_shen_sha_html | safe }}
+                </div>
+            </div>
+            {% if can_kao_shen_sha %}
+            <div>
+                <h4 class="text-xs font-bold text-stone-400 uppercase tracking-widest mb-2">參考神煞 ({{ can_kao_shen_sha_count }})</h4>
+                <div class="flex flex-wrap gap-2">
+                    {{ can_kao_shen_sha_html | safe }}
+                </div>
+            </div>
+            {% endif %}
+        </section>
+        {% endif %}
+
+        <!-- 宮位 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">宮位</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                    <div class="text-xs text-stone-500 font-medium mb-2">六親宮位</div>
+                    <div class="space-y-1 text-sm">
+                        <div><span class="text-stone-400">年柱 祖輩宮：</span>年干 ({{ nian_gan_liu_qin }})、年支 ({{ nian_zhi_liu_qin }})</div>
+                        <div><span class="text-stone-400">月柱 父母兄弟宮：</span>月干 ({{ yue_gan_liu_qin }})、月支 ({{ yue_zhi_liu_qin }})</div>
+                        <div><span class="text-stone-400">日柱 夫妻宮：</span>日干 ({{ ri_gan_liu_qin }})、日支 ({{ ri_zhi_liu_qin }})</div>
+                        <div><span class="text-stone-400">時柱 晚輩宮：</span>時干 ({{ shi_gan_liu_qin }})、時支 ({{ shi_zhi_liu_qin }})</div>
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                    <div class="text-xs text-stone-500 font-medium mb-2">身體宮位</div>
+                    <div class="space-y-1 text-sm">
+                        <div><span class="text-stone-400">年柱：</span>{{ nian_zhu_shen_ti }}（{{ nian_zhu_shi_xu }}）</div>
+                        <div><span class="text-stone-400">月柱：</span>{{ yue_zhu_shen_ti }}（{{ yue_zhu_shi_xu }}）</div>
+                        <div><span class="text-stone-400">日柱：</span>{{ ri_zhu_shen_ti }}（{{ ri_zhu_shi_xu }}）</div>
+                        <div><span class="text-stone-400">時柱：</span>{{ shi_zhu_shen_ti }}（{{ shi_zhu_shi_xu }}）</div>
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 md:col-span-2">
+                    <div class="text-xs text-stone-500 font-medium mb-3">宮位吉凶分析</div>
+                    <div class="space-y-3">
+                        {{ gong_wei_ji_xiong_html | safe }}
+                    </div>
+                </div>
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                    <div class="text-xs text-stone-500 font-medium mb-2">天干對應臟腑</div>
+                    <div class="text-sm">{{ tian_gan_zang_fu }}</div>
+                </div>
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
+                    <div class="text-xs text-stone-500 font-medium mb-2">地支對應臟腑</div>
+                    <div class="text-sm">{{ zhi_zang_fu }}</div>
+                </div>
+                <!-- 疾病論斷 -->
+                <div class="p-4 rounded-xl bg-stone-50 border border-stone-200 md:col-span-2">
+                    <div class="text-xs text-stone-500 font-medium mb-3">疾病論斷</div>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="text-stone-400">季節體質：</span>
+                            <span class="px-2 py-1 rounded bg-blue-50 text-blue-700 border border-blue-200">{{ ji_jie_ti_zhi }}</span>
+                        </div>
+                        <div class="flex items-center gap-2 text-sm">
+                            <span class="text-stone-400">五行分布：</span>
+                            <div class="flex gap-1">
+                                {{ wu_xing_fen_bu_biao_html | safe }}
+                            </div>
+                        </div>
+                        <div>
+                            <div class="text-xs text-stone-500 font-medium mb-2">詳細論斷 ({{ ji_bing_lun_duan_count }}項)</div>
+                            <div class="space-y-2">
+                                {{ ji_bing_lun_duan_html | safe }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 干支象法 -->
+        {% if ganzhi_xiang and ganzhi_xiang['四柱干支象'] %}
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">干支象法</h3>
+            <div class="space-y-4">
+                <!-- 四柱干支象 -->
+                <div class="space-y-3">
+                    <div class="text-xs text-stone-600 font-medium mb-2">四柱干支象</div>
+                    {% for pillar_info in ganzhi_xiang['四柱干支象'] %}
+                    <div class="p-4 rounded-xl border {% if pillar_info['吉凶'] == '吉' %}bg-green-50 border-green-200{% elif pillar_info['吉凶'] == '凶' %}bg-red-50 border-red-200{% else %}bg-stone-50 border-stone-200{% endif %}">
+                        <div class="flex items-center justify-between mb-3">
+                            <div class="flex items-center gap-2">
+                                <span class="text-xs font-bold text-stone-500">{{ pillar_info['位置'] }}</span>
+                                <span class="text-lg font-bold {% if pillar_info['吉凶'] == '吉' %}text-green-700{% elif pillar_info['吉凶'] == '凶' %}text-red-700{% else %}text-stone-700{% endif %}">{{ pillar_info['干支'] }}</span>
+                                {% if pillar_info['六親'] %}
+                                <span class="text-xs px-2 py-1 rounded bg-stone-200 text-stone-600">{{ pillar_info['六親'] }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="text-xs {% if pillar_info['吉凶'] == '吉' %}text-green-600{% elif pillar_info['吉凶'] == '凶' %}text-red-600{% else %}text-stone-400{% endif %}">
+                                {{ pillar_info['吉凶'] }}
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-sm">
+                            <!-- 天干 -->
+                            <div class="space-y-2">
+                                <div class="text-xs font-bold text-stone-500">天干：{{ pillar_info['天干'] }}</div>
+                                {% if pillar_info['天干臟腑'] %}
+                                <div class="flex items-center gap-2 text-xs">
+                                    <span class="text-stone-400">臟腑：</span>
+                                    <span class="text-stone-700">{{ pillar_info['天干臟腑']['臟腑'] }}</span>
+                                </div>
+                                {% if pillar_info['天干臟腑']['部位'] %}
+                                <div class="flex items-center gap-2 text-xs">
+                                    <span class="text-stone-400">部位：</span>
+                                    <span class="text-stone-700">{{ pillar_info['天干臟腑']['部位'] }}</span>
+                                </div>
+                                {% endif %}
+                                {% endif %}
+                                {% if pillar_info['天干意象'] %}
+                                <div class="flex items-center gap-2 text-xs">
+                                    <span class="text-stone-400">意象：</span>
+                                    <span class="text-stone-700">{{ pillar_info['天干意象'] }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+
+                            <!-- 地支 -->
+                            <div class="space-y-2">
+                                <div class="text-xs font-bold text-stone-500">地支：{{ pillar_info['地支'] }}</div>
+                                {% if pillar_info['地支臟腑'] %}
+                                <div class="flex items-center gap-2 text-xs">
+                                    <span class="text-stone-400">臟腑：</span>
+                                    <span class="text-stone-700">{{ pillar_info['地支臟腑']['臟腑'] }}</span>
+                                </div>
+                                {% endif %}
+                                {% if pillar_info['地支意象'] %}
+                                <div class="flex items-center gap-2 text-xs">
+                                    <span class="text-stone-400">意象：</span>
+                                    <span class="text-stone-700">{{ pillar_info['地支意象'] }}</span>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <!-- 五行化氣 -->
+                {% if ganzhi_xiang['五行化氣'] and ganzhi_xiang['五行化氣']|length > 0 %}
+                <div class="p-4 rounded-xl bg-purple-50 border border-purple-200">
+                    <div class="text-xs text-purple-600 font-medium mb-2">五行化氣</div>
+                    <div class="space-y-2 text-sm">
+                        {% for hua_qi in ganzhi_xiang['五行化氣'] %}
+                        <div class="px-3 py-2 rounded-lg bg-white border border-purple-200 text-purple-700">
+                            {{ hua_qi }}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- 疾病預測 -->
+                {% if ganzhi_xiang['疾病預測'] and ganzhi_xiang['疾病預測']|length > 0 %}
+                <div class="p-4 rounded-xl bg-red-50 border border-red-200">
+                    <div class="text-xs text-red-600 font-medium mb-2">疾病預測</div>
+                    <div class="space-y-2 text-sm">
+                        {% for prediction in ganzhi_xiang['疾病預測'] %}
+                        <div class="px-3 py-2 rounded-lg bg-white border border-red-200">
+                            <div class="text-red-700">{{ prediction }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+
+                <!-- 特殊疾病 -->
+                {% if ganzhi_xiang['特殊疾病'] and ganzhi_xiang['特殊疾病']|length > 0 %}
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-200">
+                    <div class="text-xs text-amber-600 font-medium mb-2">特殊疾病提示</div>
+                    <div class="space-y-2 text-sm">
+                        {% for disease in ganzhi_xiang['特殊疾病'] %}
+                        <div class="px-3 py-2 rounded-lg bg-white border border-amber-200">
+                            <div class="text-amber-700">{{ disease }}</div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </section>
+        {% endif %}
+    </main>
+
+    <script>
+        // 所有流年數據（全局變量）
+        window.allLiunianData = {{ all_liunian_data_json | safe }};
+        const allLiunianData = window.allLiunianData;
+
+        // 流年數據按大運分組（全局變量）
+        window.liunianByDayun = {{ liunian_by_dayun_json | safe }};
+
+        // 流月數據按流年分組（全局變量）
+        window.liuyueByLiunian = {{ liuyue_by_liunian_json | safe }};
+
+        // 四柱數據（全局變量）
+        window.fourPillars = {{ four_pillars_json | safe }};
+        const fourPillars = window.fourPillars;
+        const pillarNames = ['年柱', '月柱', '日柱', '時柱'];
+
+        // 大運數據（全局變量）
+        window.dayunData = {{ dayun_data_json | safe }};
+        const dayunData = window.dayunData;
+
+        // 歲運格局全部數據（全局變量）
+        window.suiyunGejuAll = {{ sui_yun_ge_ju_all_json | safe }};
+
+        // [調試] 打印數據
+        console.log('\n[DEBUG] ===== 前端數據檢查 =====');
+        console.log('[DEBUG] allLiunianData:', allLiunianData);
+        console.log('[DEBUG] dayunData:', dayunData);
+        console.log('[DEBUG] fourPillars:', fourPillars);
+        console.log('[DEBUG] allLiunianData 長度:', allLiunianData?.length);
+        console.log('[DEBUG] dayunData 長度:', dayunData?.length);
+        console.log('[DEBUG] 第一個流年:', allLiunianData?.[0]);
+        console.log('[DEBUG] 第一個大運:', dayunData?.[0]);
+        console.log('[DEBUG] ===========================\n');
+    </script>
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
