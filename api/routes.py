@@ -40,6 +40,7 @@ def compute_bazi(data: dict):
         minute=data['minute'],
         birth_city=data['birth_city'],
         current_city=data.get('current_city'),
+        longitude=data.get('longitude')
     )
 
     gender_text = "男 (乾造)" if calculator.gender == "男" else "女 (坤造)"
@@ -440,7 +441,7 @@ async def calculate(
     request: Request,
     name: str = Form(""), gender: str = Form(...), calendar: str = Form(...),
     year: int = Form(...), month: int = Form(...), day: int = Form(...),
-    hour: int = Form(...), minute: int = Form(...), birth_city: str = Form(...)
+    hour: int = Form(...), minute: int = Form(...), birth_city: str = Form(""), longitude: str = Form(None)
 ):
     """計算八字（日期輸入模式）"""
     calendar_map = {"公曆": "公曆", "農曆": "農曆"}
@@ -449,7 +450,8 @@ async def calculate(
     data = {
         "name": name, "gender": gender, "calendar": calendar_std,
         "year": year, "month": month, "day": day,
-        "hour": hour, "minute": minute, "birth_city": birth_city
+        "hour": hour, "minute": minute, "birth_city": birth_city,
+        "longitude": longitude
     }
     res = compute_bazi(data)
     context = prepare_bazi_context(request, res)
@@ -578,7 +580,8 @@ async def view_client(request: Request, client_id: str):
         "day": client['day'],
         "hour": client['hour'],
         "minute": client['minute'],
-        "birth_city": client['birth_city']
+        "birth_city": client['birth_city'],
+        "longitude": client.get('longitude')
     }
     
     try:

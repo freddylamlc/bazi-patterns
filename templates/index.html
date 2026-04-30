@@ -6,6 +6,7 @@
     <title>八字算命 - 命盤排盤系統</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body class="bg-stone-100 min-h-screen">
@@ -59,8 +60,14 @@
 
                 <div class="space-y-1">
                     <label class="text-xs font-medium text-stone-500">出生城市</label>
-                    <input type="text" name="birth_city" value="香港" placeholder="例如：香港、深圳"
-                        class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                    <div class="flex gap-2">
+                        <input type="text" name="birth_city" id="birth_city" value="香港" placeholder="例如：香港、深圳"
+                            class="w-full bg-stone-50 border border-stone-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-stone-200">
+                        <input type="hidden" name="longitude" id="birth_longitude" value="">
+                        <button type="button" onclick="openMapModal()" class="px-3 py-2 bg-stone-100 hover:bg-stone-200 border border-stone-200 rounded-lg text-stone-600 transition flex items-center justify-center shrink-0" title="在地圖上精確選擇">
+                            🗺️
+                        </button>
+                    </div>
                 </div>
 
                 <div class="space-y-1">
@@ -254,7 +261,97 @@
             </form>
         </section>
     </main>
+    <!-- Map Modal -->
+    <div id="map-modal" class="fixed inset-0 bg-stone-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl shadow-xl w-full max-w-4xl overflow-hidden flex flex-col h-[80vh]">
+            <div class="px-5 py-4 border-b border-stone-100 flex justify-between items-center bg-stone-50">
+                <div>
+                    <h3 class="font-serif font-bold text-stone-900 text-lg">選擇出生地點</h3>
+                    <p class="text-xs text-stone-500 mt-1">請在地圖上點擊您的確切出生位置，以獲得最精準的真太陽時經度。</p>
+                </div>
+                <button onclick="closeMapModal()" class="text-stone-400 hover:text-stone-600 transition">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                </button>
+            </div>
+            <div class="flex-1 relative">
+                <div id="map" class="absolute inset-0"></div>
+            </div>
+            <div class="p-4 border-t border-stone-100 bg-stone-50 flex items-center justify-between">
+                <div class="text-sm">
+                    <span class="text-stone-500">已選經度：</span>
+                    <span id="selected-lng-display" class="font-bold text-indigo-600">尚未選擇</span>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="closeMapModal()" class="px-4 py-2 rounded-lg text-sm font-medium text-stone-600 hover:bg-stone-200 transition">取消</button>
+                    <button onclick="confirmMapSelection()" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 text-white hover:bg-indigo-700 transition shadow-sm">確認位置</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script>
+        let map = null;
+        let marker = null;
+        let selectedLng = null;
+        let selectedLat = null;
+
+        function openMapModal() {
+            document.getElementById('map-modal').classList.remove('hidden');
+            
+            if (!map) {
+                // Initialize map (default to China center)
+                map = L.map('map').setView([35.86166, 104.195397], 4);
+                
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '&copy; OpenStreetMap contributors'
+                }).addTo(map);
+
+                map.on('click', function(e) {
+                    if (marker) {
+                        map.removeLayer(marker);
+                    }
+                    marker = L.marker(e.latlng).addTo(map);
+                    selectedLng = e.latlng.lng;
+                    selectedLat = e.latlng.lat;
+                    
+                    document.getElementById('selected-lng-display').textContent = selectedLng.toFixed(4) + '°E';
+                });
+            } else {
+                setTimeout(() => map.invalidateSize(), 100);
+            }
+        }
+
+        function closeMapModal() {
+            document.getElementById('map-modal').classList.add('hidden');
+        }
+
+        async function confirmMapSelection() {
+            if (selectedLng === null) {
+                alert('請先在地圖上點擊選擇位置！');
+                return;
+            }
+            
+            // Set hidden input
+            document.getElementById('birth_longitude').value = selectedLng;
+            
+            // Optional: Reverse geocoding to update city name text input
+            try {
+                const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${selectedLat}&lon=${selectedLng}&zoom=10&accept-language=zh-TW,zh-CN`);
+                const data = await res.json();
+                if (data && data.address) {
+                    let city = data.address.city || data.address.town || data.address.county || data.address.state;
+                    if (city) {
+                        document.getElementById('birth_city').value = city;
+                    }
+                }
+            } catch (e) {
+                console.error("Reverse geocoding failed", e);
+            }
+            
+            closeMapModal();
+        }
+    </script>
     <script src="/static/js/app.js"></script>
 </body>
 </html>

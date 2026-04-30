@@ -65,7 +65,7 @@ class BaZiCalculator:
     使用新的模塊化架構，完全獨立於舊版 bazi_tool.py
     """
 
-    def __init__(self, name, gender, calendar, year, month, day, hour, minute, birth_city, current_city=None):
+    def __init__(self, name, gender, calendar, year, month, day, hour, minute, birth_city, current_city=None, longitude=None):
         """
         初始化八字計算器
 
@@ -80,6 +80,7 @@ class BaZiCalculator:
             minute: 分鐘
             birth_city: 出生城市
             current_city: 現居城市（可選）
+            longitude: 經度 (精確經度，若提供則不查詢城市)
         """
         # 基本參數
         self.name = name
@@ -92,9 +93,16 @@ class BaZiCalculator:
         self.minute = minute
         self.birth_city = birth_city
         self.current_city = current_city
+        self.longitude = longitude
 
         # 獲取出生城市經度
-        self.birth_longitude = inquire(birth_city)
+        if self.longitude is not None:
+            try:
+                self.birth_longitude = float(self.longitude)
+            except ValueError:
+                self.birth_longitude = inquire(birth_city)
+        else:
+            self.birth_longitude = inquire(birth_city)
 
         # 計算真太陽時
         self.solar_time = self._calculate_solar_time()

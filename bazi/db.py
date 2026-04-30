@@ -24,14 +24,19 @@ def init_db():
                 created_at DATETIME DEFAULT CURRENT_TIMESTAMP
             )
         ''')
+        # Try to add longitude column if it doesn't exist (for existing databases)
+        try:
+            conn.execute('ALTER TABLE clients ADD COLUMN longitude REAL')
+        except sqlite3.OperationalError:
+            pass # Column already exists
 
 def save_client(data: dict) -> str:
     client_id = str(uuid.uuid4())
     annotations = "{}"
     with sqlite3.connect(DB_PATH) as conn:
         conn.execute('''
-            INSERT INTO clients (id, name, gender, calendar, year, month, day, hour, minute, birth_city, annotations)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO clients (id, name, gender, calendar, year, month, day, hour, minute, birth_city, longitude, annotations)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             client_id, 
             data.get('name', ''), 
@@ -43,6 +48,7 @@ def save_client(data: dict) -> str:
             data.get('hour', 12), 
             data.get('minute', 0), 
             data.get('birth_city', '香港'), 
+            data.get('longitude', None),
             annotations
         ))
     return client_id
