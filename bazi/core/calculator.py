@@ -50,7 +50,6 @@ from bazi.analysis import (
     calculate_integrated_analysis,
     calculate_yi_zhu,
     calculate_ganzhi_xiang,
-    calculate_liang_ge_bing_cun,
 )
 from bazi.analysis.bazi_gua import calculate_bazi_gua
 
@@ -202,9 +201,6 @@ class BaZiCalculator:
 
         # 7. 移花接木判斷（歲運進階）
         self.yi_hua_jie_mu = calculate_yi_hua_jie_mu(self.detailed_dayun.get("十個大運", []))
-
-        # 8. 兩格並存判斷（歲運進階）
-        self.liang_ge_bing_cun = calculate_liang_ge_bing_cun(self.ba_zi, self.ge_ju)
 
         # 9. 一柱論命（以日柱為主）
         day_pillar = self.ba_zi.split()[2] if len(self.ba_zi.split()) > 2 else ""

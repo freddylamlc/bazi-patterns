@@ -2,7 +2,7 @@
 分析模塊 - 包含格局判斷、宮位分析、先天病源等
 """
 
-from bazi.analysis.geju import calculate_geju, judge_ge_chengbai, calculate_shishen_personality, calculate_liang_ge_bing_cun
+from bazi.analysis.geju import calculate_geju, judge_ge_chengbai, calculate_shishen_personality
 from bazi.analysis.gongwei import calculate_gongwei
 from bazi.analysis.bingyuan import calculate_bingyuan
 from bazi.analysis.dayun_liunian import calculate_dayun_pan_duan, calculate_liunian_pan_duan
@@ -36,6 +36,5 @@ __all__ = [
     "SHENSHA_DUAN_YU",
     "calculate_yi_zhu",
     "calculate_ganzhi_xiang",
-    "calculate_liang_ge_bing_cun",
     "calculate_bazi_gua",
 ]

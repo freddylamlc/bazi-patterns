@@ -80,7 +80,6 @@ def compute_bazi(data: dict):
         "一柱論命": calculator.yi_zhu,
         "干支象法": calculator.ganzhi_xiang,
         "移花接木": calculator.yi_hua_jie_mu,
-        "兩格並存": calculator.liang_ge_bing_cun,
         "bazi_gua": calculator.bazi_gua,
     }
 
@@ -418,7 +417,6 @@ def prepare_bazi_context(request: Request, res: dict) -> dict:
         "health_suggestions": integrated.get('健康分析', {}).get('生活調理', {}),
         "ganzhi_xiang": res.get('干支象法', {}),
         "yi_hua_jie_mu": res.get('移花接木', {}),
-        "liang_ge_bing_cun": res.get('兩格並存', {}),
         
         "all_liunian_data_json": json.dumps(all_liunian_data, ensure_ascii=False),
         "liunian_by_dayun_json": json.dumps(liunian_by_dayun, ensure_ascii=False),
