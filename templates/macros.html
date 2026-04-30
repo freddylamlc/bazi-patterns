@@ -1,0 +1,265 @@
+{% macro render_wuxing_class(wx) -%}
+{% if wx == '木' %}bg-green-50 text-green-700 border-green-200
+{% elif wx == '火' %}bg-red-50 text-red-700 border-red-200
+{% elif wx == '土' %}bg-yellow-50 text-yellow-700 border-yellow-200
+{% elif wx == '金' %}bg-gray-50 text-gray-700 border-gray-200
+{% elif wx == '水' %}bg-blue-50 text-blue-700 border-blue-200
+{% else %}bg-stone-50 text-stone-700 border-stone-200{% endif %}
+{%- endmacro %}
+
+{% macro render_wuxing_text_class(wx) -%}
+{% if wx == '木' %}text-green-700
+{% elif wx == '火' %}text-red-700
+{% elif wx == '土' %}text-yellow-700
+{% elif wx == '金' %}text-gray-700
+{% elif wx == '水' %}text-blue-700
+{% else %}text-stone-700{% endif %}
+{%- endmacro %}
+
+{% macro render_gongwei_jixiong(gong_wei_ji_xiong) %}
+{% if not gong_wei_ji_xiong %}
+<div class="text-stone-500 text-sm">暫無數據</div>
+{% else %}
+{% for gw in gong_wei_ji_xiong %}
+<div class="p-3 rounded-lg bg-stone-50 border border-stone-200">
+    <div class="text-xs font-bold text-stone-600 mb-2">{{ gw.柱 }}</div>
+    <div class="text-xs space-y-1">
+        <div><span class="text-stone-400">天干：</span><span class="{% if gw.天干.吉凶 == '大吉' %}text-green-600{% elif gw.天干.吉凶 == '凶' %}text-red-600{% else %}text-stone-600{% endif %}">{{ gw.天干.天干|default('') }} - {{ gw.天干.吉凶|default('平') }}</span></div>
+        <div><span class="text-stone-400">地支：</span><span class="{% if gw.地支.吉凶 == '大吉' %}text-green-600{% elif gw.地支.吉凶 == '凶' %}text-red-600{% else %}text-stone-600{% endif %}">{{ gw.地支.地支|default('') }} - {{ gw.地支.吉凶|default('平') }}</span></div>
+    </div>
+</div>
+{% endfor %}
+{% endif %}
+{% endmacro %}
+
+{% macro render_jibing_lunduan(ji_bing_lun_duan) %}
+{% if not ji_bing_lun_duan %}
+<div class="text-stone-500 text-sm">暫無數據</div>
+{% else %}
+{% for item in ji_bing_lun_duan %}
+<div class="p-3 rounded-lg bg-stone-50 border border-stone-200">
+    <div class="text-xs font-bold text-stone-600 mb-1">{{ item.類型 }}</div>
+    <div class="text-xs text-stone-700">{{ item.說明 }}</div>
+    {% if item.應期 %}<div class="text-xs text-amber-600 mt-1">應期：{{ item.應期 }}</div>{% endif %}
+    {% if item.建議 %}<div class="text-xs text-blue-600 mt-1">建議：{{ item.建議 }}</div>{% endif %}
+</div>
+{% endfor %}
+{% endif %}
+{% endmacro %}
+
+{% macro render_wuxing_fenbu_biao(wu_xing_fen_bu) %}
+{% if not wu_xing_fen_bu %}
+<span class="text-stone-500 text-sm">暫無數據</span>
+{% else %}
+{% for wx, info in wu_xing_fen_bu.items() %}
+<span class="px-2 py-1 rounded text-xs {{ render_wuxing_class(wx) }}">{{ wx }}:{{ info.數量|default(0) }} ({{ info.狀態|default('') }})</span>
+{% endfor %}
+{% endif %}
+{% endmacro %}
+
+{% macro render_dayun_panduan(da_yun_pan_duan) %}
+{% if not da_yun_pan_duan %}
+<div class="text-stone-500 text-sm">暫無數據</div>
+{% else %}
+{% for dy in da_yun_pan_duan %}
+<div class="p-3 rounded-lg bg-stone-50 border border-stone-200">
+    <div class="text-xs font-bold text-stone-600 mb-1">{{ dy.大運 }} ({{ dy.十神 }})</div>
+    <div class="text-xs text-stone-700">{{ dy.大運影響 }}</div>
+    <div class="text-xs {% if '用神' in dy.格局影響 or '喜神' in dy.格局影響 %}text-green-600{% elif '忌神' in dy.格局影響 %}text-red-600{% else %}text-stone-600{% endif %} mt-1">格局影響：{{ dy.格局影響 }}</div>
+</div>
+{% endfor %}
+{% endif %}
+{% endmacro %}
+
+{% macro render_liunian_panduan(liu_nian_pan_duan) %}
+{% if not liu_nian_pan_duan %}
+<div class="text-stone-500 text-sm">暫無數據</div>
+{% else %}
+{% for ln in liu_nian_pan_duan %}
+<div class="p-3 rounded-lg bg-stone-50 border border-stone-200">
+    <div class="text-xs font-bold text-stone-600 mb-1">{{ ln.流年 }} ({{ ln.流年十神 }})</div>
+    <div class="text-xs {% if '用神' in ln.格局影響 or '喜神' in ln.格局影響 %}text-green-600{% elif '忌神' in ln.格局影響 %}text-red-600{% else %}text-stone-600{% endif %} mt-1">{{ ln.格局影響 }}</div>
+</div>
+{% endfor %}
+{% endif %}
+{% endmacro %}
+
+{% macro render_zangfu(zang_fu) %}
+{% if not zang_fu %}
+<span class="text-stone-500 text-sm">暫無數據</span>
+{% else %}
+{% for key, value in zang_fu.items() %}
+<span class="px-2 py-1 rounded text-xs bg-stone-100 text-stone-700">{{ key }}: {{ value }}</span>
+{% endfor %}
+{% endif %}
+{% endmacro %}
+
+{% macro render_shishen_personality(shishen_data) %}
+{% if not shishen_data %}
+<div class="text-stone-500 text-sm">暫無數據</div>
+{% else %}
+{% for shishen_name, info in shishen_data.items() %}
+    {% set status = info.狀態|default('') %}
+    {% set is_ke_zhi = info.是否受剋|default(False) %}
+    
+    {% if '相神' in status and '被剋' not in status %}
+        {% set card_class = 'bg-green-50 border-green-200 border' %}
+        {% set title_class = 'text-green-700' %}
+        {% set desc_class = 'text-green-800' %}
+    {% elif '相神' in status and '被剋' in status %}
+        {% set card_class = 'bg-red-100 border-red-300 border-2' %}
+        {% set title_class = 'text-red-800 font-bold' %}
+        {% set desc_class = 'text-red-900 font-bold' %}
+    {% elif '忌神' in status and '被制' in status %}
+        {% set card_class = 'bg-green-50 border-green-200 border' %}
+        {% set title_class = 'text-green-700' %}
+        {% set desc_class = 'text-green-800' %}
+    {% elif '忌神' in status and '被制' not in status %}
+        {% set card_class = 'bg-red-50 border-red-200 border' %}
+        {% set title_class = 'text-red-700' %}
+        {% set desc_class = 'text-red-800' %}
+    {% else %}
+        {% set card_class = 'bg-stone-50 border-stone-200 border' %}
+        {% set title_class = 'text-stone-600' %}
+        {% set desc_class = 'text-stone-500' %}
+    {% endif %}
+
+    <div class="p-3 rounded-xl {{ card_class }}">
+        <div class="flex items-center justify-between mb-2">
+            <span class="text-sm font-bold {{ title_class }}">{{ shishen_name }}
+            {% if is_ke_zhi %}
+                <span class="text-xs px-2 py-0.5 rounded bg-red-200 text-red-700 ml-2">受剋</span>
+            {% endif %}
+            </span>
+            <span class="text-xs text-stone-400">{{ status }}</span>
+        </div>
+        <div class="text-xs {{ desc_class }} leading-relaxed">{{ info.心性描述|default('') }}</div>
+        {% if info.身旺衰說明 %}
+            <div class="text-xs text-stone-400 mt-2">{{ info.身旺衰說明 }}</div>
+        {% endif %}
+    </div>
+{% endfor %}
+{% endif %}
+{% endmacro %}
+
+{% macro render_canggan(canggan) %}
+    {% if canggan and canggan.主氣 %}
+    <div class="flex justify-between text-[9px] w-full px-1 opacity-70">
+        <span class="{{ render_wuxing_text_class(canggan.主氣.五行) }}">{{ canggan.主氣.干 }}</span>
+        <span class="text-stone-400">{{ canggan.主氣.十神 }}</span>
+    </div>
+    {% endif %}
+    {% if canggan and canggan.中氣 %}
+    <div class="flex justify-between text-[9px] w-full px-1 opacity-70">
+        <span class="{{ render_wuxing_text_class(canggan.中氣.五行) }}">{{ canggan.中氣.干 }}</span>
+        <span class="text-stone-400">{{ canggan.中氣.十神 }}</span>
+    </div>
+    {% endif %}
+    {% if canggan and canggan.餘氣 %}
+    <div class="flex justify-between text-[9px] w-full px-1 opacity-70">
+        <span class="{{ render_wuxing_text_class(canggan.餘氣.五行) }}">{{ canggan.餘氣.干 }}</span>
+        <span class="text-stone-400">{{ canggan.餘氣.十神 }}</span>
+    </div>
+    {% endif %}
+{% endmacro %}
+
+{% macro render_pillar_card(p, index) %}
+<div class="pillar-card flex flex-col items-center gap-1 p-2 bg-stone-50 rounded-xl border border-stone-200/50 min-w-[90px]" id="pillar-container-{{ index }}">
+    <span class="text-xs text-stone-400 font-medium tracking-widest uppercase">{{ p.name }}</span>
+    <span class="text-[10px] text-stone-500 h-4" id="pillar-{{ index }}-shishen">{{ p.shi_shen }}</span>
+    <div class="w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold rounded-full {{ render_wuxing_class(p.gan_wuxing) }} border-2">
+        {{ p.gan }}
+    </div>
+    <div class="w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold {{ render_wuxing_text_class(p.zhi_wuxing) }}">
+        {{ p.zhi }}
+    </div>
+    <div class="flex flex-col gap-0.5 mt-1 items-center w-full min-h-[3.2rem]" id="pillar-{{ index }}-canggan">
+        {{ render_canggan(p.canggan_dict) }}
+    </div>
+    <div class="text-[9px] text-stone-500 font-medium">{{ p.chang_sheng }}</div>
+</div>
+{% endmacro %}
+
+{% macro render_dayun_pillar_card(dy, index) %}
+{% set active_class = 'border-indigo-500 bg-indigo-50' if index == 0 else 'border-stone-200 bg-stone-50 hover:bg-stone-100' %}
+<div id="dayun-pillar-{{ index }}" class="dayun-pillar-select cursor-pointer pillar-card flex flex-col items-center gap-1 p-2 rounded-xl border min-w-[80px] transition-all {{ active_class }}" onclick="selectDayun({{ index }})">
+    <span class="text-xs text-stone-400 font-medium">{{ dy.起運年齡 }}歲</span>
+    <span class="text-[10px] text-stone-500 h-4">{{ dy.十神 }}</span>
+    <div class="w-10 h-10 flex items-center justify-center text-2xl font-serif font-bold rounded-full {{ render_wuxing_class(GAN_WU_XING[dy.大運干]) }} border-2">
+        {{ dy.大運干 }}
+    </div>
+    <div class="w-10 h-10 flex items-center justify-center text-2xl font-serif font-bold {{ render_wuxing_text_class(ZHI_WU_XING[dy.大運支]) }}">
+        {{ dy.大運支 }}
+    </div>
+    <div class="flex flex-col gap-0.5 mt-1 items-center w-full min-h-[3.2rem]" id="dayun-pillar-{{ index }}-canggan">
+        {{ render_canggan(dy.地支.藏干) }}
+    </div>
+</div>
+{% endmacro %}
+
+{% macro render_zhi_relations(zhi_relations) %}
+    {% set relation_keys = [
+        ('六合', '六合'), ('六沖', '六沖'), ('三合局', '三合局'),
+        ('半合局', '半合局'), ('拱局', '拱局'), ('閘合局', '閘合局'),
+        ('三會方', '三會方'), ('刑', '刑'), ('穿', '穿'), ('破', '破')
+    ] %}
+    {% for key, label in relation_keys %}
+        {% if zhi_relations.get(key) %}
+            {% set items = zhi_relations.get(key) %}
+            {% if items is string %}
+                <span class="px-3 py-1.5 rounded-lg text-sm bg-blue-50 text-blue-700 border border-blue-200">{{ label }}: {{ items }}</span>
+            {% else %}
+                {% for item in items %}
+                    {% if item is string %}
+                        <span class="px-3 py-1.5 rounded-lg text-sm bg-blue-50 text-blue-700 border border-blue-200">{{ label }}: {{ item }}</span>
+                    {% elif item is mapping %}
+                        {% set relation_str = item.合|default(item.沖|default(item.刑|default(item.穿|default(item.破|default(item.局|default('')))))) %}
+                        {% set position = item.位置|default('') %}
+                        {% set status = item.狀態|default('') %}
+                        {% set combo = item.組合|default('') %}
+                        {% set display = relation_str if relation_str else (combo if combo else label) %}
+                        {% set display = display ~ (' (' ~ position ~ ')' if position else '') %}
+                        {% set display = display ~ (' [' ~ status ~ ']' if status else '') %}
+                        <span class="px-3 py-1.5 rounded-lg text-sm bg-blue-50 text-blue-700 border border-blue-200">{{ label }}: {{ display }}</span>
+                    {% elif item is sequence %}
+                        <span class="px-3 py-1.5 rounded-lg text-sm bg-blue-50 text-blue-700 border border-blue-200">{{ label }}: {{ item|join('-') }}</span>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro render_gen_qi_table(di_zhi_de_gen) %}
+{% for dg in di_zhi_de_gen %}
+<tr class="hover:bg-stone-50/50">
+    <td class="p-2 border border-stone-200">{{ dg.柱 }}</td>
+    <td class="p-2 border border-stone-200 font-medium">{{ dg.地支 }}</td>
+    <td class="p-2 border border-stone-200 {% if dg.日主得根 %}text-green-600{% else %}text-red-600{% endif %}">{% if dg.日主得根 %}是{% else %}否{% endif %}</td>
+    <td class="p-2 border border-stone-200">{{ dg.日主根氣強度|default(0) }}</td>
+    <td class="p-2 border border-stone-200 text-xs text-stone-600">
+        {% set cg_list = [] %}
+        {% for k, v in dg.藏干.items() %}
+            {% set _ = cg_list.append(k ~ v) %}
+        {% endfor %}
+        {{ cg_list|join(', ') }}
+    </td>
+</tr>
+{% endfor %}
+{% endmacro %}
+
+{% macro render_gen_qi_total(wang_shuai, bazi_parts, gan_wu_xing_map) %}
+{% set pillars = ['年干','月干','日干','時干'] %}
+{% for i in range(4) %}
+{% set gan = bazi_parts[i] %}
+<div class="p-2 bg-stone-50 rounded-lg border border-stone-200">
+    <div class="text-xs text-stone-500 mb-1">{{ pillars[i] }}（{{ gan_wu_xing_map.get(gan, '') }}）</div>
+    <div class="text-sm font-medium">
+        總根氣：<span class="text-stone-700">{{ wang_shuai.get(gan ~ '_總根氣', 0) }}</span>
+    </div>
+    <div class="text-xs text-stone-600 mt-1">
+        {{ wang_shuai.get(gan ~ '_根氣論斷', '虛浮無根') }}
+    </div>
+</div>
+{% endfor %}
+{% endmacro %}

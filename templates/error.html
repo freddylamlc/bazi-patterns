@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>錯誤 - 八字排盤</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-stone-100 min-h-screen">
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-20 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="w-8 h-8 bg-stone-900 text-white flex items-center justify-center rounded-lg text-sm font-bold">八字</span>
+                <span class="text-lg font-serif font-bold text-stone-900">命盤排盤系統</span>
+            </div>
+        </div>
+    </header>
+    <main class="max-w-6xl mx-auto px-4 py-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-red-200 p-6">
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <span class="text-red-600 text-xl">!</span>
+                </div>
+                <h2 class="text-xl font-bold text-red-800">反推失敗</h2>
+            </div>
+            <p class="text-stone-700 mb-6">{{ error_message }}</p>
+            <div class="bg-stone-50 rounded-lg p-4 text-sm text-stone-600">
+                <p>可能原因：</p>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>四柱組合在 1900-2100 年範圍內不存在</li>
+                    <li>月柱與年干不匹配（五虎遁）</li>
+                    <li>時柱與日干不匹配（五鼠遁）</li>
+                </ul>
+            </div>
+            <a href="/" class="mt-6 inline-block bg-stone-900 text-white px-6 py-2 rounded-lg hover:bg-black transition">返回首頁</a>
+        </div>
+    </main>
+    <script src="/static/js/app.js?v=2"></script>
+</body>
+</html>

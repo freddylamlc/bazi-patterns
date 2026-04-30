@@ -193,28 +193,34 @@ def calculate_dayun_pan_duan(ba_zi: str, ge_ju: dict, detailed_dayun: dict,
         if is_auspicious and yong_shen:
             if dy_gan_wuxing == yong_shen_wuxing:
                 yong_shen_dao_wei = f"用神{yong_shen}到位（天干）"
-                ge_ju_ying_xiang = "用神到位 - 格局增強"
             if dy_zhi_wuxing == yong_shen_wuxing:
                 yong_shen_dao_wei += f"、" if yong_shen_dao_wei else f"用神{yong_shen}到位（地支）"
-                if not ge_ju_ying_xiang.startswith("用神"):
-                    ge_ju_ying_xiang = "用神到位 - 格局增強"
 
         if dy_gan in xishen_gans:
             xishen_dao_wei = f"喜神{dy_gan}到位（天干）"
-            if not ge_ju_ying_xiang.startswith("用神"):
-                ge_ju_ying_xiang = "喜神到位 - 吉運"
         if dy_zhi in xishen_gans:
             xishen_dao_wei += f"、" if xishen_dao_wei else f"喜神{dy_zhi}到位（地支）"
-            if not ge_ju_ying_xiang.startswith("用神"):
-                ge_ju_ying_xiang = "喜神到位 - 吉運"
+        if dy_gan_wuxing in xishen_wuxing_list:
+            if not xishen_dao_wei:
+                xishen_dao_wei = f"喜神{dy_gan_wuxing}到位（天干五行）"
+        if dy_zhi_wuxing in xishen_wuxing_list:
+            if not xishen_dao_wei:
+                xishen_dao_wei = f"喜神{dy_zhi_wuxing}到位（地支五行）"
 
         if dy_gan in jishen_gans:
             ji_shen_dao_wei = f"忌神{dy_gan}到位（天干）"
-            ge_ju_ying_xiang = "忌神到位 - 格局受損"
         if dy_zhi_wuxing in jishen_wuxing:
             ji_shen_dao_wei += f"、" if ji_shen_dao_wei else f"忌神{dy_zhi}到位（地支）"
-            if not ge_ju_ying_xiang.startswith("忌神"):
-                ge_ju_ying_xiang = "忌神到位 - 格局受損"
+
+        if yong_shen_dao_wei or xishen_dao_wei:
+            if ji_shen_dao_wei:
+                ge_ju_ying_xiang = "喜忌交雜 - 吉凶參半"
+            elif yong_shen_dao_wei:
+                ge_ju_ying_xiang = "用神到位 - 格局增強"
+            else:
+                ge_ju_ying_xiang = "喜神到位 - 吉運"
+        elif ji_shen_dao_wei:
+            ge_ju_ying_xiang = "忌神到位 - 格局受損"
 
         # 7. 吉凶總結
         if ge_ju_ying_xiang.startswith("用神"):
@@ -464,40 +470,36 @@ def calculate_liunian_pan_duan(ba_zi: str, ge_ju: dict, dayun_pan_duan: dict,
             if is_auspicious and yong_shen:
                 if ln_gan_wuxing == yong_shen_wuxing:
                     yong_shen_dao_wei = f"用神{yong_shen}到位（天干）"
-                    ge_ju_ying_xiang = "用神到位 - 格局增強"
                 if ln_zhi_wuxing == yong_shen_wuxing:
                     yong_shen_dao_wei += f"、" if yong_shen_dao_wei else f"用神{yong_shen}到位（地支）"
-                    if not ge_ju_ying_xiang.startswith("用神"):
-                        ge_ju_ying_xiang = "用神到位 - 格局增強"
 
             if ln_gan in xishen_gans:
                 xishen_dao_wei = f"喜神{ln_gan}到位（天干）"
-                if not ge_ju_ying_xiang.startswith("用神"):
-                    ge_ju_ying_xiang = "喜神到位 - 吉運"
             if ln_zhi in xishen_gans:
                 xishen_dao_wei += f"、" if xishen_dao_wei else f"喜神{ln_zhi}到位（地支）"
-                if not ge_ju_ying_xiang.startswith("用神"):
-                    ge_ju_ying_xiang = "喜神到位 - 吉運"
 
             # 檢查流年天干/地支五行是否在喜神五行列表中
             if ln_gan_wuxing in xishen_wuxing_list:
                 if not xishen_dao_wei:
                     xishen_dao_wei = f"喜神{ln_gan_wuxing}到位（天干五行）"
-                    if not ge_ju_ying_xiang.startswith("用神"):
-                        ge_ju_ying_xiang = "喜神到位 - 吉運"
             if ln_zhi_wuxing in xishen_wuxing_list:
                 if not xishen_dao_wei:
                     xishen_dao_wei = f"喜神{ln_zhi_wuxing}到位（地支五行）"
-                    if not ge_ju_ying_xiang.startswith("用神"):
-                        ge_ju_ying_xiang = "喜神到位 - 吉運"
 
             if ln_gan in jishen_gans:
                 ji_shen_dao_wei = f"忌神{ln_gan}到位（天干）"
-                ge_ju_ying_xiang = "忌神到位 - 格局受損"
             if ln_zhi_wuxing in jishen_wuxing:
                 ji_shen_dao_wei += f"、" if ji_shen_dao_wei else f"忌神{ln_zhi}到位（地支）"
-                if not ge_ju_ying_xiang.startswith("忌神"):
-                    ge_ju_ying_xiang = "忌神到位 - 格局受損"
+
+            if yong_shen_dao_wei or xishen_dao_wei:
+                if ji_shen_dao_wei:
+                    ge_ju_ying_xiang = "喜忌交雜 - 吉凶參半"
+                elif yong_shen_dao_wei:
+                    ge_ju_ying_xiang = "用神到位 - 格局增強"
+                else:
+                    ge_ju_ying_xiang = "喜神到位 - 吉運"
+            elif ji_shen_dao_wei:
+                ge_ju_ying_xiang = "忌神到位 - 格局受損"
 
             # 吉凶判斷
             if ge_ju_ying_xiang.startswith("用神"):

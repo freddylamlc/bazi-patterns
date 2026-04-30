@@ -145,9 +145,9 @@ function selectDayun(index) {
 
     // 更新當前大運柱顯示
     if (window.dayunData[index]) {
-        document.getElementById('current-dayun-gan').textContent = window.dayunData[index]['天干']['干'];
-        document.getElementById('current-dayun-zhi').textContent = window.dayunData[index]['地支']['支'];
-        document.getElementById('current-dayun-shishen').textContent = window.dayunData[index]['天干']['十神'];
+        document.getElementById('current-dayun-gan').textContent = window.dayunData[index]['大運干'];
+        document.getElementById('current-dayun-zhi').textContent = window.dayunData[index]['大運支'];
+        document.getElementById('current-dayun-shishen').textContent = window.dayunData[index]['十神'];
 
         // 更新大運藏干
         const canggan = window.dayunData[index]['地支']['藏干'] || {};
@@ -649,7 +649,7 @@ function updateZhiRelations() {
         return;
     }
 
-    const dayunZhi = window.dayunData[dayunIndex]['地支']['支'];
+    const dayunZhi = window.dayunData[dayunIndex]['大運支'];
     const liunianZhi = liunianList[liunianIndex]['流年地支'];
 
     // 四柱地支
@@ -767,7 +767,7 @@ function updateTianGanWuHe() {
         return;
     }
 
-    const dayunGan = window.dayunData[dayunIndex]['天干']['干'];
+    const dayunGan = window.dayunData[dayunIndex]['大運干'];
     const liunianGan = liunianList[liunianIndex]['流年天干'];
 
     // 提取四柱天干

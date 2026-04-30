@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>選擇日期 - 八字排盤</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-stone-100 min-h-screen">
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-20 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <span class="w-8 h-8 bg-stone-900 text-white flex items-center justify-center rounded-lg text-sm font-bold">八字</span>
+                <span class="text-lg font-serif font-bold text-stone-900">命盤排盤系統</span>
+            </div>
+        </div>
+    </header>
+    <main class="max-w-6xl mx-auto px-4 py-6">
+        <div class="bg-white rounded-2xl shadow-sm border border-stone-100 p-6">
+            <h2 class="text-xl font-bold text-stone-800 mb-2">找到多個可能的出生日期</h2>
+            <p class="text-stone-600 mb-6">由於六十甲子 60 年一循環，以下日期都匹配您輸入的四柱。請選擇正確的日期：</p>
+            <div class="space-y-4">
+                {% for date in possible_dates %}
+                <div class="p-4 bg-stone-50 rounded-lg border border-stone-200 hover:border-stone-400 transition">
+                    <div class="flex items-center justify-between mb-2">
+                        <div class="font-bold text-stone-800">{{ date.year }}年{{ date.month }}月{{ date.day }}日</div>
+                        <form action="/select_date" method="post" class="inline">
+                            <input type="hidden" name="name" value="{{ name }}">
+                            <input type="hidden" name="gender" value="{{ gender }}">
+                            <input type="hidden" name="selected_index" value="{{ loop.index0 }}">
+                            <input type="hidden" name="year" value="{{ date.year }}">
+                            <input type="hidden" name="month" value="{{ date.month }}">
+                            <input type="hidden" name="day" value="{{ date.day }}">
+                            <input type="hidden" name="hour" value="{{ date.hour }}">
+                            <input type="hidden" name="minute" value="{{ date.minute }}">
+                            <input type="hidden" name="calendar" value="{{ date.calendar }}">
+                            <button type="submit" class="bg-stone-900 text-white px-4 py-1.5 rounded-lg text-sm hover:bg-black transition">選擇此日期</button>
+                        </form>
+                    </div>
+                    <p class="text-sm text-stone-600">{{ date.note }}</p>
+                </div>
+                {% endfor %}
+            </div>
+            <a href="/" class="mt-6 inline-block text-stone-600 hover:text-stone-800 transition">← 返回重新輸入</a>
+        </div>
+    </main>
+    <script src="/static/js/app.js?v=2"></script>
+</body>
+</html>
