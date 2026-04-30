@@ -20,8 +20,21 @@
                 <span class="w-px h-6 bg-stone-200"></span>
                 <span class="text-lg font-serif font-bold text-stone-900">{{ name }} 的命盤</span>
             </div>
-            <div class="text-xs text-stone-400">
-                真太陽時：{{ solar_time }}
+            <div class="flex items-center gap-4">
+                <div class="text-xs text-stone-400 hidden sm:block">
+                    真太陽時：{{ solar_time }}
+                </div>
+                {% if client_id %}
+                <div class="px-3 py-1.5 bg-indigo-50 border border-indigo-100 rounded-lg flex items-center gap-2">
+                    <span class="w-2 h-2 rounded-full bg-indigo-500"></span>
+                    <span class="text-xs font-bold text-indigo-700">客戶：{{ client_name }}</span>
+                </div>
+                {% else %}
+                <button onclick="saveClientRecord()" id="save-client-btn" class="px-3 py-1.5 bg-stone-900 text-white rounded-lg text-sm font-medium hover:bg-black transition flex items-center gap-1.5 shadow-sm">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                    保存為客戶
+                </button>
+                {% endif %}
             </div>
         </div>
     </header>
@@ -59,7 +72,7 @@
                     <span class="text-stone-400 text-xs">出生地</span>
                     <div class="font-medium text-stone-800">{{ birth_city }}</div>
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_1', client_id, annotations) }}
         </section>
 
         <!-- 八字四柱 + 大運流年 -->
@@ -120,7 +133,7 @@
                         <div class="text-[9px] text-stone-500 font-medium" id="current-liuyue-changsheng">{{ first_liuyue.十二長生|default('') }}</div>
                     </div>
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_2', client_id, annotations) }}
         </section>
 
         <!-- 大運 -->
@@ -128,7 +141,7 @@
             <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">大運信息</h3>
             <div class="p-4 rounded-xl bg-stone-50 border border-stone-200">
                 <span class="text-lg font-serif font-bold text-stone-800">{{ da_yun }}</span>
-            </div>
+            </div>    {{ macros.render_annotation('sec_3', client_id, annotations) }}
         </section>
 
         <!-- 十個大運 -->
@@ -142,7 +155,7 @@
                     {{ macros.render_dayun_pillar_card(dy, loop.index0) }}
                     {% endfor %}
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_4', client_id, annotations) }}
         </section>
 
         <!-- 流年 -->
@@ -154,7 +167,7 @@
                 <div id="liunian-pillar-container" class="flex justify-center gap-2 min-w-[800px]">
                     <!-- 通過 JS 動態生成 -->
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_5', client_id, annotations) }}
         </section>
 
         <!-- 流月 -->
@@ -166,7 +179,7 @@
                 <div id="liuyue-pillar-container" class="flex justify-center gap-2 min-w-[800px]">
                     <!-- 通過 JS 動態生成 -->
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_6', client_id, annotations) }}
         </section>
 
         <!-- 刑沖會合 -->
@@ -178,7 +191,7 @@
                 {% else %}
                     <span class="text-stone-400 text-sm">無沖刑會合</span>
                 {% endif %}
-            </div>
+            </div>    {{ macros.render_annotation('sec_7', client_id, annotations) }}
         </section>
 
         <!-- 大運流年沖刑穿破 -->
@@ -186,7 +199,7 @@
             <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">大運流年沖刑穿破</h3>
             <div id="dy-ln-zhi-relations" class="flex flex-wrap gap-2">
                 <!-- 动态内容将由 JavaScript 更新 -->
-            </div>
+            </div>    {{ macros.render_annotation('sec_8', client_id, annotations) }}
         </section>
 
         <!-- 天干五合 -->
@@ -194,7 +207,7 @@
             <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">天干五合</h3>
             <div id="tian-gan-wu-he" class="flex flex-wrap gap-2">
                 <!-- 动态内容将由 JavaScript 更新 -->
-            </div>
+            </div>    {{ macros.render_annotation('sec_9', client_id, annotations) }}
         </section>
 
         <!-- 十神性格 -->
@@ -202,7 +215,7 @@
             <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">十神性格</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {{ macros.render_shishen_personality(shishen_data) }}
-            </div>
+            </div>    {{ macros.render_annotation('sec_10', client_id, annotations) }}
         </section>
 
         <!-- 命理精斷（十神組合） - Phase 2 -->
@@ -219,7 +232,7 @@
                     <div class="text-sm text-indigo-800 leading-relaxed">{{ item.斷語 }}</div>
                 </div>
                 {% endfor %}
-            </div>
+            </div>    {{ macros.render_annotation('sec_11', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -277,7 +290,7 @@
                     {% endfor %}
                 </div>
             </div>
-            {% endif %}
+            {% endif %}    {{ macros.render_annotation('sec_12', client_id, annotations) }}
         </section>
 
         <!-- 原局格局（先天命格） -->
@@ -320,7 +333,7 @@
                         <div class="text-xs text-red-600">{{ yuan_ju_ge_ju.get('忌神五行', []) | join('、') }}</div>
                     </div>
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_13', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -359,7 +372,7 @@
                     <div class="text-xs text-stone-500 font-medium mb-2">斷語</div>
                     <div class="text-sm text-stone-700" id="suiyun-duanyu-display">{{ sui_yun_ge_ju.get('斷語', '') }}</div>
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_14', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -419,7 +432,7 @@
                         <!-- 由 JavaScript 動態生成，根據選擇的大運變動 -->
                     </div>
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_15', client_id, annotations) }}
         </section>
 
 
@@ -454,7 +467,7 @@
                     <span class="text-stone-500">根氣論斷：</span>
                     <span class="font-medium text-stone-700">{{ gen_qi_lun_duan }}</span>
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_16', client_id, annotations) }}
         </section>
 
         <!-- 移花接木 -->
@@ -484,7 +497,7 @@
                     <div class="text-sm text-stone-600">大運中無辰、戌、丑、未四庫，平穩過渡</div>
                 </div>
                 {% endif %}
-            </div>
+            </div>    {{ macros.render_annotation('sec_17', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -522,7 +535,7 @@
                     {% endfor %}
                 </div>
                 {% endif %}
-            </div>
+            </div>    {{ macros.render_annotation('sec_18', client_id, annotations) }}
         </section>
 
         <!-- 六十甲子 -->
@@ -546,7 +559,7 @@
                         {% endfor %}
                     </div>
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_19', client_id, annotations) }}
         </section>
 
         <!-- 一柱論命 -->
@@ -588,7 +601,7 @@
                     <div class="text-sm text-red-800 leading-relaxed">{{ yi_zhu.get('特殊斷語', '') }}</div>
                 </div>
                 {% endif %}
-            </div>
+            </div>    {{ macros.render_annotation('sec_20', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -619,7 +632,7 @@
                     {% endfor %}
                 </div>
             </div>
-            {% endif %}
+            {% endif %}    {{ macros.render_annotation('sec_21', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -681,7 +694,7 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>    {{ macros.render_annotation('sec_22', client_id, annotations) }}
         </section>
 
         <!-- 干支象法 -->
@@ -793,7 +806,7 @@
                     </div>
                 </div>
                 {% endif %}
-            </div>
+            </div>    {{ macros.render_annotation('sec_23', client_id, annotations) }}
         </section>
         {% endif %}
     </main>
@@ -829,6 +842,94 @@
         console.log('[DEBUG] allLiunianData 長度:', allLiunianData?.length);
         console.log('[DEBUG] dayunData 長度:', dayunData?.length);
         console.log('[DEBUG] 第一個流年:', allLiunianData?.[0]);
+
+        // CRM 功能
+        const clientId = "{{ client_id | default('') }}";
+        const baziFormData = {{ bazi_form_data | default('null') | safe }};
+
+        async function saveClientRecord() {
+            if (!baziFormData) {
+                alert('無法獲取命盤資料，保存失敗。');
+                return;
+            }
+            
+            const btn = document.getElementById('save-client-btn');
+            const originalHtml = btn.innerHTML;
+            btn.innerHTML = '<span class="animate-pulse">保存中...</span>';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch('/api/clients', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(baziFormData)
+                });
+                const result = await res.json();
+                if (result.client_id) {
+                    window.location.href = `/client/${result.client_id}`;
+                } else {
+                    alert('保存失敗，請重試。');
+                    btn.innerHTML = originalHtml;
+                    btn.disabled = false;
+                }
+            } catch (e) {
+                alert('發生錯誤：' + e.message);
+                btn.innerHTML = originalHtml;
+                btn.disabled = false;
+            }
+        }
+
+        // 批注功能：折疊展開
+        document.querySelectorAll('.toggle-annotation-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const targetId = btn.getAttribute('data-target');
+                const target = document.getElementById(targetId);
+                if (target.classList.contains('hidden')) {
+                    target.classList.remove('hidden');
+                } else {
+                    target.classList.add('hidden');
+                }
+            });
+        });
+
+        // 批注功能：自動儲存 (Debounce)
+        let debounceTimer;
+        document.querySelectorAll('.annotation-input').forEach(input => {
+            input.addEventListener('input', () => {
+                const sectionId = input.getAttribute('data-section');
+                const statusSpan = document.getElementById(`anno-status-${sectionId}`);
+                statusSpan.textContent = '未儲存...';
+                statusSpan.className = 'text-[10px] text-amber-500 font-medium';
+
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(async () => {
+                    if (!clientId) return; // 只有在保存為客戶後才會自動儲存
+                    
+                    statusSpan.textContent = '儲存中...';
+                    try {
+                        const res = await fetch(`/api/clients/${clientId}/annotations`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({
+                                section_id: sectionId,
+                                text: input.value
+                            })
+                        });
+                        if (res.ok) {
+                            statusSpan.textContent = '已自動儲存';
+                            statusSpan.className = 'text-[10px] text-green-500 font-medium';
+                            setTimeout(() => { statusSpan.textContent = ''; }, 2000);
+                        } else {
+                            statusSpan.textContent = '儲存失敗';
+                            statusSpan.className = 'text-[10px] text-red-500 font-medium';
+                        }
+                    } catch (e) {
+                        statusSpan.textContent = '網路錯誤';
+                        statusSpan.className = 'text-[10px] text-red-500 font-medium';
+                    }
+                }, 1000); // 停止打字 1 秒後自動儲存
+            });
+        });
     </script>
     <script src="/static/js/app.js?v=2"></script>
 </body>

@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>客戶管理 - 八字命盤系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="bg-stone-100 min-h-screen">
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-20 shadow-sm">
+        <div class="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/" class="flex items-center gap-2 text-stone-600 hover:text-stone-900 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    <span class="text-sm">返回</span>
+                </a>
+                <span class="w-px h-6 bg-stone-200"></span>
+                <span class="text-lg font-serif font-bold text-stone-900">客戶管理</span>
+            </div>
+            <div>
+                <form action="/clients" method="GET" class="relative">
+                    <input type="text" name="q" value="{{ query }}" placeholder="搜尋姓名..." class="w-48 sm:w-64 pl-9 pr-3 py-1.5 text-sm rounded-lg border border-stone-200 bg-stone-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-stone-200 transition">
+                    <svg class="w-4 h-4 text-stone-400 absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </form>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 py-6">
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden">
+            {% if records %}
+            <div class="divide-y divide-stone-100">
+                {% for record in records %}
+                <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-stone-50 transition group" id="client-row-{{ record.id }}">
+                    <div class="flex flex-col gap-1">
+                        <div class="flex items-center gap-2">
+                            <h3 class="text-lg font-bold text-stone-800">{{ record.name or '未命名客戶' }}</h3>
+                            <span class="px-2 py-0.5 rounded text-xs font-medium {{ 'bg-blue-50 text-blue-600' if record.gender == '男' else 'bg-pink-50 text-pink-600' }}">{{ record.gender }}</span>
+                        </div>
+                        <div class="text-sm text-stone-500 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            {{ record.year }}年{{ record.month }}月{{ record.day }}日
+                        </div>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-stone-400">儲存於 {{ record.created_at[:10] }}</span>
+                        <a href="/client/{{ record.id }}" class="px-4 py-2 bg-stone-900 text-white rounded-lg text-sm font-medium hover:bg-black transition">
+                            查看命盤
+                        </a>
+                        <button onclick="deleteClient('{{ record.id }}', '{{ record.name }}')" class="p-2 text-stone-400 hover:text-red-500 transition rounded-lg hover:bg-red-50 opacity-0 group-hover:opacity-100 focus:opacity-100" title="刪除客戶">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="p-12 text-center flex flex-col items-center">
+                <svg class="w-16 h-16 text-stone-200 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                <h3 class="text-lg font-bold text-stone-500 mb-1">{% if query %}找不到相符的客戶{% else %}目前沒有已保存的客戶命盤{% endif %}</h3>
+                <p class="text-stone-400 text-sm">請在首頁排盤後，點擊「保存為客戶命盤」來加入紀錄。</p>
+                {% if query %}
+                <a href="/clients" class="mt-4 px-4 py-2 bg-stone-100 text-stone-600 rounded-lg text-sm font-medium hover:bg-stone-200 transition">清除搜尋</a>
+                {% else %}
+                <a href="/" class="mt-4 px-4 py-2 bg-stone-900 text-white rounded-lg text-sm font-medium hover:bg-black transition">前往排盤</a>
+                {% endif %}
+            </div>
+            {% endif %}
+        </section>
+    </main>
+
+    <script>
+        async function deleteClient(id, name) {
+            const displayName = name || '未命名客戶';
+            if (confirm(`確定要刪除「${displayName}」的紀錄嗎？此操作無法還原。`)) {
+                try {
+                    const res = await fetch(`/api/clients/${id}`, { method: 'DELETE' });
+                    const result = await res.json();
+                    if (result.success) {
+                        const row = document.getElementById(`client-row-${id}`);
+                        row.style.opacity = '0';
+                        setTimeout(() => row.remove(), 300);
+                        
+                        // Check if it was the last one
+                        if (document.querySelectorAll('[id^="client-row-"]').length === 1) {
+                            setTimeout(() => location.reload(), 350);
+                        }
+                    } else {
+                        alert('刪除失敗，請稍後再試。');
+                    }
+                } catch (e) {
+                    alert('發生錯誤：' + e.message);
+                }
+            }
+        }
+    </script>
+</body>
+</html>

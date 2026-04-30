@@ -8,8 +8,12 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 from api.routes import router
+from bazi.db import init_db
 
 app = FastAPI(title="八字算命網頁版")
+
+# 初始化資料庫
+init_db()
 
 # 掛載靜態文件目錄
 app.mount("/static", StaticFiles(directory="static"), name="static")

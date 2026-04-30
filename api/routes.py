@@ -12,6 +12,7 @@ from pydantic import BaseModel
 from bazi import BaZiCalculator
 from bazi.core.constants import TIAN_GAN_YIN_YANG, TIAN_GAN_WU_XING as GAN_WU_XING, ZHI_WU_XING
 from bazi.calculations.shishen import get_shi_shen
+from bazi.db import save_client, get_client, update_annotation, search_clients, delete_client
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -452,6 +453,8 @@ async def calculate(
     }
     res = compute_bazi(data)
     context = prepare_bazi_context(request, res)
+    # 傳遞原始輸入表單資料，以便保存
+    context["bazi_form_data"] = json.dumps(data, ensure_ascii=False)
     return templates.TemplateResponse("result.html", context)
 
 
@@ -543,3 +546,63 @@ async def save_bazi(request: Request):
             media_type="text/html",
             status_code=500
         )
+
+# ========== 客戶管理系統 (CRM) 端點 ==========
+
+@router.get("/clients", response_class=HTMLResponse)
+async def list_clients(request: Request, q: str = ""):
+    """客戶管理列表頁面"""
+    records = search_clients(q)
+    return templates.TemplateResponse("clients.html", {"request": request, "records": records, "query": q})
+
+@router.post("/api/clients")
+async def create_client(request: Request):
+    """保存為新客戶命盤"""
+    data = await request.json()
+    client_id = save_client(data)
+    return {"client_id": client_id}
+
+@router.get("/client/{client_id}", response_class=HTMLResponse)
+async def view_client(request: Request, client_id: str):
+    """查看已保存客戶的命盤（動態重算）"""
+    client = get_client(client_id)
+    if not client:
+        return templates.TemplateResponse("error.html", {"request": request, "error_message": "找不到該客戶紀錄"})
+    
+    data = {
+        "name": client['name'],
+        "gender": client['gender'],
+        "calendar": client['calendar'],
+        "year": client['year'],
+        "month": client['month'],
+        "day": client['day'],
+        "hour": client['hour'],
+        "minute": client['minute'],
+        "birth_city": client['birth_city']
+    }
+    
+    try:
+        res = compute_bazi(data)
+        context = prepare_bazi_context(request, res)
+        context['client_id'] = client_id
+        context['client_name'] = client['name']
+        context['annotations'] = json.loads(client['annotations'] or "{}")
+        context['bazi_form_data'] = json.dumps(data, ensure_ascii=False)
+        return templates.TemplateResponse("result.html", context)
+    except Exception as e:
+        return templates.TemplateResponse("error.html", {"request": request, "error_message": f"排盤發生錯誤：{str(e)}"})
+
+@router.post("/api/clients/{client_id}/annotations")
+async def update_client_annotation(client_id: str, request: Request):
+    """更新客戶的區塊批注"""
+    data = await request.json()
+    section_id = data.get("section_id")
+    text = data.get("text")
+    success = update_annotation(client_id, section_id, text)
+    return {"success": success}
+
+@router.delete("/api/clients/{client_id}")
+async def delete_client_record(client_id: str):
+    """刪除客戶紀錄"""
+    success = delete_client(client_id)
+    return {"success": success}
