@@ -4,7 +4,11 @@ import uuid
 import os
 from datetime import datetime
 
-DB_PATH = "bazi.db"
+# 若在 Vercel 環境執行，必須將 DB 存放在 /tmp，否則唯讀會報錯
+if os.environ.get("VERCEL") == "1":
+    DB_PATH = "/tmp/bazi.db"
+else:
+    DB_PATH = "bazi.db"
 
 def init_db():
     with sqlite3.connect(DB_PATH) as conn:

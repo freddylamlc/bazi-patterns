@@ -11,6 +11,7 @@ from pydantic import BaseModel
 
 from bazi import BaZiCalculator
 from bazi.core.constants import TIAN_GAN_YIN_YANG, TIAN_GAN_WU_XING as GAN_WU_XING, ZHI_WU_XING
+import bazi.core.constants as consts
 from bazi.calculations.shishen import get_shi_shen
 from bazi.db import save_client, get_client, update_annotation, search_clients, delete_client
 
@@ -609,3 +610,13 @@ async def delete_client_record(client_id: str):
     """刪除客戶紀錄"""
     success = delete_client(client_id)
     return {"success": success}
+
+@router.get("/tutorial", response_class=HTMLResponse)
+async def view_tutorial(request: Request):
+    """八字教學頁面"""
+    context = {
+        "request": request,
+        "consts": consts
+    }
+    return templates.TemplateResponse("tutorial.html", context)
+

@@ -1,0 +1,293 @@
+{% import 'macros.html' as macros %}
+<!DOCTYPE html>
+<html lang="zh-HK" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>八字教學 - 核心理論與常數</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <style>
+        .sidebar-link.active {
+            @apply bg-indigo-50 text-indigo-700 font-bold border-r-4 border-indigo-600;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 min-h-screen text-stone-800">
+    <!-- Header -->
+    <header class="bg-white border-b border-stone-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 h-14 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <a href="/" class="flex items-center gap-2 text-stone-600 hover:text-stone-900 transition">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                    <span class="text-sm font-medium">返回排盤</span>
+                </a>
+                <span class="w-px h-6 bg-stone-200"></span>
+                <span class="text-lg font-serif font-bold text-stone-900 flex items-center gap-2">
+                    📖 八字核心理論教學
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <div class="max-w-7xl mx-auto px-4 py-8 flex flex-col md:flex-row gap-8 items-start">
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-64 shrink-0 sticky top-20 bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+            <nav class="flex flex-col py-2" id="toc">
+                <a href="#section-wuxing" class="sidebar-link px-5 py-3 text-sm text-stone-600 hover:bg-stone-50 transition active">基礎五行陰陽</a>
+                <a href="#section-canggan" class="sidebar-link px-5 py-3 text-sm text-stone-600 hover:bg-stone-50 transition">地支藏干</a>
+                <a href="#section-relations" class="sidebar-link px-5 py-3 text-sm text-stone-600 hover:bg-stone-50 transition">干支關係 (合沖刑)</a>
+                <a href="#section-zhangsheng" class="sidebar-link px-5 py-3 text-sm text-stone-600 hover:bg-stone-50 transition">十二長生</a>
+                <a href="#section-shishen" class="sidebar-link px-5 py-3 text-sm text-stone-600 hover:bg-stone-50 transition">十神與格局</a>
+                <a href="#section-shensha" class="sidebar-link px-5 py-3 text-sm text-stone-600 hover:bg-stone-50 transition">常見神煞</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 space-y-12 pb-20">
+            <!-- 1. 五行陰陽 -->
+            <section id="section-wuxing" class="scroll-mt-20">
+                <h2 class="text-2xl font-serif font-bold mb-6 flex items-center gap-2"><span class="text-indigo-600">一、</span>基礎五行與陰陽</h2>
+                
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+                        <h3 class="font-bold text-stone-800 mb-4 border-b pb-2">十天干 (Ten Heavenly Stems)</h3>
+                        <div class="grid grid-cols-5 gap-2 text-center">
+                            {% for gan in consts.GAN %}
+                            <div class="p-2 rounded-lg bg-stone-50 border border-stone-100 flex flex-col items-center">
+                                <span class="text-xl font-serif font-bold {{ macros.render_wuxing_text_class(consts.TIAN_GAN_WU_XING[gan]) }}">{{ gan }}</span>
+                                <span class="text-[10px] text-stone-500 mt-1">{{ consts.TIAN_GAN_YIN_YANG[gan] }}{{ consts.TIAN_GAN_WU_XING[gan] }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+                        <h3 class="font-bold text-stone-800 mb-4 border-b pb-2">十二地支 (Twelve Earthly Branches)</h3>
+                        <div class="grid grid-cols-6 gap-2 text-center">
+                            {% for zhi in consts.ZHI %}
+                            <div class="p-2 rounded-lg bg-stone-50 border border-stone-100 flex flex-col items-center">
+                                <span class="text-xl font-serif font-bold {{ macros.render_wuxing_text_class(consts.ZHI_WU_XING[zhi]) }}">{{ zhi }}</span>
+                                <span class="text-[10px] text-stone-500 mt-1">{{ consts.ZHI_YIN_YANG[zhi] }}{{ consts.ZHI_WU_XING[zhi] }}</span>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-6 bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+                    <h3 class="font-bold text-stone-800 mb-4 border-b pb-2">五行生剋規律</h3>
+                    <div class="flex flex-wrap gap-8 text-sm">
+                        <div>
+                            <span class="font-bold text-stone-600 block mb-2">相生 (Generation)：</span>
+                            <div class="flex items-center gap-2">
+                                {% for w1, w2 in consts.WU_XING_SHENG.items() %}
+                                <span>{{ w1 }}生{{ w2 }}</span> {% if not loop.last %}<span class="text-stone-300">→</span>{% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div>
+                            <span class="font-bold text-stone-600 block mb-2">相剋 (Overcoming)：</span>
+                            <div class="flex items-center gap-2">
+                                {% for w1, w2 in consts.WU_XING_KE.items() %}
+                                <span>{{ w1 }}剋{{ w2 }}</span> {% if not loop.last %}<span class="text-stone-300">→</span>{% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 2. 地支藏干 -->
+            <section id="section-canggan" class="scroll-mt-20">
+                <h2 class="text-2xl font-serif font-bold mb-6 flex items-center gap-2"><span class="text-indigo-600">二、</span>地支藏干 (Hidden Stems)</h2>
+                <div class="bg-white rounded-xl shadow-sm border border-stone-100 p-5">
+                    <p class="text-sm text-stone-500 mb-4">每個地支內部包含了 1 到 3 個天干，分別稱為本氣、中氣、餘氣，代表地支所蘊含的複雜能量。</p>
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {% for zhi, canggan in consts.ZHI_CANG_GAN.items() %}
+                        <div class="border border-stone-100 rounded-lg p-3 bg-stone-50 flex items-center gap-4">
+                            <div class="text-2xl font-serif font-bold {{ macros.render_wuxing_text_class(consts.ZHI_WU_XING[zhi]) }}">{{ zhi }}</div>
+                            <div class="flex flex-col text-xs gap-1">
+                                <span class="font-bold text-stone-700">主：{{ canggan['主氣'] }}</span>
+                                {% if canggan['中氣'] %}<span class="text-stone-500">中：{{ canggan['中氣'] }}</span>{% endif %}
+                                {% if canggan['餘氣'] %}<span class="text-stone-500">餘：{{ canggan['餘氣'] }}</span>{% endif %}
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </section>
+
+            <!-- 3. 干支關係 -->
+            <section id="section-relations" class="scroll-mt-20">
+                <h2 class="text-2xl font-serif font-bold mb-6 flex items-center gap-2"><span class="text-indigo-600">三、</span>干支關係 (合、沖、刑)</h2>
+                <div class="space-y-6">
+                    <div class="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+                        <div class="bg-stone-50 px-5 py-3 border-b border-stone-100 font-bold">天干五合</div>
+                        <div class="p-5 grid grid-cols-2 sm:grid-cols-5 gap-3">
+                            {% for he, detail in consts.TIAN_GAN_WU_HE.items() %}
+                            <div class="text-center p-2 border border-stone-200 rounded-lg">
+                                <div class="font-serif text-lg">{{ he }}</div>
+                                <div class="text-xs text-stone-500 mt-1">化{{ detail['化氣'] }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6">
+                        <div class="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+                            <div class="bg-stone-50 px-5 py-3 border-b border-stone-100 font-bold">地支六合</div>
+                            <div class="p-5 flex flex-wrap gap-2">
+                                {% set processed_he = [] %}
+                                {% for he, name in consts.ZHI_LIU_HE.items() %}
+                                    {% if name not in processed_he %}
+                                    <span class="px-3 py-1 bg-stone-100 rounded-full text-sm">{{ name }}</span>
+                                    {% set _ = processed_he.append(name) %}
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+                            <div class="bg-stone-50 px-5 py-3 border-b border-stone-100 font-bold">地支六沖</div>
+                            <div class="p-5 flex flex-wrap gap-2">
+                                {% for chong in consts.ZHI_LIU_CHONG %}
+                                <span class="px-3 py-1 bg-red-50 text-red-700 border border-red-100 rounded-full text-sm">{{ chong[0] }}{{ chong[1] }}沖</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+                        <div class="bg-stone-50 px-5 py-3 border-b border-stone-100 font-bold">地支三合局</div>
+                        <div class="p-5 grid sm:grid-cols-4 gap-4">
+                            {% for ju, detail in consts.ZHI_SAN_HE_JU.items() %}
+                            <div class="border border-stone-100 rounded-lg p-3 text-center">
+                                <div class="font-bold text-stone-800 mb-2">{{ detail['長生'] }}{{ detail['帝旺'] }}{{ detail['墓庫'] }}</div>
+                                <div class="text-sm font-medium text-indigo-600">{{ ju }}</div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 4. 十二長生 -->
+            <section id="section-zhangsheng" class="scroll-mt-20">
+                <h2 class="text-2xl font-serif font-bold mb-6 flex items-center gap-2"><span class="text-indigo-600">四、</span>十二長生 (12 States of Life)</h2>
+                <div class="bg-white rounded-xl shadow-sm border border-stone-100 overflow-hidden">
+                    <div class="p-5 overflow-x-auto">
+                        <table class="w-full text-sm text-center">
+                            <thead>
+                                <tr class="bg-stone-50 border-b border-stone-200">
+                                    <th class="py-3 px-2 font-medium text-stone-500">天干 \ 狀態</th>
+                                    {% for state in consts.SHI_ER_ZHANG_SHENG %}
+                                    <th class="py-3 px-2 font-medium text-stone-700">{{ state }}</th>
+                                    {% endfor %}
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-stone-100">
+                                {% for gan in consts.GAN %}
+                                <tr class="hover:bg-stone-50 transition">
+                                    <td class="py-3 px-2 font-bold font-serif {{ macros.render_wuxing_text_class(consts.TIAN_GAN_WU_XING[gan]) }}">{{ gan }}</td>
+                                    {% for state in consts.SHI_ER_ZHANG_SHENG %}
+                                        {% set zhi_val = "" %}
+                                        {% for zhi, zstate in consts.TIAN_GAN_ZHANG_SHENG[gan].items() %}
+                                            {% if zstate == state %}
+                                                {% set zhi_val = zhi %}
+                                            {% endif %}
+                                        {% endfor %}
+                                    <td class="py-3 px-2">{{ zhi_val }}</td>
+                                    {% endfor %}
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 5. 十神與格局 -->
+            <section id="section-shishen" class="scroll-mt-20">
+                <h2 class="text-2xl font-serif font-bold mb-6 flex items-center gap-2"><span class="text-indigo-600">五、</span>十神與吉凶</h2>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-green-50 rounded-xl shadow-sm border border-green-100 p-5">
+                        <h3 class="font-bold text-green-800 mb-3 flex items-center gap-2">四吉神 <span class="text-xs font-normal text-green-600 bg-green-100 px-2 py-0.5 rounded">順用成格</span></h3>
+                        <div class="flex flex-wrap gap-2">
+                            {% for shen in consts.JI_SHEN %}
+                            <span class="px-3 py-1.5 bg-white border border-green-200 rounded-lg text-sm font-medium text-green-700">{{ shen }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="bg-red-50 rounded-xl shadow-sm border border-red-100 p-5">
+                        <h3 class="font-bold text-red-800 mb-3 flex items-center gap-2">四凶神 <span class="text-xs font-normal text-red-600 bg-red-100 px-2 py-0.5 rounded">逆用成格</span></h3>
+                        <div class="flex flex-wrap gap-2">
+                            {% for shen in consts.XIONG_SHEN %}
+                            <span class="px-3 py-1.5 bg-white border border-red-200 rounded-lg text-sm font-medium text-red-700">{{ shen }}</span>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 6. 神煞 -->
+            <section id="section-shensha" class="scroll-mt-20">
+                <h2 class="text-2xl font-serif font-bold mb-6 flex items-center gap-2"><span class="text-indigo-600">六、</span>常見神煞速查</h2>
+                <div class="bg-white rounded-xl shadow-sm border border-stone-100 p-5 space-y-6">
+                    <div>
+                        <h3 class="font-bold text-stone-800 mb-2">天乙貴人 (至吉之神)</h3>
+                        <div class="flex flex-wrap gap-3">
+                            {% for gan, zhis in consts.TIAN_YI_GUI_REN.items() %}
+                            <div class="text-sm"><span class="font-bold">{{ gan }}</span>: {{ zhis|join('、') }}</div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="grid md:grid-cols-2 gap-6 pt-4 border-t border-stone-100">
+                        <div>
+                            <h3 class="font-bold text-stone-800 mb-2">桃花 / 咸池 (人際魅力)</h3>
+                            <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-stone-600">
+                                {% for zhi, t in consts.TAO_HUA.items() %}
+                                <span>{{ zhi }}見{{ t|join('/') }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-stone-800 mb-2">驛馬 (奔波變動)</h3>
+                            <div class="flex flex-wrap gap-x-4 gap-y-1 text-sm text-stone-600">
+                                {% for zhi, m in consts.YI_MA.items() %}
+                                <span>{{ zhi }}見{{ m }}</span>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // 簡單的滾動監聽來啟動側邊欄高亮
+        document.addEventListener('DOMContentLoaded', () => {
+            const sections = document.querySelectorAll('section');
+            const navLinks = document.querySelectorAll('.sidebar-link');
+            
+            window.addEventListener('scroll', () => {
+                let current = '';
+                sections.forEach(section => {
+                    const sectionTop = section.offsetTop;
+                    if (scrollY >= sectionTop - 100) {
+                        current = section.getAttribute('id');
+                    }
+                });
+
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href').substring(1) === current) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
