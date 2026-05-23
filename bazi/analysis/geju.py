@@ -12,20 +12,7 @@ from bazi.core.constants import (
     TIAN_GAN_YANG, TIAN_GAN_YIN, ZHI_LIU_CHONG, ZHI_XING, ZHI_CHUAN, ZHI_PO,
     ZHI_WU_XING,
 )
-
-# 別名（兼容舊代碼）
-ZhiCangGan = ZHI_CANG_GAN
-TianGanWuXing = TIAN_GAN_WU_XING
-TianGanYinYang = TIAN_GAN_YIN_YANG
-WuXingSheng = WU_XING_SHENG
-WuXingKe = WU_XING_KE
-TianGanYang = TIAN_GAN_YANG
-TianGanYin = TIAN_GAN_YIN
-ZhiLiuChong = ZHI_LIU_CHONG
-ZhiXing = ZHI_XING
-ZhiChuan = ZHI_CHUAN
-ZhiPo = ZHI_PO
-ZhiWuXing = ZHI_WU_XING
+from bazi.calculations.relations import check_zhi_damaged
 
 
 def get_shi_shen(gan: str, gan_wuxing: str, gan_yinyang: str,
@@ -52,28 +39,28 @@ def get_shi_shen(gan: str, gan_wuxing: str, gan_yinyang: str,
             return "劫財"
 
     # 日主生（食神、傷官）- gan 是日主所生
-    if WuXingSheng.get(day_gan_wuxing) == gan_wuxing:
+    if WU_XING_SHENG.get(day_gan_wuxing) == gan_wuxing:
         if gan_yinyang == day_gan_yinyang:
             return "食神"
         else:
             return "傷官"
 
     # 日主剋（偏財、正財）- gan 是日主所剋
-    if WuXingKe.get(day_gan_wuxing) == gan_wuxing:
+    if WU_XING_KE.get(day_gan_wuxing) == gan_wuxing:
         if gan_yinyang == day_gan_yinyang:
             return "偏財"
         else:
             return "正財"
 
     # 剋日主（七殺、正官）- gan 剋日主
-    if WuXingKe.get(gan_wuxing) == day_gan_wuxing:
+    if WU_XING_KE.get(gan_wuxing) == day_gan_wuxing:
         if gan_yinyang == day_gan_yinyang:
             return "七殺"
         else:
             return "正官"
 
     # 生日主（偏印、正印）- gan 生日主
-    if WuXingSheng.get(gan_wuxing) == day_gan_wuxing:
+    if WU_XING_SHENG.get(gan_wuxing) == day_gan_wuxing:
         if gan_yinyang == day_gan_yinyang:
             return "偏印"
         else:
@@ -88,7 +75,7 @@ def get_all_gans_in_pillars(pillars: list) -> list:
     for p in pillars:
         gans.append(p[0])  # 天干
         zhi = p[1]
-        cang_gan = ZhiCangGan.get(zhi, {})
+        cang_gan = ZHI_CANG_GAN.get(zhi, {})
         for qi in ["主氣", "中氣", "餘氣"]:
             if cang_gan.get(qi):
                 gans.append(cang_gan[qi])
@@ -106,12 +93,12 @@ def get_xiang_shen(ge_name: str, day_gan: str, pillars: list,
                   兩種相神只能存在一個，否則破格
     """
     all_gans = get_all_gans_in_pillars(pillars)
-    day_gan_wuxing = TianGanWuXing.get(day_gan, "")
-    day_gan_yinyang = TianGanYinYang.get(day_gan, "")
+    day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
+    day_gan_yinyang = TIAN_GAN_YIN_YANG.get(day_gan, "")
 
     # 用神天干的五行
     if yongshen_gan:
-        ge_wuxing = TianGanWuXing.get(yongshen_gan, "")
+        ge_wuxing = TIAN_GAN_WU_XING.get(yongshen_gan, "")
     else:
         # 用神對應的五行（備用）
         ge_wuxing_map = {
@@ -128,17 +115,17 @@ def get_xiang_shen(ge_name: str, day_gan: str, pillars: list,
 
     # 生用神的五行
     sheng_ge_wuxing = None
-    for src, tgt in WuXingSheng.items():
+    for src, tgt in WU_XING_SHENG.items():
         if tgt == ge_wuxing:
             sheng_ge_wuxing = src
             break
 
     # 用神所生的五行
-    ge_sheng_wuxing = WuXingSheng.get(ge_wuxing, "")
+    ge_sheng_wuxing = WU_XING_SHENG.get(ge_wuxing, "")
 
     # 剋用神的五行
     ke_ge_wuxing = None
-    for src, tgt in WuXingKe.items():
+    for src, tgt in WU_XING_KE.items():
         if tgt == ge_wuxing:
             ke_ge_wuxing = src
             break
@@ -149,8 +136,8 @@ def get_xiang_shen(ge_name: str, day_gan: str, pillars: list,
     if is_auspicious:
         # 吉神順用：生用神的五行
         for g in all_gans:
-            gw = TianGanWuXing.get(g, "")
-            gy = TianGanYinYang.get(g, "")
+            gw = TIAN_GAN_WU_XING.get(g, "")
+            gy = TIAN_GAN_YIN_YANG.get(g, "")
             rel = get_shi_shen(g, gw, gy, day_gan, day_gan_wuxing, day_gan_yinyang)
             if gw == sheng_ge_wuxing:
                 xiang_list.append(rel)
@@ -163,8 +150,8 @@ def get_xiang_shen(ge_name: str, day_gan: str, pillars: list,
         yongshen_sheng_gans = []
 
         for g in all_gans:
-            gw = TianGanWuXing.get(g, "")
-            gy = TianGanYinYang.get(g, "")
+            gw = TIAN_GAN_WU_XING.get(g, "")
+            gy = TIAN_GAN_YIN_YANG.get(g, "")
             rel = get_shi_shen(g, gw, gy, day_gan, day_gan_wuxing, day_gan_yinyang)
             if gw == ke_ge_wuxing:
                 has_ke_yongshen = True
@@ -189,33 +176,6 @@ def get_xiang_shen(ge_name: str, day_gan: str, pillars: list,
     return {"相神": xiang_list if xiang_list else ["待定"], "破格": False}
 
 
-def check_zhi_damaged(zhi: str, zhi_list: list) -> list:
-    """檢查地支是否被沖、刑、穿、破"""
-    damaged_by = []
-    for other_zhi in zhi_list:
-        if other_zhi == zhi:
-            continue
-        # 檢查六沖
-        for c1, c2 in ZhiLiuChong:
-            if (zhi == c1 and other_zhi == c2) or (zhi == c2 and other_zhi == c1):
-                damaged_by.append(f"{other_zhi}沖")
-                break
-        # 檢查刑
-        if zhi + other_zhi in ZhiXing or other_zhi + zhi in ZhiXing:
-            damaged_by.append(f"{other_zhi}刑")
-        # 檢查穿
-        for c1, c2 in ZhiChuan:
-            if (zhi == c1 and other_zhi == c2) or (zhi == c2 and other_zhi == c1):
-                damaged_by.append(f"{other_zhi}穿")
-                break
-        # 檢查破
-        for c1, c2 in ZhiPo:
-            if (zhi == c1 and other_zhi == c2) or (zhi == c2 and other_zhi == c1):
-                damaged_by.append(f"{other_zhi}破")
-                break
-    return damaged_by
-
-
 def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
                       month_zhi: str, yongshen_gan: str = None) -> dict:
     """
@@ -235,10 +195,10 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
 
     # 獲取十神關係
     def get_shi_shen_relation(gan):
-        gan_wuxing = TianGanWuXing.get(gan, "")
-        gan_yinyang = TianGanYinYang.get(gan, "")
-        day_gan_wuxing = TianGanWuXing.get(day_gan, "")
-        day_gan_yinyang = TianGanYinYang.get(day_gan, "")
+        gan_wuxing = TIAN_GAN_WU_XING.get(gan, "")
+        gan_yinyang = TIAN_GAN_YIN_YANG.get(gan, "")
+        day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
+        day_gan_yinyang = TIAN_GAN_YIN_YANG.get(day_gan, "")
         return get_shi_shen(gan, gan_wuxing, gan_yinyang, day_gan, day_gan_wuxing, day_gan_yinyang)
 
     # 統計各十神
@@ -253,7 +213,7 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
 
     # 檢查日主是否有根
     def day_gan_has_root():
-        day_gan_wuxing = TianGanWuXing.get(day_gan, "")
+        day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
         wuxing_to_zhi = {
             "木": ["寅", "卯"], "火": ["巳", "午"], "土": ["辰", "戌", "丑", "未"],
             "金": ["申", "酉"], "水": ["亥", "子"],
@@ -263,7 +223,7 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
 
     # 檢查六沖
     def has_clash(zhi1, zhi2):
-        for c1, c2 in ZhiLiuChong:
+        for c1, c2 in ZHI_LIU_CHONG:
             if (zhi1 == c1 and zhi2 == c2) or (zhi1 == c2 and zhi2 == c1):
                 return True
         return False
@@ -276,7 +236,7 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
     def get_yongshen_genqi_zhi(yongshen):
         if not yongshen:
             return []
-        yongshen_wuxing = TianGanWuXing.get(yongshen, "")
+        yongshen_wuxing = TIAN_GAN_WU_XING.get(yongshen, "")
         wuxing_to_zhi = {
             "木": ["寅", "卯"], "火": ["巳", "午"], "土": ["辰", "戌", "丑", "未"],
             "金": ["申", "酉"], "水": ["亥", "子"],
@@ -337,8 +297,8 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
         has_guan = "正官" in shishen_count
 
         # 陽刃（只有陽日干才有）
-        day_gan_wuxing = TianGanWuXing.get(day_gan, "")
-        day_gan_yinyang = TianGanYinYang.get(day_gan, "")
+        day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
+        day_gan_yinyang = TIAN_GAN_YIN_YANG.get(day_gan, "")
         is_yang_day_gan = day_gan_yinyang == "陽"
         yang_ren_zhi = {"木": "卯", "火": "午", "土": "未", "金": "酉", "水": "子"}.get(day_gan_wuxing, "")
         has_yang_ren = is_yang_day_gan and yang_ren_zhi in zhi_list
@@ -571,46 +531,8 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
 
     # 根氣被剋判斷
     ge_name = ge.replace("格", "")
-    ji_shens = ["正官", "正印", "偏印", "正財", "偏財", "食神"]
-    xiong_shens = ["七殺", "傷官", "比肩", "劫財"]
-
-    # 獲取用神根氣地支（用用神天干來找）
-    def get_yongshen_genqi_zhi(yongshen):
-        if not yongshen:
-            return []
-        yongshen_wuxing = TianGanWuXing.get(yongshen, "")
-        wuxing_to_zhi = {
-            "木": ["寅", "卯"], "火": ["巳", "午"], "土": ["辰", "戌", "丑", "未"],
-            "金": ["申", "酉"], "水": ["亥", "子"],
-        }
-        target_zhi = wuxing_to_zhi.get(yongshen_wuxing, [])
-        return [z for z in target_zhi if z in zhi_list]
-
-    # 檢查地支是否被沖、刑、穿、破
-    def check_zhi_damaged(target_zhi):
-        damaged_by = []
-        for other_zhi in zhi_list:
-            if other_zhi == target_zhi:
-                continue
-            # 檢查六沖
-            for c1, c2 in ZhiLiuChong:
-                if (target_zhi == c1 and other_zhi == c2) or (target_zhi == c2 and other_zhi == c1):
-                    damaged_by.append(f"{other_zhi}沖")
-                    break
-            # 檢查刑
-            if (target_zhi + other_zhi) in ZhiXing or (other_zhi + target_zhi) in ZhiXing:
-                damaged_by.append(f"{other_zhi}刑")
-            # 檢查穿
-            for c1, c2 in ZhiChuan:
-                if (target_zhi == c1 and other_zhi == c2) or (target_zhi == c2 and other_zhi == c1):
-                    damaged_by.append(f"{other_zhi}穿")
-                    break
-            # 檢查破
-            for c1, c2 in ZhiPo:
-                if (target_zhi == c1 and other_zhi == c2) or (target_zhi == c2 and other_zhi == c1):
-                    damaged_by.append(f"{other_zhi}破")
-                    break
-        return damaged_by
+    ji_shens = _JI_SHENS
+    xiong_shens = _XIONG_SHENS
 
     # 計算用神根氣地支
     genqi_zhi = get_yongshen_genqi_zhi(yongshen_gan)
@@ -619,7 +541,7 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
     damaged_genqi = []
     undamaged_genqi = []
     for zhi in genqi_zhi:
-        damaged_by = check_zhi_damaged(zhi)
+        damaged_by = check_zhi_damaged(zhi, zhi_list)
         if damaged_by:
             damaged_genqi.append((zhi, damaged_by))
         else:
@@ -678,12 +600,12 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
 
 def get_ge_form(ge: str, pillars: list, day_gan: str, all_gans: list) -> list:
     """獲取格局形式（如官印相生、殺印相生、食神生財等）"""
-    day_gan_wuxing = TianGanWuXing.get(day_gan, "")
-    day_gan_yinyang = TianGanYinYang.get(day_gan, "")
+    day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
+    day_gan_yinyang = TIAN_GAN_YIN_YANG.get(day_gan, "")
 
     def get_gan_relation(gan):
-        gan_wuxing = TianGanWuXing.get(gan, "")
-        gan_yinyang = TianGanYinYang.get(gan, "")
+        gan_wuxing = TIAN_GAN_WU_XING.get(gan, "")
+        gan_yinyang = TIAN_GAN_YIN_YANG.get(gan, "")
         return get_shi_shen(gan, gan_wuxing, gan_yinyang, day_gan, day_gan_wuxing, day_gan_yinyang)
 
     shishen_present = {}
@@ -858,7 +780,7 @@ SHISHEN_PERSONALITY = {
 
 def _calculate_day_gan_genqi(day_gan: str, pillars: list) -> int:
     """計算日干根氣強度"""
-    day_gan_wuxing = TianGanWuXing.get(day_gan, "")
+    day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
 
     # 五行對應的地支
     wuxing_to_zhi = {
@@ -886,8 +808,8 @@ def _calculate_day_gan_genqi(day_gan: str, pillars: list) -> int:
 
 def _get_shishen_gans(shishen_name: str, day_gan: str) -> list:
     """根據十神名稱和日干獲取對應的天干"""
-    day_gan_wuxing = TianGanWuXing.get(day_gan, "")
-    day_gan_yinyang = TianGanYinYang.get(day_gan, "")
+    day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
+    day_gan_yinyang = TIAN_GAN_YIN_YANG.get(day_gan, "")
 
     # 十神對應的五行和陰陽
     shishen_map = {
@@ -933,9 +855,9 @@ def _get_shishen_gans(shishen_name: str, day_gan: str) -> list:
 
     # 找出對應的天干
     result = []
-    for gan, wuxing in TianGanWuXing.items():
+    for gan, wuxing in TIAN_GAN_WU_XING.items():
         if wuxing == target_wuxing:
-            gan_yinyang = TianGanYinYang.get(gan, "")
+            gan_yinyang = TIAN_GAN_YIN_YANG.get(gan, "")
             if target_yinyang == "異性":
                 if gan_yinyang != day_gan_yinyang:
                     result.append(gan)
@@ -949,7 +871,7 @@ def _get_shishen_gans(shishen_name: str, day_gan: str) -> list:
 
 def _get_shishen_wuxing(shishen_name: str, day_gan: str) -> str:
     """根據十神名稱和日干獲取對應的五行"""
-    day_gan_wuxing = TianGanWuXing.get(day_gan, "")
+    day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
 
     # 十神對應的五行
     shishen_wuxing_map = {
@@ -1001,14 +923,14 @@ def _check_shishen_tian_gan_ke(shishen_gans: list, pillars: list, day_gan: str) 
 
     # 檢查是否有剋制該十神的天干存在
     for gan in shishen_gans:
-        gan_wuxing = TianGanWuXing.get(gan, "")
-        ke_wuxing = WuXingKe.get(gan_wuxing, "")  # 剋該五行的五行
+        gan_wuxing = TIAN_GAN_WU_XING.get(gan, "")
+        ke_wuxing = WU_XING_KE.get(gan_wuxing, "")  # 剋該五行的五行
 
         # 檢查是否有天干屬於剋制五行
         for other_gan in tian_gan_list:
             if other_gan == gan:
                 continue
-            other_wuxing = TianGanWuXing.get(other_gan, "")
+            other_wuxing = TIAN_GAN_WU_XING.get(other_gan, "")
             if other_wuxing == ke_wuxing:
                 return True
 
@@ -1021,7 +943,7 @@ def _check_shishen_genqi_ke(shishen_name: str, shishen_gans: list, pillars: list
         return False
 
     # 獲取十神五行對應的根氣地支
-    shishen_wuxing = TianGanWuXing.get(shishen_gans[0], "")
+    shishen_wuxing = TIAN_GAN_WU_XING.get(shishen_gans[0], "")
     wuxing_to_zhi = {
         "木": ["寅", "卯"],
         "火": ["巳", "午"],
@@ -1044,18 +966,18 @@ def _check_shishen_genqi_ke(shishen_name: str, shishen_gans: list, pillars: list
             if other_zhi == zhi:
                 continue
             # 檢查六沖
-            for c1, c2 in ZhiLiuChong:
+            for c1, c2 in ZHI_LIU_CHONG:
                 if (zhi == c1 and other_zhi == c2) or (zhi == c2 and other_zhi == c1):
                     return True
             # 檢查刑
-            if zhi + other_zhi in ZhiXing or other_zhi + zhi in ZhiXing:
+            if zhi + other_zhi in ZHI_XING or other_zhi + zhi in ZHI_XING:
                 return True
             # 檢查穿
-            for c1, c2 in ZhiChuan:
+            for c1, c2 in ZHI_CHUAN:
                 if (zhi == c1 and other_zhi == c2) or (zhi == c2 and other_zhi == c1):
                     return True
             # 檢查破
-            for c1, c2 in ZhiPo:
+            for c1, c2 in ZHI_PO:
                 if (zhi == c1 and other_zhi == c2) or (zhi == c2 and other_zhi == c1):
                     return True
 
@@ -1159,6 +1081,29 @@ def calculate_shishen_personality(ge_name: str, xiang_shen: list, ji_shen_shishe
     return result
 
 
+# 月支本氣定格常量
+_ZHI_GE_JU = {
+    "子": {"本氣": "癸", "中氣": None, "餘氣": None, "本氣格局": "正官"},
+    "丑": {"本氣": "己", "中氣": "癸", "餘氣": "辛", "本氣格局": "食神"},
+    "寅": {"本氣": "甲", "中氣": "丙", "餘氣": "戊", "本氣格局": "七殺"},
+    "卯": {"本氣": "乙", "中氣": None, "餘氣": None, "本氣格局": "七殺"},
+    "辰": {"本氣": "戊", "中氣": "乙", "餘氣": "癸", "本氣格局": "偏印"},
+    "巳": {"本氣": "丙", "中氣": "戊", "餘氣": "庚", "本氣格局": "正印"},
+    "午": {"本氣": "丁", "中氣": "己", "餘氣": None, "本氣格局": "正印"},
+    "未": {"本氣": "己", "中氣": "丁", "餘氣": "乙", "本氣格局": "傷官"},
+    "申": {"本氣": "庚", "中氣": "壬", "餘氣": "戊", "本氣格局": "七殺"},
+    "酉": {"本氣": "辛", "中氣": None, "餘氣": None, "本氣格局": "正官"},
+    "戌": {"本氣": "戊", "中氣": "辛", "餘氣": "丁", "本氣格局": "食神"},
+    "亥": {"本氣": "壬", "中氣": "甲", "餘氣": None, "本氣格局": "正印"},
+}
+
+_YIN_DAY_GAN = frozenset(["乙", "丁", "己", "辛", "癸"])
+
+# 十神分類
+_JI_SHENS = frozenset(["正官", "正印", "偏印", "正財", "偏財", "食神"])
+_XIONG_SHENS = frozenset(["七殺", "傷官", "比肩", "劫財"])
+
+
 def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
                    pillars: list) -> dict:
     """
@@ -1181,32 +1126,15 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
     Returns:
         格局判斷字典
     """
-    # 從月支本氣定格
-    ZhiGeJu = {
-        "子": {"本氣": "癸", "中氣": None, "餘氣": None, "本氣格局": "正官"},
-        "丑": {"本氣": "己", "中氣": "癸", "餘氣": "辛", "本氣格局": "食神"},
-        "寅": {"本氣": "甲", "中氣": "丙", "餘氣": "戊", "本氣格局": "七殺"},
-        "卯": {"本氣": "乙", "中氣": None, "餘氣": None, "本氣格局": "七殺"},
-        "辰": {"本氣": "戊", "中氣": "乙", "餘氣": "癸", "本氣格局": "偏印"},
-        "巳": {"本氣": "丙", "中氣": "戊", "餘氣": "庚", "本氣格局": "正印"},
-        "午": {"本氣": "丁", "中氣": "己", "餘氣": None, "本氣格局": "正印"},
-        "未": {"本氣": "己", "中氣": "丁", "餘氣": "乙", "本氣格局": "傷官"},
-        "申": {"本氣": "庚", "中氣": "壬", "餘氣": "戊", "本氣格局": "七殺"},
-        "酉": {"本氣": "辛", "中氣": None, "餘氣": None, "本氣格局": "正官"},
-        "戌": {"本氣": "戊", "中氣": "辛", "餘氣": "丁", "本氣格局": "食神"},
-        "亥": {"本氣": "壬", "中氣": "甲", "餘氣": None, "本氣格局": "正印"},
-    }
-
     # 獲取日干五行和陰陽
-    day_gan_wuxing = TianGanWuXing.get(day_gan, "")
-    day_gan_yinyang = TianGanYinYang.get(day_gan, "")
+    day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
+    day_gan_yinyang = TIAN_GAN_YIN_YANG.get(day_gan, "")
 
     # 陰日干列表
-    yin_day_gan = ["乙", "丁", "己", "辛", "癸"]
-    is_yin_day = day_gan in yin_day_gan
+    is_yin_day = day_gan in _YIN_DAY_GAN
 
     # 獲取月支藏干信息
-    zhi_info = ZhiGeJu.get(month_zhi, {})
+    zhi_info = _ZHI_GE_JU.get(month_zhi, {})
     month_zhi_benqi = zhi_info.get("本氣")
     month_zhi_zhongqi = zhi_info.get("中氣")
     month_zhi_yuqi = zhi_info.get("餘氣")
@@ -1230,8 +1158,8 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
     qisha_gans = []
 
     for gan in other_gans:
-        gan_wuxing = TianGanWuXing.get(gan, "")
-        gan_yinyang = TianGanYinYang.get(gan, "")
+        gan_wuxing = TIAN_GAN_WU_XING.get(gan, "")
+        gan_yinyang = TIAN_GAN_YIN_YANG.get(gan, "")
         relation = get_shi_shen(gan, gan_wuxing, gan_yinyang, day_gan, day_gan_wuxing, day_gan_yinyang)
         if relation == "正官":
             zhengguan_count += 1
@@ -1281,7 +1209,7 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
         def can_use_as_ge(gan):
             # 四庫土必須透干才能以土定格
             if month_zhi in si_ku_zhi:
-                benqi_wuxing = TianGanWuXing.get(month_zhi_benqi, "")
+                benqi_wuxing = TIAN_GAN_WU_XING.get(month_zhi_benqi, "")
                 if benqi_wuxing == "土":
                     return is_gan_present_in_tian_gan(gan, pillars)
             return is_gan_present_in_tian_gan(gan, pillars)
@@ -1289,20 +1217,20 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
         # 按本氣→中氣→餘氣順序檢查
         # 注意：月支本氣如果是日干本身，不算透干
         if month_zhi_benqi and month_zhi_benqi != day_gan and can_use_as_ge(month_zhi_benqi):
-            gan_wuxing = TianGanWuXing.get(month_zhi_benqi, "")
-            gan_yinyang = TianGanYinYang.get(month_zhi_benqi, "")
+            gan_wuxing = TIAN_GAN_WU_XING.get(month_zhi_benqi, "")
+            gan_yinyang = TIAN_GAN_YIN_YANG.get(month_zhi_benqi, "")
             priority_ge = get_shi_shen(month_zhi_benqi, gan_wuxing, gan_yinyang, day_gan, day_gan_wuxing, day_gan_yinyang) + "格"
             priority_gan = month_zhi_benqi
             priority_source = "月支本氣"
         elif month_zhi_zhongqi and month_zhi_zhongqi != day_gan and can_use_as_ge(month_zhi_zhongqi):
-            gan_wuxing = TianGanWuXing.get(month_zhi_zhongqi, "")
-            gan_yinyang = TianGanYinYang.get(month_zhi_zhongqi, "")
+            gan_wuxing = TIAN_GAN_WU_XING.get(month_zhi_zhongqi, "")
+            gan_yinyang = TIAN_GAN_YIN_YANG.get(month_zhi_zhongqi, "")
             priority_ge = get_shi_shen(month_zhi_zhongqi, gan_wuxing, gan_yinyang, day_gan, day_gan_wuxing, day_gan_yinyang) + "格"
             priority_gan = month_zhi_zhongqi
             priority_source = "月支中氣"
         elif month_zhi_yuqi and month_zhi_yuqi != day_gan and can_use_as_ge(month_zhi_yuqi):
-            gan_wuxing = TianGanWuXing.get(month_zhi_yuqi, "")
-            gan_yinyang = TianGanYinYang.get(month_zhi_yuqi, "")
+            gan_wuxing = TIAN_GAN_WU_XING.get(month_zhi_yuqi, "")
+            gan_yinyang = TIAN_GAN_YIN_YANG.get(month_zhi_yuqi, "")
             priority_ge = get_shi_shen(month_zhi_yuqi, gan_wuxing, gan_yinyang, day_gan, day_gan_wuxing, day_gan_yinyang) + "格"
             priority_gan = month_zhi_yuqi
             priority_source = "月支餘氣"
@@ -1323,8 +1251,8 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
 
             # 優先找官殺
             for gan in other_gans_priority:
-                gan_wuxing = TianGanWuXing.get(gan, "")
-                gan_yinyang = TianGanYinYang.get(gan, "")
+                gan_wuxing = TIAN_GAN_WU_XING.get(gan, "")
+                gan_yinyang = TIAN_GAN_YIN_YANG.get(gan, "")
                 rel = get_shi_shen(gan, gan_wuxing, gan_yinyang, day_gan, day_gan_wuxing, day_gan_yinyang)
                 if rel in ["正官", "七殺"]:
                     priority_ge = rel + "格"
@@ -1335,8 +1263,8 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
             # 沒官殺，找偏財正財
             if not priority_ge:
                 for gan in other_gans_priority:
-                    gan_wuxing = TianGanWuXing.get(gan, "")
-                    gan_yinyang = TianGanYinYang.get(gan, "")
+                    gan_wuxing = TIAN_GAN_WU_XING.get(gan, "")
+                    gan_yinyang = TIAN_GAN_YIN_YANG.get(gan, "")
                     rel = get_shi_shen(gan, gan_wuxing, gan_yinyang, day_gan, day_gan_wuxing, day_gan_yinyang)
                     if rel in ["偏財", "正財"]:
                         priority_ge = rel + "格"
@@ -1347,8 +1275,8 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
             # 沒偏財正財，找食神傷官
             if not priority_ge:
                 for gan in other_gans_priority:
-                    gan_wuxing = TianGanWuXing.get(gan, "")
-                    gan_yinyang = TianGanYinYang.get(gan, "")
+                    gan_wuxing = TIAN_GAN_WU_XING.get(gan, "")
+                    gan_yinyang = TIAN_GAN_YIN_YANG.get(gan, "")
                     rel = get_shi_shen(gan, gan_wuxing, gan_yinyang, day_gan, day_gan_wuxing, day_gan_yinyang)
                     if rel in ["食神", "傷官"]:
                         priority_ge = rel + "格"
@@ -1358,9 +1286,9 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
 
             # 沒有官殺也沒有其他十神，看有沒有同五行的天干
             if not priority_ge:
-                same_wuxing_gan = [g for g in other_gans_priority if TianGanWuXing.get(g, "") == day_gan_wuxing]
+                same_wuxing_gan = [g for g in other_gans_priority if TIAN_GAN_WU_XING.get(g, "") == day_gan_wuxing]
                 if same_wuxing_gan:
-                    same_yy = [g for g in same_wuxing_gan if TianGanYinYang.get(g, "") == day_gan_yinyang]
+                    same_yy = [g for g in same_wuxing_gan if TIAN_GAN_YIN_YANG.get(g, "") == day_gan_yinyang]
                     if same_yy:
                         priority_ge = "比肩格" if day_gan_yinyang == "陽" else "劫財格"
                         priority_gan = same_yy[0]
@@ -1382,7 +1310,7 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
     # ========== 第五步：外格判斷 ==========
     if not priority_ge:
         # 從財格：財星 >= 3 個
-        cai_count = sum(1 for g in all_gans if TianGanWuXing.get(g, "") == WuXingKe.get(day_gan_wuxing, ""))
+        cai_count = sum(1 for g in all_gans if TIAN_GAN_WU_XING.get(g, "") == WU_XING_KE.get(day_gan_wuxing, ""))
         if cai_count >= 3:
             priority_ge = "從財格"
             priority_gan = "財"
@@ -1401,8 +1329,8 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
 
     # 獲取相神
     ge_name = ge.replace("格", "").replace("(官殺混雜)", "").replace("破格", "")
-    ji_shens = ["正官", "正印", "偏印", "正財", "偏財", "食神"]
-    xiong_shens = ["七殺", "傷官", "比肩", "劫財"]
+    ji_shens = _JI_SHENS
+    xiong_shens = _XIONG_SHENS
 
     if ge_name in ji_shens:
         is_auspicious = True
@@ -1445,7 +1373,7 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
     ji_shen_wuxing_list = []  # 忌神五行列表
 
     # 用神五行
-    yong_shen_wuxing = TianGanWuXing.get(priority_gan, "") if priority_gan else ""
+    yong_shen_wuxing = TIAN_GAN_WU_XING.get(priority_gan, "") if priority_gan else ""
 
     # 喜神天干：相神對應的天干 + 生助相神的五行對應的天干
     for xs in xiang_shen_list:
@@ -1456,7 +1384,7 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
         for gan in xs_gans:
             if gan not in xi_shen_gans and gan in all_gans:
                 xi_shen_gans.append(gan)
-                wx = TianGanWuXing.get(gan, "")
+                wx = TIAN_GAN_WU_XING.get(gan, "")
                 if wx and wx not in xi_shen_wuxing_list:
                     xi_shen_wuxing_list.append(wx)
 
@@ -1467,13 +1395,13 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
         xs_wuxing = _get_shishen_wuxing(xs, day_gan)
         if xs_wuxing:
             # 找生助相神的五行
-            for src, tgt in WuXingSheng.items():
+            for src, tgt in WU_XING_SHENG.items():
                 if tgt == xs_wuxing:
                     # 如果生助相神的五行是用神五行或用神所生的五行（財星），不加入喜神
                     if src == yong_shen_wuxing:
                         continue
                     for gan in all_gans:
-                        if TianGanWuXing.get(gan, "") == src and gan not in xi_shen_gans:
+                        if TIAN_GAN_WU_XING.get(gan, "") == src and gan not in xi_shen_gans:
                             xi_shen_gans.append(gan)
                             if src not in xi_shen_wuxing_list:
                                 xi_shen_wuxing_list.append(src)
@@ -1486,10 +1414,10 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
         xs_wuxing = _get_shishen_wuxing(xs, day_gan)
         if xs_wuxing:
             # 找剋制相神的五行
-            for src, tgt in WuXingKe.items():
+            for src, tgt in WU_XING_KE.items():
                 if tgt == xs_wuxing:
                     for gan in all_gans:
-                        if TianGanWuXing.get(gan, "") == src and gan != day_gan and gan not in ji_shen_gans:
+                        if TIAN_GAN_WU_XING.get(gan, "") == src and gan != day_gan and gan not in ji_shen_gans:
                             # 如果該五行本身是相神的五行，不列為忌神（兩種相神並存時）
                             if src in xi_shen_wuxing_list:
                                 continue
@@ -1512,10 +1440,10 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
                 if pillar[0] == priority_gan:
                     tg = pillar[0]
                     zhi = pillar[1]
-                    tg_wx = TianGanWuXing.get(tg, "")
-                    zhi_wx = ZhiWuXing.get(zhi, "")
+                    tg_wx = TIAN_GAN_WU_XING.get(tg, "")
+                    zhi_wx = ZHI_WU_XING.get(zhi, "")
                     # 截腳：地支剋天干
-                    if WuXingKe.get(zhi_wx) == tg_wx:
+                    if WU_XING_KE.get(zhi_wx) == tg_wx:
                         jie_jiao_pan_duan = f"{tg}坐{zhi}為截腳"
                         xiong_shen_po_ge = True
                         po_ge_yuan_yin = "截腳破格"
@@ -1532,7 +1460,7 @@ def calculate_geju(ba_zi: str, canggan: dict, day_gan: str, month_zhi: str,
         "用神": priority_gan or "",
         "用神性質": "吉神" if is_auspicious else ("凶神" if is_auspicious is False else "中性"),
         "用神方式": use_type,
-        "用神五行": TianGanWuXing.get(priority_gan, "") if priority_gan else "",
+        "用神五行": TIAN_GAN_WU_XING.get(priority_gan, "") if priority_gan else "",
         "相神": xiang_shen_list,
         "相神衝突": xiang_shen_chongtu,
         "凶神破格": xiong_shen_po_ge,

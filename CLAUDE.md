@@ -5,8 +5,9 @@ This file provides guidance to Claude Code (claude.ai/code) when working with th
 ## 項目概述
 
 中式八字（Four Pillars of Destiny）計算器，包含：
-- Web 界面（FastAPI）
-- MCP 服務器
+- Web 界面（FastAPI + Jinja2 模板）
+- MCP 服務器（支持 AI Agent 集成）
+- CRM 客戶管理系統（SQLite）
 - 完整八字排盤、格局分析、大運流年功能
 
 GitHub: https://github.com/freddylamlc/bazi
@@ -23,40 +24,81 @@ python app.py  # 訪問：http://127.0.0.1:8080
 # 運行 MCP 服務器
 python mcp_server.py  # 訪問：http://localhost:8001/mcp
 
-# 測試
-pytest tests/ -v
+# Docker 部署
+docker compose up --build
+
+# 測試（pytest 配置在 pytest.ini）
+pytest tests/ -v                        # 所有測試
+pytest tests/ -v -m unit                # 僅單元測試
+pytest tests/ -v -m integration         # 僅集成測試
+pytest tests/test_integration.py -v     # 單個測試文件
+pytest tests/ -v --cov=bazi --cov-report=term-missing  # 含覆蓋率
 ```
 
 ## 架構
 
+### 數據流
+
+```
+用戶輸入 (表單/MCP)
+    → api/routes.py (compute_bazi) 或 mcp_server.py
+        → bazi/core/calculator.py (BaZiCalculator)
+            → calculations/ 模塊（四柱、藏干、旺衰、十神、神煞、大運…）
+            → analysis/ 模塊（格局、宮位、病源、整合分析…）
+        → 返回結果 dict
+    → templates/result.html (Jinja2 渲染) 或 MCP JSON response
+```
+
+### 目錄結構
+
 ```
 bazi/
 ├── core/
-│   ├── calculator.py    # 主類
-│   ├── constants.py     # 天干地支、五行、神煞常數
-│   └── utils.py         # 真太陽時、農曆轉換
-├── calculations/        # 計算模塊
+│   ├── calculator.py    # BaZiCalculator 主類，協調所有模塊
+│   ├── constants.py     # 天干地支、五行、神煞、藏干等常數
+│   └── utils.py         # 真太陽時計算、農曆轉換
+├── calculations/        # 純計算模塊（輸入數據 → 計算結果）
 │   ├── pillar.py        # 四柱計算
 │   ├── canggan.py       # 地支藏干
-│   ├── relations.py     # 天干五合、地支關係
-│   ├── wangshuai.py     # 旺衰判斷
+│   ├── relations.py     # 天干五合、地支刑沖合害
+│   ├── wangshuai.py     # 旺衰判斷（根氣強度）
 │   ├── changsheng.py    # 十二長生
 │   ├── shishen.py       # 十神計算
 │   ├── shensha.py       # 神煞計算
 │   ├── ganzhi.py        # 干支生剋
 │   ├── jieqi.py         # 節氣信息
-│   └── dayun.py         # 大運計算（含移花接木）
-├── analysis/            # 分析模塊
+│   ├── dayun.py         # 大運計算（含移花接木）
+│   └── liushijiazi.py   # 六十甲子計算
+├── analysis/            # 分析模塊（計算結果 → 命理解讀）
 │   ├── geju.py          # 格局判斷（含兩格並存）
 │   ├── gongwei.py       # 宮位分析
 │   ├── bingyuan.py      # 先天病源
-│   ├── dayun_liunian.py # 大運流年判斷
+│   ├── dayun_liunian.py # 大運流年判斷、歲運格局
 │   ├── integrated.py    # 整合分析（格局為核心）
 │   ├── yizhu.py         # 一柱論命（60 甲子斷語）
 │   ├── ganzhi_xiang.py  # 干支象法（臟腑、意象、疾病）
-│   └── duanyu_db.py     # 斷語數據庫
-└── models/              # 數據模型
+│   ├── duanyu_db.py     # 斷語數據庫
+│   └── bazi_gua.py      # 八字卦象
+├── models/              # Pydantic 數據模型（birth_info, bazi_result）
+├── exceptions/          # 自定義異常
+├── validators/          # 輸入驗證
+└── db.py                # SQLite 客戶管理（CRM）
+config/settings.py       # pydantic-settings 配置（環境變量覆蓋）
+api/routes.py            # FastAPI 路由（Web 端點 + CRM API）
+region.json              # 城市經緯度數據（真太陽時用）
 ```
+
+### 兩個入口的差異
+
+- **app.py** → FastAPI Web 應用，Jinja2 渲染 HTML，掛載靜態文件，初始化 SQLite DB
+- **mcp_server.py** → FastMCP 服務器，返回 JSON，供 AI Agent 調用
+
+### CRM 系統
+
+`bazi/db.py` 管理 SQLite 數據庫 (`bazi.db`)：
+- 保存/查詢/刪除客戶命盤
+- 每個客戶支持區塊批注（annotations，JSON 存儲）
+- API 端點在 `api/routes.py` 中（`/api/clients/*`）
 
 ## 核心算法
 
@@ -64,6 +106,7 @@ bazi/
 ```python
 出生時間 + (城市經度 - 120°) × 4 分鐘
 ```
+城市經度從 `region.json` 或 `calculator.py` 中的 `inquire()` 回退字典獲取。
 
 ### 大運計算
 - 陽男陰女順排，陰男陽女逆排
@@ -111,17 +154,10 @@ ln_zhi_idx = (year_zhi_idx + liunian_age) % 12
 4. 五行過旺（≥4 個）
 5. 五行缺失
 
-## 新增功能（2026-04-06）
-
-- **一柱論命**（`yizhu.py`）：60 組甲子日柱斷語
-- **干支象法**（`ganzhi_xiang.py`）：臟腑、意象、疾病預測
-- **斷語庫**（`duanyu_db.py`）：十神事件斷語
-- **歲運進階**（`dayun.py`、`geju.py`）：移花接木、兩格並存
-
 ## BaZiCalculator 主要屬性
 
 ```python
-calculator.ba_zi              # 四柱
+calculator.ba_zi              # 四柱（空格分隔字符串）
 calculator.cang_gan           # 藏干
 calculator.wang_shuai         # 旺衰
 calculator.shi_shen           # 十神
@@ -134,14 +170,24 @@ calculator.ganzhi_xiang       # 干支象法
 calculator.liang_ge_bing_cun  # 兩格並存
 calculator.yuan_ju_ge_ju      # 原局格局
 calculator.suiyun_ge_ju       # 歲運格局
+calculator.bazi_gua           # 八字卦象
+calculator.yi_hua_jie_mu      # 移花接木
 ```
+
+## 配置系統
+
+`config/settings.py` 使用 pydantic-settings，支持環境變量覆蓋：
+- 應用前綴：`BAZI_`（如 `BAZI_DEBUG=true`）
+- 格局配置前綴：`GEJU_`（如 `GEJU_ENABLE_BING_YUAN=false`）
 
 ## 依賴
 
-- `sxtwl` - 農曆/節氣計算
+- `sxtwl` - 農曆/節氣計算（C 擴展）
 - `fastapi`/`uvicorn` - Web 框架
+- `jinja2` - HTML 模板
 - `mcp` - MCP 服務器
 - `pydantic-settings` - 配置管理
+- `python-docx` - 文檔導出
 
 ## MCP 配置
 

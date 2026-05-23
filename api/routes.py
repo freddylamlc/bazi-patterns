@@ -10,8 +10,7 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from bazi import BaZiCalculator
-from bazi.core.constants import TIAN_GAN_YIN_YANG, TIAN_GAN_WU_XING as GAN_WU_XING, ZHI_WU_XING
-import bazi.core.constants as consts
+from bazi.core.constants import TIAN_GAN_YIN_YANG, TIAN_GAN_WU_XING as GAN_WU_XING, ZHI_WU_XING, ZHI_CANG_GAN, TIAN_GAN_ZHANG_SHENG
 from bazi.calculations.shishen import get_shi_shen
 from bazi.db import save_client, get_client, update_annotation, search_clients, delete_client
 
@@ -87,9 +86,9 @@ def compute_bazi(data: dict):
     }
 
 
-def build_pillar_view_models(res: dict) -> list:
+def build_pillar_view_models(res: dict, ba_zi_parts: list = None) -> list:
     """提取四柱視圖模型邏輯，消除重複代碼"""
-    ba_zi_list = res['八字'].split()
+    ba_zi_list = ba_zi_parts if ba_zi_parts is not None else res['八字'].split()
     pillar_names = ["年柱", "月柱", "日柱", "時柱"]
     pillars = []
     
@@ -159,7 +158,8 @@ def build_pillar_view_models(res: dict) -> list:
 
 def prepare_bazi_context(request: Request, res: dict) -> dict:
     """準備傳遞給模板的通用上下文"""
-    pillars = build_pillar_view_models(res)
+    ba_zi_parts = res['八字'].split()
+    pillars = build_pillar_view_models(res, ba_zi_parts)
     
     # 先天病源
     xian_tian_bing_yuan = res.get('先天病源', {})
@@ -193,14 +193,11 @@ def prepare_bazi_context(request: Request, res: dict) -> dict:
         canggan = ln.get('藏干', {})
         if not canggan and zhi:
             # 根據地支獲取藏干
-            from bazi.core.constants import ZHI_CANG_GAN
             zhi_canggan = ZHI_CANG_GAN.get(zhi, {})
             canggan = {}
             for qi_type in ['主氣', '中氣', '餘氣']:
                 gan = zhi_canggan.get(qi_type)
                 if gan:
-                    # 使用 shared logic 獲取十神
-                    from bazi.calculations.shishen import get_shi_shen
                     canggan[qi_type] = {
                         '干': gan,
                         '十神': get_shi_shen(gan, day_gan),
@@ -247,12 +244,10 @@ def prepare_bazi_context(request: Request, res: dict) -> dict:
             yue_list = []
             for yue_idx, yue_zhi in enumerate(YUE_LING_ZHI):
                 yue_gan = get_yue_gan(nian_gan, yue_idx)
-                from bazi.calculations.shishen import get_shi_shen
                 yue_shishen = get_shi_shen(yue_gan, day_gan)
                 yue_name = f"{yue_gan}{yue_zhi}"
 
                 canggan = {}
-                from bazi.core.constants import ZHI_CANG_GAN
                 zhi_canggan = ZHI_CANG_GAN.get(yue_zhi, {})
                 for qi_type in ['主氣', '中氣', '餘氣']:
                     gan = zhi_canggan.get(qi_type)
@@ -262,8 +257,7 @@ def prepare_bazi_context(request: Request, res: dict) -> dict:
                             '十神': get_shi_shen(gan, day_gan),
                             '五行': GAN_WU_XING.get(gan, '')
                         }
-                
-                from bazi.core.constants import TIAN_GAN_ZHANG_SHENG
+
                 chang_sheng = ''
                 if day_gan in TIAN_GAN_ZHANG_SHENG and yue_zhi in TIAN_GAN_ZHANG_SHENG.get(day_gan, {}):
                     chang_sheng = TIAN_GAN_ZHANG_SHENG[day_gan][yue_zhi]
@@ -610,13 +604,3 @@ async def delete_client_record(client_id: str):
     """刪除客戶紀錄"""
     success = delete_client(client_id)
     return {"success": success}
-
-@router.get("/tutorial", response_class=HTMLResponse)
-async def view_tutorial(request: Request):
-    """八字教學頁面"""
-    context = {
-        "request": request,
-        "consts": consts
-    }
-    return templates.TemplateResponse("tutorial.html", context)
-

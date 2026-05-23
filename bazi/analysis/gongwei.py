@@ -9,19 +9,9 @@
 """
 
 from bazi.core.constants import (
-    TIAN_GAN_WU_XING, TIAN_GAN_YIN_YANG, ZHI_WU_XING, WU_XING_KE, WU_XING_SHENG,
+    TIAN_GAN_WU_XING, ZHI_WU_XING, WU_XING_KE,
     TIAN_GAN_ZANG_FU, ZHI_ZANG_FU, ZHI_LIU_CHONG,
 )
-
-# 別名（兼容舊代碼）
-TianGanWuXing = TIAN_GAN_WU_XING
-TianGanYinYang = TIAN_GAN_YIN_YANG
-ZhiWuXing = ZHI_WU_XING
-WuXingKe = WU_XING_KE
-WuXingSheng = WU_XING_SHENG
-TianGanZangFu = TIAN_GAN_ZANG_FU
-ZhiZangFu = ZHI_ZANG_FU
-ZhiLiuChong = ZHI_LIU_CHONG
 
 
 # 六親宮位
@@ -112,7 +102,7 @@ def check_zhi_chong(zhi: str, all_zhis: list) -> tuple:
     Returns:
         (是否被沖，沖的地支)
     """
-    for ch1, ch2 in ZhiLiuChong:
+    for ch1, ch2 in ZHI_LIU_CHONG:
         if zhi == ch1 and ch2 in all_zhis:
             return True, ch2
         if zhi == ch2 and ch1 in all_zhis:
@@ -131,12 +121,12 @@ def check_gai_tou_jie_jiao(pillar: tuple) -> tuple:
         (類型，說明) 或 (None, None)
     """
     tg, zhi = pillar
-    tg_wuxing = TianGanWuXing[tg]
-    zhi_wuxing = ZhiWuXing[zhi]
+    tg_wuxing = TIAN_GAN_WU_XING[tg]
+    zhi_wuxing = ZHI_WU_XING[zhi]
 
-    if WuXingKe.get(tg_wuxing) == zhi_wuxing:
+    if WU_XING_KE.get(tg_wuxing) == zhi_wuxing:
         return "蓋頭", f"{tg}剋{zhi}（{tg_wuxing}剋{zhi_wuxing}）"
-    elif WuXingKe.get(zhi_wuxing) == tg_wuxing:
+    elif WU_XING_KE.get(zhi_wuxing) == tg_wuxing:
         return "截腳", f"{zhi}剋{tg}（{zhi_wuxing}剋{tg_wuxing}）"
     return None, None
 
@@ -168,8 +158,8 @@ def calculate_ji_bing_lun_duan(ba_zi_parts: list, ji_shen_wuxing: list,
     # 五行分布統計
     wuxing_count = {"木": 0, "火": 0, "土": 0, "金": 0, "水": 0}
     for pillar in ba_zi_parts:
-        tg_wuxing = TianGanWuXing.get(pillar[0], "")
-        zhi_wuxing = ZhiWuXing.get(pillar[1], "")
+        tg_wuxing = TIAN_GAN_WU_XING.get(pillar[0], "")
+        zhi_wuxing = ZHI_WU_XING.get(pillar[1], "")
         if tg_wuxing:
             wuxing_count[tg_wuxing] += 1
         if zhi_wuxing:
@@ -361,8 +351,8 @@ def calculate_gongwei(ba_zi: str, canggan: dict, shi_shen: dict,
     for i, (pillar, pillar_name) in enumerate(zip(ba_zi_parts, pillar_names)):
         tg = pillar[0]
         zhi = pillar[1]
-        tg_wuxing = TianGanWuXing[tg]
-        zhi_wuxing = ZhiWuXing[zhi]
+        tg_wuxing = TIAN_GAN_WU_XING[tg]
+        zhi_wuxing = ZHI_WU_XING[zhi]
 
         # 獲取該柱的十神
         if isinstance(shi_shen_data, list) and i < len(shi_shen_data):
@@ -434,7 +424,7 @@ def calculate_gongwei(ba_zi: str, canggan: dict, shi_shen: dict,
                 "十神": tg_shi_shen,
                 "吉凶": tg_ji_xiong,
                 "原因": tg_reason,
-                "臟腑": TianGanZangFu.get(tg, ""),
+                "臟腑": TIAN_GAN_ZANG_FU.get(tg, ""),
                 "部位": TIAN_GAN_BU_WEI.get(tg, ""),
             },
             "地支": {
@@ -443,7 +433,7 @@ def calculate_gongwei(ba_zi: str, canggan: dict, shi_shen: dict,
                 "十神": zhi_shi_shen_name,
                 "吉凶": zhi_ji_xiong,
                 "原因": zhi_reason,
-                "臟腑": ZhiZangFu.get(zhi, ""),
+                "臟腑": ZHI_ZANG_FU.get(zhi, ""),
                 "部位": ZHI_BU_WEI.get(zhi, ""),
                 "被沖": zhi_being_chong,
                 "沖支": chong_zhi,
@@ -464,8 +454,8 @@ def calculate_gongwei(ba_zi: str, canggan: dict, shi_shen: dict,
         "身體宮位": SHEN_TI_GONG_WEI,
         "宮位吉凶": gong_wei_ji_xiong,
         "天干對應部位": TIAN_GAN_BU_WEI,
-        "天干對應臟腑": TianGanZangFu,
+        "天干對應臟腑": TIAN_GAN_ZANG_FU,
         "地支對應部位": ZHI_BU_WEI,
-        "地支對應臟腑": ZhiZangFu,
+        "地支對應臟腑": ZHI_ZANG_FU,
         "疾病論斷": ji_bing_lun_duan,
     }

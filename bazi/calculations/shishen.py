@@ -4,6 +4,10 @@
 
 from bazi.core.constants import TIAN_GAN_WU_XING, TIAN_GAN_YIN_YANG
 
+# Module-level constant maps (avoid per-call dict creation)
+_SHENG_MAP = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
+_KE_MAP = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
+
 
 def get_shi_shen(gan: str, day_gan: str) -> str:
     """
@@ -44,30 +48,28 @@ def _calculate_shi_shen(gan: str, gan_wuxing: str, gan_yinyang: str,
             return "劫財"
 
     # 我生（日干生天干）
-    sheng_map = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
-    if sheng_map.get(day_gan_wuxing) == gan_wuxing:
+    if _SHENG_MAP.get(day_gan_wuxing) == gan_wuxing:
         if gan_yinyang == day_gan_yinyang:
             return "食神"
         else:
             return "傷官"
 
     # 我剋（日干剋天干）
-    ke_map = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
-    if ke_map.get(day_gan_wuxing) == gan_wuxing:
+    if _KE_MAP.get(day_gan_wuxing) == gan_wuxing:
         if gan_yinyang == day_gan_yinyang:
             return "偏財"
         else:
             return "正財"
 
     # 剋我（天干剋日干）
-    if ke_map.get(gan_wuxing) == day_gan_wuxing:
+    if _KE_MAP.get(gan_wuxing) == day_gan_wuxing:
         if gan_yinyang == day_gan_yinyang:
             return "七殺"
         else:
             return "正官"
 
     # 生我（天干生日干）
-    if sheng_map.get(gan_wuxing) == day_gan_wuxing:
+    if _SHENG_MAP.get(gan_wuxing) == day_gan_wuxing:
         if gan_yinyang == day_gan_yinyang:
             return "偏印"
         else:

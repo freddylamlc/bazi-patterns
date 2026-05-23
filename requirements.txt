@@ -6,4 +6,3 @@ python-docx
 jinja2
 pydantic-settings
 pytest
-python-multipart

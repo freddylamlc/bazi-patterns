@@ -9,15 +9,18 @@ import datetime
 from typing import Any
 import sxtwl
 
+# Module-level constant for city longitude lookup
+_CITY_LONGITUDE = {
+    "北京": 116.40, "上海": 121.47, "廣州": 113.26, "深圳": 114.05,
+    "香港": 114.17, "台北": 121.50, "澳門": 113.54, "成都": 104.06,
+    "杭州": 120.15, "重慶": 106.50, "西安": 108.93, "武漢": 114.30,
+    "湛江": 110.36,
+}
+
+
 def inquire(city: str) -> float:
     """基礎經緯度查詢（本地化回退版本）"""
-    city_data = {
-        "北京": 116.40, "上海": 121.47, "廣州": 113.26, "深圳": 114.05,
-        "香港": 114.17, "台北": 121.50, "澳門": 113.54, "成都": 104.06,
-        "杭州": 120.15, "重慶": 106.50, "西安": 108.93, "武漢": 114.30,
-        "湛江": 110.36
-    }
-    return city_data.get(city, 120.0)  # 默認使用東八區標準經度
+    return _CITY_LONGITUDE.get(city, 120.0)
 
 from bazi.core.constants import (
     GAN, ZHI, LIU_SHI_JIA_ZI,
@@ -112,6 +115,9 @@ class BaZiCalculator:
 
         # 計算八字
         self.ba_zi = self._compute_ba_zi()
+
+        # Cache ba_zi parts to avoid repeated splitting
+        self._ba_zi_parts = self.ba_zi.split()
 
         # 計算地支藏干
         self.cang_gan = calculate_canggan(self.ba_zi)
@@ -228,14 +234,24 @@ class BaZiCalculator:
         # 11. 原局格局（標記）
         self.yuan_ju_ge_ju = self.ge_ju  # 別名引用，ge_ju 已包含"格局類型：原局"
 
-        # 12. 歲運格局（大運 + 流年）- 預計算所有大運流年的組合
-        self.all_suiyun_geju = self._calculate_all_suiyun_geju()
+        # 12. 歲運格局 — lazy-loaded on first access (avoids computing 100 entries eagerly)
+        self._all_suiyun_geju_cache = None
+        self._suiyun_ge_ju_cache = None
 
-        # 13. 默認顯示第一個大運第一個人流年的歲運格局（向後兼容）
-        if self.all_suiyun_geju and len(self.all_suiyun_geju) > 0:
-            self.suiyun_ge_ju = self.all_suiyun_geju[0]
-        else:
-            self.suiyun_ge_ju = {}
+    @property
+    def all_suiyun_geju(self) -> list:
+        """Lazy-loaded: all suiyun geju entries (100 combinations)"""
+        if self._all_suiyun_geju_cache is None:
+            self._all_suiyun_geju_cache = self._calculate_all_suiyun_geju()
+        return self._all_suiyun_geju_cache
+
+    @property
+    def suiyun_ge_ju(self) -> dict:
+        """Lazy-loaded: first suiyun geju entry (backward compat)"""
+        if self._suiyun_ge_ju_cache is None:
+            all_geju = self.all_suiyun_geju
+            self._suiyun_ge_ju_cache = all_geju[0] if all_geju else {}
+        return self._suiyun_ge_ju_cache
 
     def _calculate_all_suiyun_geju(self) -> list:
         """
@@ -351,7 +367,7 @@ class BaZiCalculator:
         Returns:
             四柱列表 [["年干", "年支"], ["月干", "月支"], ["日干", "日支"], ["時干", "時支"]]
         """
-        return [list(pillar) for pillar in self.ba_zi.split()]
+        return [list(pillar) for pillar in self._ba_zi_parts]
 
     def get_day_gan(self) -> str:
         """
@@ -360,7 +376,7 @@ class BaZiCalculator:
         Returns:
             日天干
         """
-        return self.ba_zi.split()[2][0]
+        return self._ba_zi_parts[2][0]
 
     def get_month_zhi(self) -> str:
         """
@@ -369,7 +385,7 @@ class BaZiCalculator:
         Returns:
             月支
         """
-        return self.ba_zi.split()[1][1]
+        return self._ba_zi_parts[1][1]
 
     @staticmethod
     def calculate_date_from_pillars(
@@ -379,11 +395,8 @@ class BaZiCalculator:
         """
         從四柱反推出生年月日時（1900-2100 年範圍）
 
-        算法思路：
-        1. 年柱 → 確定年份範圍（1900-2100 內匹配的年柱）
-        2. 月柱 → 根據年干和月支，使用「五虎遁」確定月干，再找匹配節氣
-        3. 日柱 → 遍歷該年該月找到匹配的日柱
-        4. 時柱 → 根據日干和時支，使用「五鼠遁」驗證時干
+        優化：利用60甲子循環，只檢查匹配的年份（~4個而非200個），
+        並預先驗證時柱一致性避免無效內層循環。
 
         Args:
             year_gan, year_zhi: 年柱天干地支
@@ -396,16 +409,7 @@ class BaZiCalculator:
         """
         results = []
 
-        # 五虎遁口訣：甲己之年丙作首，乙庚之歲戊為頭，丙辛之年尋庚上，丁壬壬寅順水流，戊癸之年甲寅頭
-        wu_hu_dun_start = {
-            "甲": "丙", "己": "丙",
-            "乙": "戊", "庚": "戊",
-            "丙": "庚", "辛": "庚",
-            "丁": "壬", "壬": "壬",
-            "戊": "甲", "癸": "甲",
-        }
-
-        # 五鼠遁口訣：甲己還加甲，乙庚丙作初，丙辛從戊起，丁壬庚子居，戊癸何方發，壬子是真途
+        # 五鼠遁：根據日干確定時支對應的時干
         wu_shu_dun_start = {
             "甲": "甲", "己": "甲",
             "乙": "丙", "庚": "丙",
@@ -414,32 +418,58 @@ class BaZiCalculator:
             "戊": "壬", "癸": "壬",
         }
 
-        # 月支與月份對應（以節氣為準）
-        month_zhi_to_index = {
-            "寅": 1, "卯": 2, "辰": 3, "巳": 4, "午": 5, "未": 6,
-            "申": 7, "酉": 8, "戌": 9, "亥": 10, "子": 11, "丑": 12
-        }
+        # 時支 → 索引（子=0, 丑=1, ..., 亥=11）
+        zhi_order = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+        hour_zhi_to_idx = {z: i for i, z in enumerate(zhi_order)}
 
-        # 時支與小時對應
+        # 時支 → 小時範圍
         hour_zhi_to_hour = {
             "子": (23, 1), "丑": (1, 3), "寅": (3, 5), "卯": (5, 7),
             "辰": (7, 9), "巳": (9, 11), "午": (11, 13), "未": (13, 15),
             "申": (15, 17), "酉": (17, 19), "戌": (19, 21), "亥": (21, 23)
         }
 
-        # 遍歷 1900-2100 年
-        for year in range(1900, 2101):
-            # 檢查年柱是否匹配
-            try:
-                lunar = sxtwl.fromSolar(year, 1, 1)
-                year_gan_check = GAN[lunar.getYearGan()]
-                year_zhi_check = ZHI[lunar.getYearZhi()]
+        # 預先驗證時柱：用五鼠遁檢查 hour_gan 是否與 day_gan + hour_zhi 一致
+        hour_zhi_idx = hour_zhi_to_idx.get(hour_zhi)
+        if hour_zhi_idx is None:
+            return results
 
-                if year_gan_check != year_gan or year_zhi_check != year_zhi:
-                    continue
-            except Exception:
-                continue
+        expected_start_gan = wu_shu_dun_start.get(day_gan, "甲")
+        expected_start_gan_idx = GAN.index(expected_start_gan)
+        expected_hour_gan_idx = (expected_start_gan_idx + hour_zhi_idx) % 10
+        if GAN[expected_hour_gan_idx] != hour_gan:
+            return results  # 時柱不一致，直接返回
 
+        # 利用60甲子循環找出匹配的年份（每60年重複一次）
+        # 先找到1900年對應的年柱索引
+        ref_lunar = sxtwl.fromSolar(1900, 1, 1)
+        ref_year_gan_idx = ref_lunar.getYearGan()
+        ref_year_zhi_idx = ref_lunar.getYearZhi()
+
+        target_year_gan_idx = GAN.index(year_gan)
+        target_year_zhi_idx = ZHI.index(year_zhi)
+
+        # 計算1900年到目標年柱的偏移量
+        gan_offset = (target_year_gan_idx - ref_year_gan_idx) % 10
+        zhi_offset = (target_year_zhi_idx - ref_year_zhi_idx) % 12
+
+        # 找到最小的同時滿足天干和地支偏移的年份
+        # 使用中國餘數定理：找到 x 使得 x ≡ gan_offset (mod 10) 且 x ≡ zhi_offset (mod 12)
+        matching_offset = None
+        for x in range(60):
+            if x % 10 == gan_offset and x % 12 == zhi_offset:
+                matching_offset = x
+                break
+
+        if matching_offset is None:
+            return results
+
+        # 生成所有匹配的年份（1900-2100範圍內）
+        matching_years = list(range(1900 + matching_offset, 2101, 60))
+
+        start_h, end_h = hour_zhi_to_hour[hour_zhi]
+
+        for year in matching_years:
             # 遍歷每個月
             for month in range(1, 13):
                 try:
@@ -452,32 +482,22 @@ class BaZiCalculator:
                         continue
 
                     # 遍歷每一天
-                    for day in range(1, 32):
+                    import calendar as cal
+                    max_day = cal.monthrange(year, month)[1]
+                    for day in range(1, max_day + 1):
                         try:
                             lunar = sxtwl.fromSolar(year, month, day)
                             day_gan_check = GAN[lunar.getDayGan()]
                             day_zhi_check = ZHI[lunar.getDayZhi()]
 
-                            if day_gan_check != day_gan or day_zhi_check != day_zhi:
-                                continue
-
-                            # 檢查時柱
-                            for hour_idx, (hour_zhi, (start_h, end_h)) in enumerate(hour_zhi_to_hour.items()):
-                                # 計算時干
-                                day_gan_idx = GAN.index(day_gan)
-                                start_gan = wu_shu_dun_start.get(day_gan, "甲")
-                                start_gan_idx = GAN.index(start_gan)
-                                hour_gan_idx = (start_gan_idx + hour_idx) % 10
-                                hour_gan_check = GAN[hour_gan_idx]
-
-                                if hour_gan_check == hour_gan and hour_zhi == hour_zhi:
-                                    results.append({
-                                        "year": year,
-                                        "month": month,
-                                        "day": day,
-                                        "hour": start_h,
-                                        "minute": 0
-                                    })
+                            if day_gan_check == day_gan and day_zhi_check == day_zhi:
+                                results.append({
+                                    "year": year,
+                                    "month": month,
+                                    "day": day,
+                                    "hour": start_h,
+                                    "minute": 0
+                                })
                         except Exception:
                             continue
                 except Exception:

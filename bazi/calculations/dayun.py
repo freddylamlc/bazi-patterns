@@ -11,6 +11,9 @@ from bazi.core.constants import (
     GAN,
     ZHI,
 )
+from bazi.calculations.shishen import get_shi_shen
+
+_YANG_TIAN_GAN = frozenset(["甲", "丙", "戊", "庚", "壬"])
 
 
 def calculate_da_yun_info(ba_zi: str, gender: str, lunar_date) -> str:
@@ -30,8 +33,7 @@ def calculate_da_yun_info(ba_zi: str, gender: str, lunar_date) -> str:
     year_tg = year_gz[0]
 
     # 判斷年干陰陽
-    yang_tian_gan = ["甲", "丙", "戊", "庚", "壬"]
-    is_year_tg_yang = year_tg in yang_tian_gan
+    is_year_tg_yang = year_tg in _YANG_TIAN_GAN
 
     # 判斷性别
     is_male = gender == "男"
@@ -89,69 +91,6 @@ def calculate_da_yun_info(ba_zi: str, gender: str, lunar_date) -> str:
     return f"{gender_info}，{da_yun_direction}，起運時間{qi_yun_years}年{qi_yun_months}月，{qi_yun_age}歲起运"
 
 
-def get_shi_shen(gan: str, day_gan: str) -> str:
-    """
-    計算天干相對於日主的十神
-
-    Args:
-        gan: 要計算的天干
-        day_gan: 日主天干
-
-    Returns:
-        十神名稱
-    """
-    gan_wuxing = TIAN_GAN_WU_XING.get(gan, "")
-    gan_yinyang = TIAN_GAN_YIN_YANG.get(gan, "")
-    day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
-    day_gan_yinyang = TIAN_GAN_YIN_YANG.get(day_gan, "")
-
-    if not gan_wuxing or not day_gan_wuxing:
-        return ""
-
-    # 五行生剋關係
-    # 木生火，火生土，土生金，金生水，水生木
-    sheng_map = {"木": "火", "火": "土", "土": "金", "金": "水", "水": "木"}
-    # 木剋土，土剋水，水剋火，火剋金，金剋木
-    ke_map = {"木": "土", "土": "水", "水": "火", "火": "金", "金": "木"}
-
-    # 同五行
-    if gan_wuxing == day_gan_wuxing:
-        if gan_yinyang == day_gan_yinyang:
-            return "比肩"
-        else:
-            return "劫財"
-
-    # 生我者（印）
-    if sheng_map.get(gan_wuxing) == day_gan_wuxing:
-        if gan_yinyang == day_gan_yinyang:
-            return "偏印"
-        else:
-            return "正印"
-
-    # 我生者（食傷）
-    if sheng_map.get(day_gan_wuxing) == gan_wuxing:
-        if gan_yinyang == day_gan_yinyang:
-            return "食神"
-        else:
-            return "傷官"
-
-    # 剋我者（官殺）
-    if ke_map.get(gan_wuxing) == day_gan_wuxing:
-        if gan_yinyang == day_gan_yinyang:
-            return "七殺"
-        else:
-            return "正官"
-
-    # 我剋者（財）
-    if ke_map.get(day_gan_wuxing) == gan_wuxing:
-        if gan_yinyang == day_gan_yinyang:
-            return "偏財"
-        else:
-            return "正財"
-
-    return "普通"
-
-
 def calculate_detailed_dayun(ba_zi: str, gender: str, lunar_date) -> dict:
     """
     計算詳細十個大運
@@ -178,8 +117,7 @@ def calculate_detailed_dayun(ba_zi: str, gender: str, lunar_date) -> dict:
     year_tg = ba_zi_parts[0][0]
 
     # 判斷年干陰陽
-    yang_tian_gan = ["甲", "丙", "戊", "庚", "壬"]
-    is_year_tg_yang = year_tg in yang_tian_gan
+    is_year_tg_yang = year_tg in _YANG_TIAN_GAN
 
     # 判斷性别
     is_male = gender == "男"

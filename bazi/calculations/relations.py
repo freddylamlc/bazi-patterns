@@ -443,3 +443,39 @@ def calculate_relations(ba_zi: str) -> dict:
         "穿": calculate_zhi_chuan(zhi_list),
         "破": calculate_zhi_po(zhi_list),
     }
+
+
+def check_zhi_damaged(target_zhi: str, other_zhi_list: list) -> list:
+    """
+    檢查地支是否被沖、刑、穿、破
+
+    Args:
+        target_zhi: 目標地支
+        other_zhi_list: 要檢查的其他地支列表
+
+    Returns:
+        損害描述列表，如 ["子沖", "卯刑"]
+    """
+    damaged_by = []
+    for other_zhi in other_zhi_list:
+        if other_zhi == target_zhi:
+            continue
+        # 六沖
+        for c1, c2 in ZHI_LIU_CHONG:
+            if (target_zhi == c1 and other_zhi == c2) or (target_zhi == c2 and other_zhi == c1):
+                damaged_by.append(f"{other_zhi}沖")
+                break
+        # 刑
+        if target_zhi + other_zhi in ZHI_XING or other_zhi + target_zhi in ZHI_XING:
+            damaged_by.append(f"{other_zhi}刑")
+        # 穿
+        for c1, c2 in ZHI_CHUAN:
+            if (target_zhi == c1 and other_zhi == c2) or (target_zhi == c2 and other_zhi == c1):
+                damaged_by.append(f"{other_zhi}穿")
+                break
+        # 破
+        for c1, c2 in ZHI_PO:
+            if (target_zhi == c1 and other_zhi == c2) or (target_zhi == c2 and other_zhi == c1):
+                damaged_by.append(f"{other_zhi}破")
+                break
+    return damaged_by

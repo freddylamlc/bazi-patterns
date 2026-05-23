@@ -59,37 +59,52 @@ def calculate_integrated_analysis(
     # 宮位解讀（以格局為核心）
     def interpret_gongwei_with_geju():
         """根據格局解讀宮位"""
-        result = {}
+        result = []
         gongwei = gong_wei
 
-        # 獲取用神、忌神所在的天干
-        yongshen_gan = yongshen
+        # 獲取用神、忌神相關的十神
+        xishen_list = xishen
         jishen_list = jishen
+        yongshen_gan = yongshen
 
-        for key, value in gongwei.items():
-            if isinstance(value, dict):
-                gan = value.get("天干", "")
-                zhi = value.get("地支", "")
+        # 遍歷宮位吉凶列表（四柱）
+        for pillar_data in gongwei.get("宮位吉凶", []):
+            if not isinstance(pillar_data, dict):
+                continue
 
-                # 判斷該宮位與格局的關係
-                if gan == yongshen_gan:
-                    jiedu = "用神宮位-格局用神所在"
-                elif gan in jishen_list:
-                    jiedu = "忌神宮位-格局忌神所在"
-                elif "六親" in key:
-                    # 根據六親類型判斷
-                    if "父母" in key:
-                        jiedu = "父母宮"
-                    elif "配偶" in key:
-                        jiedu = "配偶宮"
-                    elif "子女" in key:
-                        jiedu = "子女宮"
-                    else:
-                        jiedu = "六親宮位"
-                else:
-                    jiedu = "一般宮位"
+            pillar_name = pillar_data.get("宮位", "")
+            tg_data = pillar_data.get("天干", {})
+            zhi_data = pillar_data.get("地支", {})
 
-                result[key] = {**value, "格局解讀": jiedu}
+            tg_char = tg_data.get("天干", "") if isinstance(tg_data, dict) else ""
+            tg_shishen = tg_data.get("十神", "") if isinstance(tg_data, dict) else ""
+            zhi_shishen = zhi_data.get("十神", "") if isinstance(zhi_data, dict) else ""
+
+            # 判斷該宮位與格局的關係
+            if tg_char == yongshen_gan:
+                jiedu = f"用神宮位-格局用神{yongshen_gan}所在"
+            elif tg_shishen in jishen_list or tg_char in jishen_list:
+                jiedu = f"忌神宮位-忌神{tg_char}({tg_shishen})在此"
+            elif tg_shishen in xishen_list:
+                jiedu = f"喜神宮位-喜神{tg_char}({tg_shishen})在此"
+            elif "年柱" in pillar_name:
+                jiedu = "祖輩宮"
+            elif "月柱" in pillar_name:
+                jiedu = "父母兄弟宮"
+            elif "日柱" in pillar_name:
+                jiedu = "夫妻宮"
+            elif "時柱" in pillar_name:
+                jiedu = "晚輩宮"
+            else:
+                jiedu = "一般宮位"
+
+            result.append({
+                "宮位": pillar_name,
+                "天干": tg_char,
+                "天干十神": tg_shishen,
+                "地支十神": zhi_shishen,
+                "格局解讀": jiedu,
+            })
 
         return result
 
@@ -107,26 +122,32 @@ def calculate_integrated_analysis(
                 new_rel_data = []
                 for item in rel_data:
                     if isinstance(item, dict):
-                        zhi1 = item.get("地支一", "")
-                        zhi2 = item.get("地支二", "")
+                        # 地支關係項使用 "位置" 鍵（如 "年柱~月柱"）和 "地支" 鍵（如 "子-丑"）
+                        position = item.get("位置", "")
+                        zhi_pair = item.get("地支", "")
+                        related_zhis = zhi_pair.replace("-", "") if zhi_pair else ""
 
                         # 判斷對格局的影響
                         impact = "無直接影響"
-                        if zhi1 == month_zhi or zhi2 == month_zhi:
+                        if month_zhi in position or month_zhi in related_zhis:
                             impact = "月支關係-影響格局根基"
-                        elif zhi1 == day_zhi or zhi2 == day_zhi:
+                        elif day_zhi in position or day_zhi in related_zhis:
                             impact = "日支關係-影響日主"
 
-                        # 根據關係類型判斷
-                        if "合" in rel_type:
-                            impact = impact + "-合來助力" if "月支" in impact or "日支" in impact else impact
-                        elif "沖" in rel_type:
-                            impact = impact + "-沖動變化" if "月支" in impact or "日支" in impact else impact
-                        elif "刑" in rel_type:
-                            impact = impact + "-刑動消耗" if "月支" in impact or "日支" in impact else impact
+                        # 根據關係類型附加影響描述
+                        if impact != "無直接影響":
+                            if "合" in rel_type:
+                                impact += "-合來助力"
+                            elif "沖" in rel_type:
+                                impact += "-沖動變化"
+                            elif "刑" in rel_type:
+                                impact += "-刑動消耗"
+                            elif "穿" in rel_type:
+                                impact += "-穿害暗傷"
+                            elif "破" in rel_type:
+                                impact += "-破損消耗"
 
-                        new_item = {**item, "格局影響": impact}
-                        new_rel_data.append(new_item)
+                        new_rel_data.append({**item, "格局影響": impact})
                     else:
                         new_rel_data.append(item)
                 result[rel_type] = new_rel_data

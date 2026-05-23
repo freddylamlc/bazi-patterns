@@ -13,48 +13,10 @@ from bazi.core.constants import (
     ZHI_CANG_GAN, TIAN_GAN_ZHANG_SHENG, GAN_ZHI_KONG_WANG, TIAN_GAN_WU_HE,
 )
 from bazi.calculations.shishen import _calculate_shi_shen as get_shi_shen
+from bazi.calculations.relations import check_zhi_damaged
 
-# 別名（兼容舊代碼）
-TianGanWuXing = TIAN_GAN_WU_XING
-TianGanYinYang = TIAN_GAN_YIN_YANG
-ZhiWuXing = ZHI_WU_XING
-ZhiYinYang = ZHI_YIN_YANG
-WuXingKe = WU_XING_KE
-WuXingSheng = WU_XING_SHENG
-ZhiLiuChong = ZHI_LIU_CHONG
-ZhiXing = ZHI_XING
-ZhiChuan = ZHI_CHUAN
-ZhiPo = ZHI_PO
-ZhiCangGan = ZHI_CANG_GAN
-TianGanZhangSheng = TIAN_GAN_ZHANG_SHENG
-GanZhiKongWang = GAN_ZHI_KONG_WANG
-TianGanWuHe = TIAN_GAN_WU_HE
-
-# 歲運格局新增導入
-from bazi.core.constants import WU_XING_KE, WU_XING_SHENG, ZHI_LIU_CHONG
-
-
-def check_sui_yun_damaged(target_zhi: str, sui_yun_zhi_list: list) -> list:
-    """檢查命局地支是否被歲運地支沖、刑、穿、破"""
-    damaged_by = []
-    for other_zhi in sui_yun_zhi_list:
-        if other_zhi == target_zhi:
-            continue
-        for c1, c2 in ZhiLiuChong:
-            if (target_zhi == c1 and other_zhi == c2) or (target_zhi == c2 and other_zhi == c1):
-                damaged_by.append(f"{other_zhi}沖")
-                break
-        if target_zhi + other_zhi in ZhiXing or other_zhi + target_zhi in ZhiXing:
-            damaged_by.append(f"{other_zhi}刑")
-        for c1, c2 in ZhiChuan:
-            if (target_zhi == c1 and other_zhi == c2) or (target_zhi == c2 and other_zhi == c1):
-                damaged_by.append(f"{other_zhi}穿")
-                break
-        for c1, c2 in ZhiPo:
-            if (target_zhi == c1 and other_zhi == c2) or (target_zhi == c2 and other_zhi == c1):
-                damaged_by.append(f"{other_zhi}破")
-                break
-    return damaged_by
+# Alias for backward compatibility in this module
+check_sui_yun_damaged = check_zhi_damaged
 
 
 def check_special_gan_condition(day_gan: str, target_gan: str) -> tuple:
@@ -65,7 +27,7 @@ def check_special_gan_condition(day_gan: str, target_gan: str) -> tuple:
     yang_day_zhengcai = {"甲": "己", "丙": "辛", "戊": "癸", "庚": "乙", "壬": "丁"}
     yin_day_zhengguan = {"乙": "庚", "丁": "壬", "己": "甲", "辛": "丙", "癸": "戊"}
 
-    day_gan_yinyang = TianGanYinYang.get(day_gan, "")
+    day_gan_yinyang = TIAN_GAN_YIN_YANG.get(day_gan, "")
 
     if day_gan_yinyang == "陽":
         zhengcai = yang_day_zhengcai.get(day_gan, "")
@@ -97,15 +59,15 @@ def calculate_dayun_pan_duan(ba_zi: str, ge_ju: dict, detailed_dayun: dict,
     ba_zi_parts = ba_zi.split()
     day_gan = ba_zi_parts[2][0]
     day_zhi = ba_zi_parts[2][1]
-    day_gan_yinyang = TianGanYinYang[day_gan]
-    day_zhi_yinyang = ZhiYinYang[day_zhi]
-    day_gan_wuxing = TianGanWuXing[day_gan]
-    day_zhi_wuxing = ZhiWuXing[day_zhi]
+    day_gan_yinyang = TIAN_GAN_YIN_YANG[day_gan]
+    day_zhi_yinyang = ZHI_YIN_YANG[day_zhi]
+    day_gan_wuxing = TIAN_GAN_WU_XING[day_gan]
+    day_zhi_wuxing = ZHI_WU_XING[day_zhi]
 
     # 獲取格局信息
     yong_shen = ge_ju.get("用神", "")
     xiang_shen = ge_ju.get("相神", [])
-    yong_shen_wuxing = TianGanWuXing.get(yong_shen, "") if yong_shen else ""
+    yong_shen_wuxing = TIAN_GAN_WU_XING.get(yong_shen, "") if yong_shen else ""
 
     # 檢查原局是否有兩種相神並存（凶神逆用）
     ge_name = ge_ju.get("格局", "").replace("格", "")
@@ -128,10 +90,10 @@ def calculate_dayun_pan_duan(ba_zi: str, ge_ju: dict, detailed_dayun: dict,
     for dayun in dayuns:
         dy_gan = dayun["大運干"]
         dy_zhi = dayun["大運支"]
-        dy_gan_yinyang = TianGanYinYang[dy_gan]
-        dy_zhi_yinyang = ZhiYinYang[dy_zhi]
-        dy_gan_wuxing = TianGanWuXing[dy_gan]
-        dy_zhi_wuxing = ZhiWuXing[dy_zhi]
+        dy_gan_yinyang = TIAN_GAN_YIN_YANG[dy_gan]
+        dy_zhi_yinyang = ZHI_YIN_YANG[dy_zhi]
+        dy_gan_wuxing = TIAN_GAN_WU_XING[dy_gan]
+        dy_zhi_wuxing = ZHI_WU_XING[dy_zhi]
 
         # 1. 干支陰陽分判斷
         gan_yinyang_tong = "同陰陽" if dy_gan_yinyang == day_gan_yinyang else "不同陰陽"
@@ -171,16 +133,16 @@ def calculate_dayun_pan_duan(ba_zi: str, ge_ju: dict, detailed_dayun: dict,
             jie_jiao = True
 
         # 4. 空亡判斷
-        dy_kong_wang = GanZhiKongWang.get(dy_gan + dy_zhi, (None, None))
+        dy_kong_wang = GAN_ZHI_KONG_WANG.get(dy_gan + dy_zhi, (None, None))
         dy_gan_luo_kong = "落空亡" if day_gan in dy_kong_wang else ""
         dy_zhi_luo_kong = "落空亡" if day_zhi in dy_kong_wang else ""
 
         # 5. 十神取向
         dy_gan_shishen = get_shi_shen(dy_gan, dy_gan_wuxing, dy_gan_yinyang,
                                        day_gan, day_gan_wuxing, day_gan_yinyang)
-        dy_zhi_benqi = ZhiCangGan.get(dy_zhi, {}).get("主氣", dy_zhi)
-        dy_zhi_benqi_wuxing = TianGanWuXing.get(dy_zhi_benqi, "")
-        dy_zhi_benqi_yinyang = TianGanYinYang.get(dy_zhi_benqi, "陽")
+        dy_zhi_benqi = ZHI_CANG_GAN.get(dy_zhi, {}).get("主氣", dy_zhi)
+        dy_zhi_benqi_wuxing = TIAN_GAN_WU_XING.get(dy_zhi_benqi, "")
+        dy_zhi_benqi_yinyang = TIAN_GAN_YIN_YANG.get(dy_zhi_benqi, "陽")
         dy_zhi_shishen = get_shi_shen(dy_zhi_benqi, dy_zhi_benqi_wuxing, dy_zhi_benqi_yinyang,
                                        day_gan, day_gan_wuxing, day_gan_yinyang)
 
@@ -282,32 +244,32 @@ def calculate_dayun_pan_duan(ba_zi: str, ge_ju: dict, detailed_dayun: dict,
         score = score_map.get(jixing, 50)
 
         # 計算大運地支藏干和十二長生
-        dy_zhi_cang_gan = ZhiCangGan.get(dy_zhi, {})
+        dy_zhi_cang_gan = ZHI_CANG_GAN.get(dy_zhi, {})
         dy_zhi_benqi = dy_zhi_cang_gan.get("主氣", dy_zhi)
         dy_zhi_zhongqi = dy_zhi_cang_gan.get("中氣")
         dy_zhi_yuqi = dy_zhi_cang_gan.get("餘氣")
 
-        dy_benqi_wuxing = TianGanWuXing.get(dy_zhi_benqi, "")
-        dy_benqi_yinyang = TianGanYinYang.get(dy_zhi_benqi, "陽")
+        dy_benqi_wuxing = TIAN_GAN_WU_XING.get(dy_zhi_benqi, "")
+        dy_benqi_yinyang = TIAN_GAN_YIN_YANG.get(dy_zhi_benqi, "陽")
         dy_benqi_shishen = get_shi_shen(dy_zhi_benqi, dy_benqi_wuxing, dy_benqi_yinyang,
                                          day_gan, day_gan_wuxing, day_gan_yinyang)
 
         dy_zhongqi_shishen = ""
         if dy_zhi_zhongqi:
-            dy_zhongqi_wuxing = TianGanWuXing.get(dy_zhi_zhongqi, "")
-            dy_zhongqi_yinyang = TianGanYinYang.get(dy_zhi_zhongqi, "陽")
+            dy_zhongqi_wuxing = TIAN_GAN_WU_XING.get(dy_zhi_zhongqi, "")
+            dy_zhongqi_yinyang = TIAN_GAN_YIN_YANG.get(dy_zhi_zhongqi, "陽")
             dy_zhongqi_shishen = get_shi_shen(dy_zhi_zhongqi, dy_zhongqi_wuxing, dy_zhongqi_yinyang,
                                                day_gan, day_gan_wuxing, day_gan_yinyang)
 
         dy_yuqi_shishen = ""
         if dy_zhi_yuqi:
-            dy_yuqi_wuxing = TianGanWuXing.get(dy_zhi_yuqi, "")
-            dy_yuqi_yinyang = TianGanYinYang.get(dy_zhi_yuqi, "陽")
+            dy_yuqi_wuxing = TIAN_GAN_WU_XING.get(dy_zhi_yuqi, "")
+            dy_yuqi_yinyang = TIAN_GAN_YIN_YANG.get(dy_zhi_yuqi, "陽")
             dy_yuqi_shishen = get_shi_shen(dy_zhi_yuqi, dy_yuqi_wuxing, dy_yuqi_yinyang,
                                             day_gan, day_gan_wuxing, day_gan_yinyang)
 
         # 十二長生
-        dy_chang_sheng = TianGanZhangSheng.get(day_gan, {}).get(dy_zhi, "")
+        dy_chang_sheng = TIAN_GAN_ZHANG_SHENG.get(day_gan, {}).get(dy_zhi, "")
 
         dayun_analysis.append({
             "大運": dayun["大運"],
@@ -375,15 +337,15 @@ def calculate_liunian_pan_duan(ba_zi: str, ge_ju: dict, dayun_pan_duan: dict,
     year_zhi = ba_zi_parts[0][1]
     day_gan = ba_zi_parts[2][0]
     day_zhi = ba_zi_parts[2][1]
-    day_gan_yinyang = TianGanYinYang[day_gan]
-    day_zhi_yinyang = ZhiYinYang[day_zhi]
-    day_gan_wuxing = TianGanWuXing[day_gan]
-    day_zhi_wuxing = ZhiWuXing[day_zhi]
+    day_gan_yinyang = TIAN_GAN_YIN_YANG[day_gan]
+    day_zhi_yinyang = ZHI_YIN_YANG[day_zhi]
+    day_gan_wuxing = TIAN_GAN_WU_XING[day_gan]
+    day_zhi_wuxing = ZHI_WU_XING[day_zhi]
 
     # 獲取格局信息
     yong_shen = ge_ju.get("用神", "")
     xiang_shen = ge_ju.get("相神", [])
-    yong_shen_wuxing = TianGanWuXing.get(yong_shen, "") if yong_shen else ""
+    yong_shen_wuxing = TIAN_GAN_WU_XING.get(yong_shen, "") if yong_shen else ""
 
     ge_name = ge_ju.get("格局", "").replace("格", "")
     ji_shens = ["正官", "正印", "偏印", "正財", "偏財", "食神"]
@@ -428,8 +390,8 @@ def calculate_liunian_pan_duan(ba_zi: str, ge_ju: dict, dayun_pan_duan: dict,
 
             ln_gan = gan_order[ln_gan_idx]
             ln_zhi = zhi_order[ln_zhi_idx]
-            ln_gan_wuxing = TianGanWuXing[ln_gan]
-            ln_zhi_wuxing = ZhiWuXing[ln_zhi]
+            ln_gan_wuxing = TIAN_GAN_WU_XING[ln_gan]
+            ln_zhi_wuxing = ZHI_WU_XING[ln_zhi]
 
             # 字碰字分析
             # 天干碰天干
@@ -531,18 +493,18 @@ def calculate_liunian_pan_duan(ba_zi: str, ge_ju: dict, dayun_pan_duan: dict,
             score = score_map.get(jixing, 50)
 
             # 流年十神
-            ln_gan_yinyang = TianGanYinYang[ln_gan]
+            ln_gan_yinyang = TIAN_GAN_YIN_YANG[ln_gan]
             ln_gan_shishen = get_shi_shen(ln_gan, ln_gan_wuxing, ln_gan_yinyang,
                                            day_gan, day_gan_wuxing, day_gan_yinyang)
 
-            ln_zhi_benqi = ZhiCangGan.get(ln_zhi, {}).get("主氣", ln_zhi)
-            ln_zhi_benqi_wuxing = TianGanWuXing.get(ln_zhi_benqi, "")
-            ln_zhi_benqi_yinyang = TianGanYinYang.get(ln_zhi_benqi, "陽")
+            ln_zhi_benqi = ZHI_CANG_GAN.get(ln_zhi, {}).get("主氣", ln_zhi)
+            ln_zhi_benqi_wuxing = TIAN_GAN_WU_XING.get(ln_zhi_benqi, "")
+            ln_zhi_benqi_yinyang = TIAN_GAN_YIN_YANG.get(ln_zhi_benqi, "陽")
             ln_zhi_shishen = get_shi_shen(ln_zhi_benqi, ln_zhi_benqi_wuxing, ln_zhi_benqi_yinyang,
                                            day_gan, day_gan_wuxing, day_gan_yinyang)
 
             # 十二長生
-            ln_chang_sheng = TianGanZhangSheng.get(day_gan, {}).get(ln_zhi, "")
+            ln_chang_sheng = TIAN_GAN_ZHANG_SHENG.get(day_gan, {}).get(ln_zhi, "")
 
             liunian_analysis.append({
                 "大運序號": dayun_idx + 1,
