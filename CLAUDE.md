@@ -85,6 +85,10 @@ bazi/
 └── db.py                # SQLite 客戶管理（CRM）
 config/settings.py       # pydantic-settings 配置（環境變量覆蓋）
 api/routes.py            # FastAPI 路由（Web 端點 + CRM API）
+static/js/app.js         # 前端 JS：大運流年流月選擇、沖刑穿破、天干五合
+static/css/style.css     # 自定義樣式（五行顏色、吉凶標籤）
+templates/macros.html    # Jinja2 宏（柱卡片、藏干、十神渲染）
+templates/result.html    # 結果頁主模板
 region.json              # 城市經緯度數據（真太陽時用）
 ```
 
@@ -118,6 +122,18 @@ region.json              # 城市經緯度數據（真太陽時用）
 ln_gan_idx = (year_gan_idx + liunian_age) % 10
 ln_zhi_idx = (year_zhi_idx + liunian_age) % 12
 ```
+
+### 年柱與公曆年份轉換
+```python
+# 立春前出生的人，年柱屬於前一年（如 1995-01-01 → 甲戌年=1994）
+# api/routes.py 中 _get_chinese_year_from_pillar() 從年柱反推公曆年份
+# 以甲子=1984 為基準，用六十甲子序列計算偏移
+```
+
+### 前端自動跳轉
+- 頁面載入時自動跳轉到當前年份對應的大運和流年
+- `birthYear` 使用年柱推算的中國年份（非公曆出生年），確保立春前出生者計算正確
+- `app.js` 僅在結果頁執行初始化（通過檢測 `#liunian-pillar-container` 守衛）
 
 ## 格局判斷規則
 
