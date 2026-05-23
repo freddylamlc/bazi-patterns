@@ -24,7 +24,7 @@
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
             <span>客戶批注</span>
         </div>
-        <span class="text-[10px] text-stone-400" id="anno-status-{{ section_id }}"></span>
+        <span class="text-xs text-stone-400" id="anno-status-{{ section_id }}"></span>
     </div>
     <div id="anno-{{ section_id }}" class="hidden transition-all duration-200">
         <textarea class="w-full text-sm p-3 rounded-lg border border-stone-200 bg-stone-50 focus:outline-none focus:ring-2 focus:ring-indigo-100 focus:bg-white transition resize-y min-h-[80px] annotation-input" data-section="{{ section_id }}" placeholder="輸入客戶專屬批注... (將自動儲存)">{{ annotations.get(section_id, '') if annotations else '' }}</textarea>
@@ -39,8 +39,8 @@
 {% else %}
 {% for gw in gong_wei_ji_xiong %}
 <div class="p-3 rounded-lg bg-stone-50 border border-stone-200">
-    <div class="text-xs font-bold text-stone-600 mb-2">{{ gw.柱 }}</div>
-    <div class="text-xs space-y-1">
+    <div class="text-sm font-bold text-stone-600 mb-2">{{ gw.柱 }}</div>
+    <div class="text-sm space-y-1">
         <div><span class="text-stone-400">天干：</span><span class="{% if gw.天干.吉凶 == '大吉' %}text-green-600{% elif gw.天干.吉凶 == '凶' %}text-red-600{% else %}text-stone-600{% endif %}">{{ gw.天干.天干|default('') }} - {{ gw.天干.吉凶|default('平') }}</span></div>
         <div><span class="text-stone-400">地支：</span><span class="{% if gw.地支.吉凶 == '大吉' %}text-green-600{% elif gw.地支.吉凶 == '凶' %}text-red-600{% else %}text-stone-600{% endif %}">{{ gw.地支.地支|default('') }} - {{ gw.地支.吉凶|default('平') }}</span></div>
     </div>
@@ -55,10 +55,10 @@
 {% else %}
 {% for item in ji_bing_lun_duan %}
 <div class="p-3 rounded-lg bg-stone-50 border border-stone-200">
-    <div class="text-xs font-bold text-stone-600 mb-1">{{ item.類型 }}</div>
-    <div class="text-xs text-stone-700">{{ item.說明 }}</div>
-    {% if item.應期 %}<div class="text-xs text-amber-600 mt-1">應期：{{ item.應期 }}</div>{% endif %}
-    {% if item.建議 %}<div class="text-xs text-blue-600 mt-1">建議：{{ item.建議 }}</div>{% endif %}
+    <div class="text-sm font-bold text-stone-600 mb-1">{{ item.類型 }}</div>
+    <div class="text-sm text-stone-700">{{ item.說明 }}</div>
+    {% if item.應期 %}<div class="text-sm text-amber-600 mt-1">應期：{{ item.應期 }}</div>{% endif %}
+    {% if item.建議 %}<div class="text-sm text-blue-600 mt-1">建議：{{ item.建議 }}</div>{% endif %}
 </div>
 {% endfor %}
 {% endif %}
@@ -80,9 +80,9 @@
 {% else %}
 {% for dy in da_yun_pan_duan %}
 <div class="p-3 rounded-lg bg-stone-50 border border-stone-200">
-    <div class="text-xs font-bold text-stone-600 mb-1">{{ dy.大運 }} ({{ dy.十神 }})</div>
-    <div class="text-xs text-stone-700">{{ dy.大運影響 }}</div>
-    <div class="text-xs {% if '用神' in dy.格局影響 or '喜神' in dy.格局影響 %}text-green-600{% elif '忌神' in dy.格局影響 %}text-red-600{% else %}text-stone-600{% endif %} mt-1">格局影響：{{ dy.格局影響 }}</div>
+    <div class="text-sm font-bold text-stone-600 mb-1">{{ dy.大運 }} ({{ dy.十神 }})</div>
+    <div class="text-sm text-stone-700">{{ dy.大運影響 }}</div>
+    <div class="text-sm {% if '用神' in dy.格局影響 or '喜神' in dy.格局影響 %}text-green-600{% elif '忌神' in dy.格局影響 %}text-red-600{% else %}text-stone-600{% endif %} mt-1">格局影響：{{ dy.格局影響 }}</div>
 </div>
 {% endfor %}
 {% endif %}
@@ -94,8 +94,8 @@
 {% else %}
 {% for ln in liu_nian_pan_duan %}
 <div class="p-3 rounded-lg bg-stone-50 border border-stone-200">
-    <div class="text-xs font-bold text-stone-600 mb-1">{{ ln.流年 }} ({{ ln.流年十神 }})</div>
-    <div class="text-xs {% if '用神' in ln.格局影響 or '喜神' in ln.格局影響 %}text-green-600{% elif '忌神' in ln.格局影響 %}text-red-600{% else %}text-stone-600{% endif %} mt-1">{{ ln.格局影響 }}</div>
+    <div class="text-sm font-bold text-stone-600 mb-1">{{ ln.流年 }} ({{ ln.流年十神 }})</div>
+    <div class="text-sm {% if '用神' in ln.格局影響 or '喜神' in ln.格局影響 %}text-green-600{% elif '忌神' in ln.格局影響 %}text-red-600{% else %}text-stone-600{% endif %} mt-1">{{ ln.格局影響 }}</div>
 </div>
 {% endfor %}
 {% endif %}
@@ -150,9 +150,9 @@
             </span>
             <span class="text-xs text-stone-400">{{ status }}</span>
         </div>
-        <div class="text-xs {{ desc_class }} leading-relaxed">{{ info.心性描述|default('') }}</div>
+        <div class="text-sm {{ desc_class }} leading-relaxed">{{ info.心性描述|default('') }}</div>
         {% if info.身旺衰說明 %}
-            <div class="text-xs text-stone-400 mt-2">{{ info.身旺衰說明 }}</div>
+            <div class="text-sm text-stone-400 mt-2">{{ info.身旺衰說明 }}</div>
         {% endif %}
     </div>
 {% endfor %}
@@ -161,19 +161,19 @@
 
 {% macro render_canggan(canggan) %}
     {% if canggan and canggan.主氣 %}
-    <div class="flex justify-between text-[9px] w-full px-1 opacity-70">
+    <div class="flex justify-between text-xs w-full px-1 opacity-70">
         <span class="{{ render_wuxing_text_class(canggan.主氣.五行) }}">{{ canggan.主氣.干 }}</span>
         <span class="text-stone-400">{{ canggan.主氣.十神 }}</span>
     </div>
     {% endif %}
     {% if canggan and canggan.中氣 %}
-    <div class="flex justify-between text-[9px] w-full px-1 opacity-70">
+    <div class="flex justify-between text-xs w-full px-1 opacity-70">
         <span class="{{ render_wuxing_text_class(canggan.中氣.五行) }}">{{ canggan.中氣.干 }}</span>
         <span class="text-stone-400">{{ canggan.中氣.十神 }}</span>
     </div>
     {% endif %}
     {% if canggan and canggan.餘氣 %}
-    <div class="flex justify-between text-[9px] w-full px-1 opacity-70">
+    <div class="flex justify-between text-xs w-full px-1 opacity-70">
         <span class="{{ render_wuxing_text_class(canggan.餘氣.五行) }}">{{ canggan.餘氣.干 }}</span>
         <span class="text-stone-400">{{ canggan.餘氣.十神 }}</span>
     </div>
@@ -183,7 +183,7 @@
 {% macro render_pillar_card(p, index) %}
 <div class="pillar-card flex flex-col items-center gap-1 p-2 bg-stone-50 rounded-xl border border-stone-200/50 min-w-[90px]" id="pillar-container-{{ index }}">
     <span class="text-xs text-stone-400 font-medium tracking-widest uppercase">{{ p.name }}</span>
-    <span class="text-[10px] text-stone-500 h-4" id="pillar-{{ index }}-shishen">{{ p.shi_shen }}</span>
+    <span class="text-xs text-stone-500 h-4" id="pillar-{{ index }}-shishen">{{ p.shi_shen }}</span>
     <div class="w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold rounded-full {{ render_wuxing_class(p.gan_wuxing) }} border-2">
         {{ p.gan }}
     </div>
@@ -193,7 +193,7 @@
     <div class="flex flex-col gap-0.5 mt-1 items-center w-full min-h-[3.2rem]" id="pillar-{{ index }}-canggan">
         {{ render_canggan(p.canggan_dict) }}
     </div>
-    <div class="text-[9px] text-stone-500 font-medium">{{ p.chang_sheng }}</div>
+    <div class="text-xs text-stone-500 font-medium">{{ p.chang_sheng }}</div>
 </div>
 {% endmacro %}
 
@@ -201,7 +201,7 @@
 {% set active_class = 'border-indigo-500 bg-indigo-50' if index == 0 else 'border-stone-200 bg-stone-50 hover:bg-stone-100' %}
 <div id="dayun-pillar-{{ index }}" class="dayun-pillar-select cursor-pointer pillar-card flex flex-col items-center gap-1 p-2 rounded-xl border min-w-[80px] transition-all {{ active_class }}" onclick="selectDayun({{ index }})">
     <span class="text-xs text-stone-400 font-medium">{{ dy.起運年齡 }}歲</span>
-    <span class="text-[10px] text-stone-500 h-4">{{ dy.十神 }}</span>
+    <span class="text-xs text-stone-500 h-4">{{ dy.十神 }}</span>
     <div class="w-10 h-10 flex items-center justify-center text-2xl font-serif font-bold rounded-full {{ render_wuxing_class(GAN_WU_XING[dy.大運干]) }} border-2">
         {{ dy.大運干 }}
     </div>
@@ -254,7 +254,7 @@
     <td class="p-2 border border-stone-200 font-medium">{{ dg.地支 }}</td>
     <td class="p-2 border border-stone-200 {% if dg.日主得根 %}text-green-600{% else %}text-red-600{% endif %}">{% if dg.日主得根 %}是{% else %}否{% endif %}</td>
     <td class="p-2 border border-stone-200">{{ dg.日主根氣強度|default(0) }}</td>
-    <td class="p-2 border border-stone-200 text-xs text-stone-600">
+    <td class="p-2 border border-stone-200 text-sm text-stone-600">
         {% set cg_list = [] %}
         {% for k, v in dg.藏干.items() %}
             {% set _ = cg_list.append(k ~ v) %}

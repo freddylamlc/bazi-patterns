@@ -59,48 +59,35 @@ let currentDayunIndex = 0;
 let currentLiunianIndex = 0;
 let currentLiuyueIndex = 0;
 
-// 初始化
+// 初始化（僅在結果頁執行，通過檢測頁面中的命盤容器來判斷）
 document.addEventListener('DOMContentLoaded', function() {
-    try {
-        // [調試] 打印 JS 收到的數據
-        console.log('\n[JS DEBUG] ===== JavaScript 初始化檢查 =====');
-        console.log('[JS DEBUG] window.allLiunianData 長度:', (window.allLiunianData || []).length);
-        console.log('[JS DEBUG] window.dayunData 長度:', (window.dayunData || []).length);
-        console.log('[JS DEBUG] window.liunianByDayun 鍵:', Object.keys(window.liunianByDayun || {}));
-        console.log('[JS DEBUG] window.fourPillars:', window.fourPillars);
-        console.log('[JS DEBUG] 第一個大運:', (window.dayunData || [])?.[0]);
-        console.log('[JS DEBUG] 第一個流年:', (window.allLiunianData || [])?.[0]);
-        console.log('[JS DEBUG] liunianByDayun[0] 第一個:', (window.liunianByDayun && window.liunianByDayun[0]) ? window.liunianByDayun[0][0] : 'undefined');
-        console.log('[JS DEBUG] window.suiyunGejuAll 長度:', (window.suiyunGejuAll || []).length);
-        console.log('[JS DEBUG] window.suiyunGejuAll[0]:', (window.suiyunGejuAll && window.suiyunGejuAll[0]) ? window.suiyunGejuAll[0] : 'undefined');
+    // 非結果頁（如首頁）不執行命盤初始化
+    if (!document.getElementById('liunian-pillar-container')) return;
 
-        // 驗證數據
+    try {
         if (!window.dayunData || window.dayunData.length === 0) {
             console.error('[JS 錯誤] window.dayunData 為空');
-        }
-        if (!window.allLiunianData || window.allLiunianData.length === 0) {
-            console.error('[JS 錯誤] window.allLiunianData 為空');
-        }
-        if (!window.liunianByDayun || !window.liunianByDayun[0] || window.liunianByDayun[0].length === 0) {
-            console.error('[JS 錯誤] window.liunianByDayun[0] 為空');
-        }
-        if (!window.suiyunGejuAll || window.suiyunGejuAll.length === 0) {
-            console.error('[JS 錯誤] window.suiyunGejuAll 為空');
+            return;
         }
 
-        console.log('[JS DEBUG] 開始初始化流年柱...');
         updateLiunianPillars(0);
-        console.log('[JS DEBUG] 開始初始化流月柱...');
         updateLiuyuePillars(0);
-        console.log('[JS DEBUG] 開始更新地支關係...');
         updateZhiRelations();
-        console.log('[JS DEBUG] 開始更新天干五合...');
         updateTianGanWuHe();
-        console.log('[JS DEBUG] 開始初始化流年判斷區域...');
         updateLiunianJudgment(0);
-        console.log('[JS DEBUG] 開始初始化歲運格局...');
         updateSuiyunGeju(0, 0);
-        console.log('[JS DEBUG] ===========================\n');
+
+        // 自動跳轉到當前年份對應的大運和流年
+        if (typeof birthYear !== 'undefined' && typeof currentYear !== 'undefined' && window.dayunData && window.dayunData.length > 0) {
+            const currentAge = currentYear - birthYear;
+            const firstStartAge = window.dayunData[0]['起運年齡'];
+            if (currentAge >= firstStartAge) {
+                const dayunIdx = Math.min(Math.floor((currentAge - firstStartAge) / 10), window.dayunData.length - 1);
+                const liunianIdx = Math.min((currentAge - firstStartAge) % 10, 9);
+                selectDayun(dayunIdx);
+                selectLiunian(liunianIdx);
+            }
+        }
     } catch (e) {
         console.error('[JS 初始化錯誤]', e);
     }
@@ -128,9 +115,7 @@ function showPillarInput() {
 
 // 選擇大運
 function selectDayun(index) {
-    console.log('[selectDayun] 點擊大運索引:', index);
     currentDayunIndex = index;
-    console.log('[selectDayun] currentDayunIndex 已設置為:', currentDayunIndex);
 
     // 更新大運選擇樣式
     document.querySelectorAll('.dayun-pillar-select').forEach((item, idx) => {
@@ -156,24 +141,26 @@ function selectDayun(index) {
             const mainGan = canggan['主氣']['干'];
             const mainWX = ganWuXing[mainGan] || '土';
             const mainClass = wuXingColors[mainWX];
-            cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${mainClass.text}">${mainGan}</span><span class="text-stone-400">${canggan['主氣']['十神'] || ''}</span></div>`;
+            cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${mainClass.text}">${mainGan}</span><span class="text-stone-400">${canggan['主氣']['十神'] || ''}</span></div>`;
         }
         if (canggan['中氣'] && canggan['中氣']['干']) {
             const midGan = canggan['中氣']['干'];
             const midWX = ganWuXing[midGan] || '土';
             const midClass = wuXingColors[midWX];
-            cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${midClass.text}">${midGan}</span><span class="text-stone-400">${canggan['中氣']['十神'] || ''}</span></div>`;
+            cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${midClass.text}">${midGan}</span><span class="text-stone-400">${canggan['中氣']['十神'] || ''}</span></div>`;
         }
         if (canggan['餘氣'] && canggan['餘氣']['干']) {
             const restGan = canggan['餘氣']['干'];
             const restWX = ganWuXing[restGan] || '土';
             const restClass = wuXingColors[restWX];
-            cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${restClass.text}">${restGan}</span><span class="text-stone-400">${canggan['餘氣']['十神'] || ''}</span></div>`;
+            cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${restClass.text}">${restGan}</span><span class="text-stone-400">${canggan['餘氣']['十神'] || ''}</span></div>`;
         }
         document.getElementById('current-dayun-canggan').innerHTML = cangganHtml;
 
         // 更新大運十二長生
-        document.getElementById('current-dayun-changsheng').textContent = window.dayunData[index]['地支']['十二長生'] || '';
+        const dayunChangsheng = window.dayunData[index]['地支']['十二長生'] || '';
+        const changshengEl = document.getElementById('current-dayun-changsheng');
+        if (changshengEl) changshengEl.textContent = dayunChangsheng;
     }
 
     // 更新流年柱
@@ -192,7 +179,6 @@ function selectDayun(index) {
     updateLiunianJudgment(index);
 
     // 更新歲運格局（重置為第一個流年）
-    console.log('[selectDayun] 調用 updateSuiyunGeju(', index, ', 0 )');
     updateSuiyunGeju(index, 0);
 }
 
@@ -238,23 +224,23 @@ function updateLiunianPillars(dayunIndex) {
             const mainGan = canggan['主氣']['干'];
             const mainWX = ganWuXing[mainGan] || '土';
             const mainClass = wuXingColors[mainWX];
-            cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${mainClass.text}">${mainGan}</span><span class="text-stone-400">${canggan['主氣']['十神'] || ''}</span></div>`;
+            cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${mainClass.text}">${mainGan}</span><span class="text-stone-400">${canggan['主氣']['十神'] || ''}</span></div>`;
         }
         if (canggan['中氣'] && canggan['中氣']['干']) {
             const midGan = canggan['中氣']['干'];
             const midWX = ganWuXing[midGan] || '土';
             const midClass = wuXingColors[midWX];
-            cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${midClass.text}">${midGan}</span><span class="text-stone-400">${canggan['中氣']['十神'] || ''}</span></div>`;
+            cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${midClass.text}">${midGan}</span><span class="text-stone-400">${canggan['中氣']['十神'] || ''}</span></div>`;
         }
         if (canggan['餘氣'] && canggan['餘氣']['干']) {
             const restGan = canggan['餘氣']['干'];
             const restWX = ganWuXing[restGan] || '土';
             const restClass = wuXingColors[restWX];
-            cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${restClass.text}">${restGan}</span><span class="text-stone-400">${canggan['餘氣']['十神'] || ''}</span></div>`;
+            cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${restClass.text}">${restGan}</span><span class="text-stone-400">${canggan['餘氣']['十神'] || ''}</span></div>`;
         }
 
         div.innerHTML = `
-            <span class="text-[10px] text-stone-500 h-4">${lnData['流年十神']}</span>
+            <span class="text-xs text-stone-500 h-4">${lnData['流年十神']}</span>
             <div class="w-10 h-10 flex items-center justify-center text-2xl font-serif font-bold rounded-full ${ganColor.bg} ${ganColor.text} border-2 ${ganColor.border}">
                 ${lnData['流年天干']}
             </div>
@@ -308,8 +294,8 @@ function updateLiunianJudgment(dayunIndex) {
 
         html += `
         <div class="p-3 rounded-lg bg-stone-50 border border-stone-200">
-            <div class="text-xs font-bold text-stone-600 mb-1">${nianName} (${nianShiShen}) <span class="text-stone-400 font-normal">虛歲${xuSui}</span></div>
-            <div class="text-xs ${gejuClass} mt-1">${nianDesc}</div>
+            <div class="text-sm font-bold text-stone-600 mb-1">${nianName} (${nianShiShen}) <span class="text-stone-400 font-normal">虛歲${xuSui}</span></div>
+            <div class="text-sm ${gejuClass} mt-1">${nianDesc}</div>
         </div>
         `;
     }
@@ -354,23 +340,23 @@ function updateLiuyuePillars(dayunIndex) {
             const mainGan = canggan['主氣']['干'];
             const mainWX = ganWuXing[mainGan] || '土';
             const mainClass = wuXingColors[mainWX];
-            cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${mainClass.text}">${mainGan}</span><span class="text-stone-400">${canggan['主氣']['十神'] || ''}</span></div>`;
+            cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${mainClass.text}">${mainGan}</span><span class="text-stone-400">${canggan['主氣']['十神'] || ''}</span></div>`;
         }
         if (canggan['中氣'] && canggan['中氣']['干']) {
             const midGan = canggan['中氣']['干'];
             const midWX = ganWuXing[midGan] || '土';
             const midClass = wuXingColors[midWX];
-            cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${midClass.text}">${midGan}</span><span class="text-stone-400">${canggan['中氣']['十神'] || ''}</span></div>`;
+            cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${midClass.text}">${midGan}</span><span class="text-stone-400">${canggan['中氣']['十神'] || ''}</span></div>`;
         }
         if (canggan['餘氣'] && canggan['餘氣']['干']) {
             const restGan = canggan['餘氣']['干'];
             const restWX = ganWuXing[restGan] || '土';
             const restClass = wuXingColors[restWX];
-            cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${restClass.text}">${restGan}</span><span class="text-stone-400">${canggan['餘氣']['十神'] || ''}</span></div>`;
+            cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${restClass.text}">${restGan}</span><span class="text-stone-400">${canggan['餘氣']['十神'] || ''}</span></div>`;
         }
 
         div.innerHTML = `
-            <span class="text-[10px] text-stone-500 h-4">${lyData['月份']}</span>
+            <span class="text-xs text-stone-500 h-4">${lyData['月份']}</span>
             <div class="w-10 h-10 flex items-center justify-center text-2xl font-serif font-bold rounded-full ${ganColor.bg} ${ganColor.text} border-2 ${ganColor.border}">
                 ${lyData['流月天干']}
             </div>
@@ -442,19 +428,19 @@ function updateLiuyueDisplay(index) {
         const mainGan = canggan['主氣']['干'];
         const mainWX = ganWuXing[mainGan] || '土';
         const mainClass = wuXingColors[mainWX];
-        cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${mainClass.text}">${mainGan}</span><span class="text-stone-400">${canggan['主氣']['十神'] || ''}</span></div>`;
+        cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${mainClass.text}">${mainGan}</span><span class="text-stone-400">${canggan['主氣']['十神'] || ''}</span></div>`;
     }
     if (canggan['中氣'] && canggan['中氣']['干']) {
         const midGan = canggan['中氣']['干'];
         const midWX = ganWuXing[midGan] || '土';
         const midClass = wuXingColors[midWX];
-        cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${midClass.text}">${midGan}</span><span class="text-stone-400">${canggan['中氣']['十神'] || ''}</span></div>`;
+        cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${midClass.text}">${midGan}</span><span class="text-stone-400">${canggan['中氣']['十神'] || ''}</span></div>`;
     }
     if (canggan['餘氣'] && canggan['餘氣']['干']) {
         const restGan = canggan['餘氣']['干'];
         const restWX = ganWuXing[restGan] || '土';
         const restClass = wuXingColors[restWX];
-        cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${restClass.text}">${restGan}</span><span class="text-stone-400">${canggan['餘氣']['十神'] || ''}</span></div>`;
+        cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${restClass.text}">${restGan}</span><span class="text-stone-400">${canggan['餘氣']['十神'] || ''}</span></div>`;
     }
     document.getElementById('current-liuyue-canggan').innerHTML = cangganHtml;
 
@@ -464,10 +450,7 @@ function updateLiuyueDisplay(index) {
 
 // 選擇流年
 function selectLiunian(index) {
-    console.log('[selectLiunian] 點擊流年索引:', index);
     currentLiunianIndex = index;
-    console.log('[selectLiunian] currentLiunianIndex 已設置為:', currentLiunianIndex);
-    console.log('[selectLiunian] currentDayunIndex:', currentDayunIndex);
 
     // 更新流年選擇樣式
     document.querySelectorAll('.liunian-pillar-select').forEach((item, idx) => {
@@ -489,7 +472,6 @@ function selectLiunian(index) {
     updateTianGanWuHe();
 
     // 更新歲運格局
-    console.log('[selectLiunian] 調用 updateSuiyunGeju(', currentDayunIndex, ',', index, ')');
     updateSuiyunGeju(currentDayunIndex, index);
 }
 
@@ -512,19 +494,19 @@ function updateLiunianDisplay(index) {
         const mainGan = canggan['主氣']['干'];
         const mainWX = ganWuXing[mainGan] || '土';
         const mainClass = wuXingColors[mainWX];
-        cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${mainClass.text}">${mainGan}</span><span class="text-stone-400">${canggan['主氣']['十神'] || ''}</span></div>`;
+        cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${mainClass.text}">${mainGan}</span><span class="text-stone-400">${canggan['主氣']['十神'] || ''}</span></div>`;
     }
     if (canggan['中氣'] && canggan['中氣']['干']) {
         const midGan = canggan['中氣']['干'];
         const midWX = ganWuXing[midGan] || '土';
         const midClass = wuXingColors[midWX];
-        cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${midClass.text}">${midGan}</span><span class="text-stone-400">${canggan['中氣']['十神'] || ''}</span></div>`;
+        cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${midClass.text}">${midGan}</span><span class="text-stone-400">${canggan['中氣']['十神'] || ''}</span></div>`;
     }
     if (canggan['餘氣'] && canggan['餘氣']['干']) {
         const restGan = canggan['餘氣']['干'];
         const restWX = ganWuXing[restGan] || '土';
         const restClass = wuXingColors[restWX];
-        cangganHtml += `<div class="flex justify-between text-[9px] w-full px-1 opacity-70"><span class="${restClass.text}">${restGan}</span><span class="text-stone-400">${canggan['餘氣']['十神'] || ''}</span></div>`;
+        cangganHtml += `<div class="flex justify-between text-xs w-full px-1 opacity-70"><span class="${restClass.text}">${restGan}</span><span class="text-stone-400">${canggan['餘氣']['十神'] || ''}</span></div>`;
     }
     document.getElementById('current-liunian-canggan').innerHTML = cangganHtml;
 
@@ -618,46 +600,30 @@ function updateZhiRelations() {
     const container = document.getElementById('dy-ln-zhi-relations');
     if (!container) return;
 
-    // 數據驗證
-    if (!window.dayunData || window.dayunData.length === 0) {
-        console.error('[JS 錯誤] window.dayunData 為空');
-        container.innerHTML = '<span class="text-stone-400 text-sm">大運數據缺失</span>';
-        return;
-    }
-
-    if (!window.allLiunianData || window.allLiunianData.length === 0) {
-        console.error('[JS 錯誤] window.allLiunianData 為空');
-        container.innerHTML = '<span class="text-stone-400 text-sm">流年數據缺失</span>';
-        return;
-    }
-
-    if (!window.fourPillars || window.fourPillars.length === 0) {
-        console.error('[JS 錯誤] window.fourPillars 為空');
-        container.innerHTML = '<span class="text-stone-400 text-sm">四柱數據缺失</span>';
-        return;
-    }
+    if (!window.dayunData || window.dayunData.length === 0) return;
+    if (!window.fourPillars || window.fourPillars.length === 0) return;
 
     const dayunIndex = currentDayunIndex;
     const liunianIndex = currentLiunianIndex;
 
-    // 使用 liunianByDayun 數據源
     const liunianList = window.liunianByDayun ? window.liunianByDayun[dayunIndex] : null;
-
-    if (!window.dayunData[dayunIndex] || !liunianList || !liunianList[liunianIndex]) {
-        console.error('[JS 錯誤] 大運或流年數據索引超出範圍');
-        container.innerHTML = '<span class="text-stone-400 text-sm">數據索引錯誤</span>';
-        return;
-    }
+    if (!window.dayunData[dayunIndex] || !liunianList || !liunianList[liunianIndex]) return;
 
     const dayunZhi = window.dayunData[dayunIndex]['大運支'];
     const liunianZhi = liunianList[liunianIndex]['流年地支'];
+
+    // 獲取流月地支
+    const liuyueList = window.liuyueByLiunian && window.liuyueByLiunian[dayunIndex]
+        ? window.liuyueByLiunian[dayunIndex][liunianIndex] : null;
+    const liuyueZhi = (liuyueList && liuyueList[currentLiuyueIndex]) ? liuyueList[currentLiuyueIndex]['流月地支'] : '';
 
     // 四柱地支
     const pillarsZhi = window.fourPillars.map(p => p.charAt(1));
     const pillarNames = ['年', '月', '日', '時'];
 
-    // 收集所有相关地支
+    // 收集所有相關地支（含流月）
     const allZhis = [dayunZhi, liunianZhi, ...pillarsZhi];
+    if (liuyueZhi) allZhis.push(liuyueZhi);
 
     let html = '';
 
@@ -726,6 +692,47 @@ function updateZhiRelations() {
         }
     });
 
+    // 流月沖刑穿破
+    if (liuyueZhi) {
+        // 大運 vs 流月
+        const dyLyRel = getZhiRelation(dayunZhi, liuyueZhi, allZhis);
+        if (dyLyRel && dyLyRel.type === '沖') {
+            html += `<span class="px-3 py-2 rounded-lg text-sm border bg-orange-50 text-orange-700 border-orange-200 font-medium">大運沖流月(${liuyueZhi})</span>`;
+        }
+        if (dyLyRel && dyLyRel.type === '穿') {
+            html += `<span class="px-3 py-2 rounded-lg text-sm border bg-orange-50 text-orange-700 border-orange-200 font-medium">大運穿流月(${liuyueZhi})</span>`;
+        }
+        if (dyLyRel && dyLyRel.type === '破') {
+            html += `<span class="px-3 py-2 rounded-lg text-sm border bg-orange-50 text-orange-700 border-orange-200 font-medium">大運破流月(${liuyueZhi})</span>`;
+        }
+
+        // 流年 vs 流月
+        const lnLyRel = getZhiRelation(liunianZhi, liuyueZhi, allZhis);
+        if (lnLyRel && lnLyRel.type === '沖') {
+            html += `<span class="px-3 py-2 rounded-lg text-sm border bg-orange-50 text-orange-700 border-orange-200 font-medium">流年沖流月(${liuyueZhi})</span>`;
+        }
+        if (lnLyRel && lnLyRel.type === '穿') {
+            html += `<span class="px-3 py-2 rounded-lg text-sm border bg-orange-50 text-orange-700 border-orange-200 font-medium">流年穿流月(${liuyueZhi})</span>`;
+        }
+        if (lnLyRel && lnLyRel.type === '破') {
+            html += `<span class="px-3 py-2 rounded-lg text-sm border bg-orange-50 text-orange-700 border-orange-200 font-medium">流年破流月(${liuyueZhi})</span>`;
+        }
+
+        // 流月 vs 四柱
+        pillarsZhi.forEach((zhi, idx) => {
+            const rel = getZhiRelation(liuyueZhi, zhi, allZhis);
+            if (rel && rel.type === '沖') {
+                html += `<span class="px-3 py-2 rounded-lg text-sm border bg-orange-50 text-orange-700 border-orange-200 font-medium">流月沖${pillarNames[idx]}(${zhi})</span>`;
+            }
+            if (rel && rel.type === '穿') {
+                html += `<span class="px-3 py-2 rounded-lg text-sm border bg-orange-50 text-orange-700 border-orange-200 font-medium">流月穿${pillarNames[idx]}(${zhi})</span>`;
+            }
+            if (rel && rel.type === '破') {
+                html += `<span class="px-3 py-2 rounded-lg text-sm border bg-orange-50 text-orange-700 border-orange-200 font-medium">流月破${pillarNames[idx]}(${zhi})</span>`;
+            }
+        });
+    }
+
     if (!html) html = '<span class="text-stone-400 text-sm">無沖刑穿破</span>';
 
     container.innerHTML = html;
@@ -736,39 +743,22 @@ function updateTianGanWuHe() {
     const container = document.getElementById('tian-gan-wu-he');
     if (!container) return;
 
-    // 數據驗證
-    if (!window.dayunData || window.dayunData.length === 0) {
-        console.error('[JS 錯誤] window.dayunData 為空');
-        container.innerHTML = '<span class="text-stone-400 text-sm">大運數據缺失</span>';
-        return;
-    }
-
-    if (!window.allLiunianData || window.allLiunianData.length === 0) {
-        console.error('[JS 錯誤] window.allLiunianData 為空');
-        container.innerHTML = '<span class="text-stone-400 text-sm">流年數據缺失</span>';
-        return;
-    }
-
-    if (!window.fourPillars || window.fourPillars.length === 0) {
-        console.error('[JS 錯誤] window.fourPillars 為空');
-        container.innerHTML = '<span class="text-stone-400 text-sm">四柱數據缺失</span>';
-        return;
-    }
+    if (!window.dayunData || window.dayunData.length === 0) return;
+    if (!window.fourPillars || window.fourPillars.length === 0) return;
 
     const dayunIndex = currentDayunIndex;
     const liunianIndex = currentLiunianIndex;
 
-    // 使用 liunianByDayun 數據源
     const liunianList = window.liunianByDayun ? window.liunianByDayun[dayunIndex] : null;
-
-    if (!window.dayunData[dayunIndex] || !liunianList || !liunianList[liunianIndex]) {
-        console.error('[JS 錯誤] 大運或流年數據索引超出範圍');
-        container.innerHTML = '<span class="text-stone-400 text-sm">數據索引錯誤</span>';
-        return;
-    }
+    if (!window.dayunData[dayunIndex] || !liunianList || !liunianList[liunianIndex]) return;
 
     const dayunGan = window.dayunData[dayunIndex]['大運干'];
     const liunianGan = liunianList[liunianIndex]['流年天干'];
+
+    // 獲取流月天干
+    const liuyueList = window.liuyueByLiunian && window.liuyueByLiunian[dayunIndex]
+        ? window.liuyueByLiunian[dayunIndex][liunianIndex] : null;
+    const liuyueGan = (liuyueList && liuyueList[currentLiuyueIndex]) ? liuyueList[currentLiuyueIndex]['流月天干'] : '';
 
     // 提取四柱天干
     const pillarsGan = window.fourPillars.map(p => p.charAt(0));
@@ -793,16 +783,40 @@ function updateTianGanWuHe() {
     // 大運與四柱五合
     pillarsGan.forEach((gan) => {
         if (tianGanHe[dayunGan] === gan) {
-            html += `<span class="px-2 py-1 rounded text-xs border bg-green-50 text-green-700 border-green-200">大運${gan}合${dayunGan}</span>`;
+            html += `<span class="px-2 py-1 rounded text-sm border bg-green-50 text-green-700 border-green-200">大運${gan}合${dayunGan}</span>`;
         }
     });
 
     // 流年與四柱五合
     pillarsGan.forEach((gan) => {
         if (tianGanHe[liunianGan] === gan) {
-            html += `<span class="px-2 py-1 rounded text-xs border bg-green-50 text-green-700 border-green-200">流年${gan}合${liunianGan}</span>`;
+            html += `<span class="px-2 py-1 rounded text-sm border bg-green-50 text-green-700 border-green-200">流年${gan}合${liunianGan}</span>`;
         }
     });
+
+    // 流月與四柱五合
+    if (liuyueGan) {
+        pillarsGan.forEach((gan) => {
+            if (tianGanHe[liuyueGan] === gan) {
+                html += `<span class="px-2 py-1 rounded text-sm border bg-amber-50 text-amber-700 border-amber-200">流月${gan}合${liuyueGan}</span>`;
+            }
+        });
+    }
+
+    // 大運與流年五合
+    if (tianGanHe[dayunGan] === liunianGan) {
+        html += `<span class="px-3 py-2 rounded-lg text-sm border bg-purple-50 text-purple-700 border-purple-200 font-medium">${dayunGan}合${liunianGan} (大運流年)</span>`;
+    }
+
+    // 大運與流月五合
+    if (liuyueGan && tianGanHe[dayunGan] === liuyueGan) {
+        html += `<span class="px-3 py-2 rounded-lg text-sm border bg-purple-50 text-purple-700 border-purple-200 font-medium">${dayunGan}合${liuyueGan} (大運流月)</span>`;
+    }
+
+    // 流年與流月五合
+    if (liuyueGan && tianGanHe[liunianGan] === liuyueGan) {
+        html += `<span class="px-3 py-2 rounded-lg text-sm border bg-purple-50 text-purple-700 border-purple-200 font-medium">${liunianGan}合${liuyueGan} (流年流月)</span>`;
+    }
 
     if (!html) html = '<span class="text-stone-400 text-sm">無五合</span>';
 
@@ -811,42 +825,18 @@ function updateTianGanWuHe() {
 
 // 更新歲運格局顯示
 function updateSuiyunGeju(dayunIndex, liunianIndex) {
-    console.log('[歲運格局] 更新：dayunIndex=' + dayunIndex + ', liunianIndex=' + liunianIndex);
-    console.log('[歲運格局] window.suiyunGejuAll:', window.suiyunGejuAll ? '存在，長度=' + window.suiyunGejuAll.length : '不存在');
+    if (!window.suiyunGejuAll || !Array.isArray(window.suiyunGejuAll)) return;
 
-    // 數據驗證
-    if (!window.suiyunGejuAll || !Array.isArray(window.suiyunGejuAll)) {
-        console.error('[JS 錯誤] window.suiyunGejuAll 為空或不是數組');
-        return;
-    }
-
-    // 查找對應的歲運格局數據
     const suiyunData = window.suiyunGejuAll.find(
         item => item.dayun_index === dayunIndex && item.liunian_index === liunianIndex
     );
 
-    if (!suiyunData) {
-        console.warn('[歲運格局] 未找到對應數據 - dayunIndex=' + dayunIndex + ', liunianIndex=' + liunianIndex);
-        // 嘗試查找該大運的第一個流年數據
-        const fallbackData = window.suiyunGejuAll.find(item => item.dayun_index === dayunIndex && item.liunian_index === 0);
-        if (fallbackData) {
-            console.log('[歲運格局] 使用備用數據 (liunian_index=0):', fallbackData);
-        }
-        console.log('[歲運格局] 可用的數據:', window.suiyunGejuAll.slice(0, 3));
-        return;
-    }
-
-    if (!suiyunData.sui_yun_ge_ju) {
-        console.warn('[歲運格局] sui_yun_ge_ju 為空');
-        return;
-    }
+    if (!suiyunData || !suiyunData.sui_yun_ge_ju) return;
 
     const geju = suiyunData.sui_yun_ge_ju;
-    console.log('[歲運格局] 找到數據:', geju);
 
     // 更新歲運狀態
     const statusEl = document.getElementById('suiyun-status-display');
-    console.log('[歲運格局] statusEl:', statusEl ? '找到' : '未找到');
     if (statusEl) {
         statusEl.textContent = geju['歲運格局狀態'] || '無';
         statusEl.className = 'font-medium ' + (
@@ -874,7 +864,7 @@ function updateSuiyunGeju(dayunIndex, liunianIndex) {
         if (yingshiList && yingshiList.length > 0) {
             yingshiContainer.style.display = 'block';
             yingshiContainer.innerHTML = `
-                <div class="text-xs text-indigo-600 font-medium mb-2">應事</div>
+                <div class="text-sm text-indigo-600 font-medium mb-2">應事</div>
                 <div class="flex flex-wrap gap-2">
                     ${yingshiList.map(ying => `<span class="px-3 py-1.5 rounded-lg bg-white border border-indigo-200 text-indigo-700 text-sm">${ying}</span>`).join('')}
                 </div>
@@ -883,6 +873,4 @@ function updateSuiyunGeju(dayunIndex, liunianIndex) {
             yingshiContainer.style.display = 'none';
         }
     }
-
-    console.log('[歲運格局] 更新成功');
 }

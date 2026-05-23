@@ -4,6 +4,7 @@
 """
 
 import json
+from datetime import datetime
 from fastapi import APIRouter, Form, Request
 from fastapi.responses import HTMLResponse, Response, JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -13,6 +14,22 @@ from bazi import BaZiCalculator
 from bazi.core.constants import TIAN_GAN_YIN_YANG, TIAN_GAN_WU_XING as GAN_WU_XING, ZHI_WU_XING, ZHI_CANG_GAN, TIAN_GAN_ZHANG_SHENG
 from bazi.calculations.shishen import get_shi_shen
 from bazi.db import save_client, get_client, update_annotation, search_clients, delete_client
+
+# 六十甲子序列（用於年柱→公曆年份轉換）
+_GAN = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸']
+_ZHI = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥']
+_JIAZI_CYCLE = []
+_g, _z = 0, 0
+for _ in range(60):
+    _JIAZI_CYCLE.append(_GAN[_g] + _ZHI[_z])
+    _g, _z = (_g + 1) % 10, (_z + 1) % 12
+
+
+def _get_chinese_year_from_pillar(year_pillar: str) -> int:
+    """從年柱推算對應的公曆年份（以甲子=1984為基準）"""
+    idx = _JIAZI_CYCLE.index(year_pillar)
+    return 1984 + idx
+
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
@@ -83,6 +100,8 @@ def compute_bazi(data: dict):
         "干支象法": calculator.ganzhi_xiang,
         "移花接木": calculator.yi_hua_jie_mu,
         "bazi_gua": calculator.bazi_gua,
+        "birth_year": calculator.year,
+        "birth_chinese_year": _get_chinese_year_from_pillar(calculator.ba_zi.split()[0]),
     }
 
 
@@ -422,6 +441,8 @@ def prepare_bazi_context(request: Request, res: dict) -> dict:
         "dayun_data_json": json.dumps(da_yun_fen_xi, ensure_ascii=False),
         "sui_yun_ge_ju_all_json": json.dumps(res.get('歲運格局全部', []), ensure_ascii=False),
         "has_zhi_relations": any(res.get('地支關係', {}).values()),
+        "birth_year": res.get('birth_chinese_year', res.get('birth_year', 1990)),
+        "current_year": datetime.now().year,
     }
 
 
