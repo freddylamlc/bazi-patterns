@@ -75,7 +75,7 @@ bazi/
 │   ├── bingyuan.py      # 先天病源
 │   ├── dayun_liunian.py # 大運流年判斷、歲運格局
 │   ├── integrated.py    # 整合分析（格局為核心）
-│   ├── yizhu.py         # 一柱論命（60 甲子斷語）
+│   ├── yizhu.py         # 一柱論命（60 甲子斷語、干支關係、六親分析）
 │   ├── ganzhi_xiang.py  # 干支象法（臟腑、意象、疾病）
 │   ├── duanyu_db.py     # 斷語數據庫
 │   └── bazi_gua.py      # 八字卦象

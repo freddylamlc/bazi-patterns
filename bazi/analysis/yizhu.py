@@ -20,6 +20,9 @@ from bazi.core.constants import (
     TIAN_GAN_WU_XING,
     TIAN_GAN_YIN_YANG,
     TIAN_GAN_ZHANG_SHENG,
+    ZHI_WU_XING,
+    ZHI_CANG_GAN,
+    TIAN_GAN_WU_HE,
     WU_XING_KE,
     WU_XING_SHENG,
 )
@@ -103,6 +106,84 @@ def _get_chang_sheng(gan: str, zhi: str) -> str:
     if zhi not in TIAN_GAN_ZHANG_SHENG.get(gan, {}):
         return ""
     return TIAN_GAN_ZHANG_SHENG[gan][zhi]
+
+
+def _analyze_gan_zhi_relation(day_gan: str, day_zhi: str) -> dict:
+    """
+    分析日干與日支的五行關係（同柱干支關係）
+
+    Returns:
+        {
+            "關係類型": str,
+            "關係描述": str,
+            "日干五行": str,
+            "日支五行": str,
+            "吉凶影響": str,
+        }
+    """
+    gan_wx = TIAN_GAN_WU_XING.get(day_gan, "")
+    zhi_wx = ZHI_WU_XING.get(day_zhi, "")
+
+    result = {
+        "日干五行": gan_wx,
+        "日支五行": zhi_wx,
+        "關係類型": "",
+        "關係描述": "",
+        "吉凶影響": "",
+    }
+
+    # 檢查天干五合（日干與日支藏干）
+    cang_gan_data = ZHI_CANG_GAN.get(day_zhi, {})
+    cang_gan_list = [v for v in (cang_gan_data.get('主氣'), cang_gan_data.get('中氣'), cang_gan_data.get('餘氣')) if v]
+    for cg in cang_gan_list:
+        pair1 = day_gan + cg
+        pair2 = cg + day_gan
+        he_info = TIAN_GAN_WU_HE.get(pair1) or TIAN_GAN_WU_HE.get(pair2)
+        if he_info:
+            result["關係類型"] = "干支暗合"
+            result["關係描述"] = f"{day_gan}{day_zhi}：日干{day_gan}與日支藏干{cg}暗合（{he_info['合名']}）"
+            result["吉凶影響"] = "干支暗合，夫妻感情暗中融洽，心有靈犀"
+            return result
+
+    # 蓋頭：天干剋地支
+    if WU_XING_KE.get(gan_wx) == zhi_wx:
+        result["關係類型"] = "蓋頭"
+        result["關係描述"] = f"{day_gan}{day_zhi}：天干{day_gan}（{gan_wx}）剋地支{day_zhi}（{zhi_wx}）"
+        result["吉凶影響"] = "天干剋地支，外強中乾，做事多阻礙，有始無終"
+        return result
+
+    # 截腳：地支剋天干
+    if WU_XING_KE.get(zhi_wx) == gan_wx:
+        result["關係類型"] = "截腳"
+        result["關係描述"] = f"{day_gan}{day_zhi}：地支{day_zhi}（{zhi_wx}）剋天干{day_gan}（{gan_wx}）"
+        result["吉凶影響"] = "地支剋天干，根基不穩，做事多波折，健康需注意"
+        return result
+
+    # 洩氣：天干生地支
+    if WU_XING_SHENG.get(gan_wx) == zhi_wx:
+        result["關係類型"] = "洩氣"
+        result["關係描述"] = f"{day_gan}{day_zhi}：天干{day_gan}（{gan_wx}）生地支{day_zhi}（{zhi_wx}）"
+        result["吉凶影響"] = "天干生地支，洩氣之象，付出較多，才華外露"
+        return result
+
+    # 支生干：地支生天干
+    if WU_XING_SHENG.get(zhi_wx) == gan_wx:
+        result["關係類型"] = "支生干"
+        result["關係描述"] = f"{day_gan}{day_zhi}：地支{day_zhi}（{zhi_wx}）生天干{day_gan}（{gan_wx}）"
+        result["吉凶影響"] = "地支生天干，根基穩固，得地利之助，有後盾支持"
+        return result
+
+    # 干支同五行
+    if gan_wx == zhi_wx:
+        result["關係類型"] = "干支同氣"
+        result["關係描述"] = f"{day_gan}{day_zhi}：天干{day_gan}與地支{day_zhi}同屬{gan_wx}"
+        result["吉凶影響"] = "干支同氣，根基穩固，自我意識強，主觀能動性高"
+        return result
+
+    result["關係類型"] = "無特殊關係"
+    result["關係描述"] = f"{day_gan}{day_zhi}：天干{day_gan}（{gan_wx}）與地支{day_zhi}（{zhi_wx}）無直接生剋"
+    result["吉凶影響"] = "干支無直接生剋，中性組合"
+    return result
 
 
 def _analyze_gan_zhi(gan: str, zhi: str) -> dict:
@@ -428,6 +509,12 @@ def _generate_duan_yu(liu_shi_jia_zi_data: dict, gender: str) -> dict:
     else:
         kong_wang = ""
 
+    # 日柱總論（60甲子體象描述）
+    ri_zhu_zong_lun = YIZHU_DESCRIPTIONS.get(day_pillar, "")
+
+    # 干支關係分析
+    gan_zhi_relation = _analyze_gan_zhi_relation(day_gan, day_zhi)
+
     # 分析六親狀態
     liu_qin_list = liu_shi_jia_zi_data.get("六親類化", [])
     liu_qin_analysis = _analyze_liu_qin_status(liu_qin_list, day_gan, day_zhi, gender)
@@ -438,28 +525,61 @@ def _generate_duan_yu(liu_shi_jia_zi_data: dict, gender: str) -> dict:
     # 檢查特殊條件
     special_conditions = _check_special_conditions(day_pillar, liu_qin_analysis, gender)
 
-    # 生成婚姻斷語
+    # ---- 強化性格斷語：整合日柱總論 + 十二長生 ----
+    xingge_parts = []
+    if ri_zhu_zong_lun:
+        xingge_parts.append(ri_zhu_zong_lun)
+    if day_analysis["性格判斷"]:
+        xingge_parts.append(day_analysis["性格判斷"])
+    personality = "；".join(xingge_parts) if xingge_parts else ""
+
+    # ---- 強化婚姻斷語：結合干支關係 ----
     marriage_parts = liu_qin_analysis["婚姻判斷"]
+    relation_type = gan_zhi_relation["關係類型"]
+    if relation_type == "蓋頭":
+        marriage_parts.append("日支受剋，婚姻中命主較強勢，配偶壓力大")
+    elif relation_type == "截腳":
+        marriage_parts.append("日干受剋，婚姻中配偶較強勢，命主需忍讓")
+    elif relation_type == "洩氣":
+        marriage_parts.append("日干生支，婚姻中命主付出較多")
+    elif relation_type == "支生干":
+        marriage_parts.append("日支生干，婚姻中得配偶助力")
+    elif relation_type == "干支暗合":
+        marriage_parts.append("干支暗合，夫妻暗中默契，心有靈犀")
     if not marriage_parts:
-        # 如果沒有具體判斷，用日支狀態
         if day_analysis["日干狀態"]["十二長生"]:
             marriage_parts.append(f"日坐{day_analysis['日干狀態']['十二長生']}")
     marriage = "；".join(marriage_parts) if marriage_parts else "以歲運引動論"
 
-    # 生成六親斷語
+    # ---- 強化健康斷語：結合日支五行 ----
+    health_parts = []
+    if day_analysis["健康判斷"]:
+        health_parts.append(f"日干{day_gan}（{TIAN_GAN_WU_XING.get(day_gan, '')}）：主{day_analysis['健康判斷']}")
+    zhi_wx = ZHI_WU_XING.get(day_zhi, "")
+    zhi_health_map = {
+        "木": "肝膽、筋骨",
+        "火": "心臟、血壓",
+        "土": "脾胃、消化",
+        "金": "肺部、呼吸",
+        "水": "腎臟、泌尿",
+    }
+    zhi_health = zhi_health_map.get(zhi_wx, "")
+    if zhi_health:
+        health_parts.append(f"日支{day_zhi}（{zhi_wx}）：次{zhi_health}")
+    if relation_type == "蓋頭":
+        health_parts.append("蓋頭之象，日支臟腑易受損，需注意")
+    elif relation_type == "截腳":
+        health_parts.append("截腳之象，日干臟腑根基不穩，需調養")
+    health = "；".join(health_parts) if health_parts else ""
+
+    # ---- 六親斷語 ----
     liu_qin_parts = liu_qin_analysis["六親判斷"]
     liu_qin = "；".join(liu_qin_parts) if liu_qin_parts else "以歲運引動論"
 
-    # 生成健康斷語
-    health = day_analysis["健康判斷"]
-
-    # 生成性格斷語
-    personality = day_analysis["性格判斷"]
-
-    # 生成事業斷語
+    # ---- 事業斷語 ----
     career = day_analysis["事業判斷"]
 
-    # 生成特殊斷語
+    # ---- 特殊斷語 ----
     special = "；".join(special_conditions) if special_conditions else ""
 
     return {
@@ -467,6 +587,8 @@ def _generate_duan_yu(liu_shi_jia_zi_data: dict, gender: str) -> dict:
         "性別": gender,
         "所屬旬": xun_name,
         "空亡": kong_wang,
+        "日柱總論": ri_zhu_zong_lun,
+        "干支關係": gan_zhi_relation,
         "婚姻斷語": marriage,
         "六親斷語": liu_qin,
         "健康斷語": health,
