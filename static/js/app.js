@@ -74,6 +74,7 @@ document.addEventListener('DOMContentLoaded', function() {
         updateLiuyuePillars(0);
         updateZhiRelations();
         updateTianGanWuHe();
+        updateShensha();
         updateLiunianJudgment(0);
         updateSuiyunGeju(0, 0);
 
@@ -174,6 +175,9 @@ function selectDayun(index) {
 
     // 更新天干五合
     updateTianGanWuHe();
+
+    // 更新大運流年神煞
+    updateShensha();
 
     // 更新流年判斷區域
     updateLiunianJudgment(index);
@@ -470,6 +474,7 @@ function selectLiunian(index) {
 
     updateZhiRelations();
     updateTianGanWuHe();
+    updateShensha();
 
     // 更新歲運格局
     updateSuiyunGeju(currentDayunIndex, index);
@@ -820,6 +825,116 @@ function updateTianGanWuHe() {
 
     if (!html) html = '<span class="text-stone-400 text-sm">無五合</span>';
 
+    container.innerHTML = html;
+}
+
+// 更新大運流年神煞
+function updateShensha() {
+    const container = document.getElementById('dy-ln-shensha');
+    if (!container) return;
+    if (!window.dayunData || !window.fourPillars || !window.shenshaConstants) return;
+
+    const sc = window.shenshaConstants;
+    const dayunIndex = currentDayunIndex;
+    const liunianIndex = currentLiunianIndex;
+
+    const liunianList = window.liunianByDayun ? window.liunianByDayun[dayunIndex] : null;
+    if (!window.dayunData[dayunIndex] || !liunianList || !liunianList[liunianIndex]) return;
+
+    const dayunGan = window.dayunData[dayunIndex]['大運干'];
+    const dayunZhi = window.dayunData[dayunIndex]['大運支'];
+    const liunianGan = liunianList[liunianIndex]['流年天干'];
+    const liunianZhi = liunianList[liunianIndex]['流年地支'];
+
+    // 獲取流月干支
+    const liuyueList = window.liuyueByLiunian && window.liuyueByLiunian[dayunIndex]
+        ? window.liuyueByLiunian[dayunIndex][liunianIndex] : null;
+    const liuyueGan = (liuyueList && liuyueList[currentLiuyueIndex]) ? liuyueList[currentLiuyueIndex]['流月天干'] : '';
+    const liuyueZhi = (liuyueList && liuyueList[currentLiuyueIndex]) ? liuyueList[currentLiuyueIndex]['流月地支'] : '';
+
+    // 原局參考點
+    const pillars = window.fourPillars;
+    if (pillars.length < 3) return;
+    const nianZhi = pillars[0].charAt(1);
+    const yueZhi = pillars[1].charAt(1);
+    const riGan = pillars[2].charAt(0);
+    const riZhi = pillars[2].charAt(1);
+
+    const shown = new Set();
+    let html = '';
+
+    function makeTag(name, position, desc, source) {
+        return `<div class="px-3 py-2 rounded-lg text-sm bg-amber-50 text-amber-700 border border-amber-200" title="${desc}">` +
+            `<span class="font-medium">${name}</span>` +
+            `<span class="opacity-70 text-xs ml-1">(${position})</span>` +
+            (source ? `<span class="opacity-50 text-xs ml-1">${source}</span>` : '') +
+            `</div>`;
+    }
+
+    function checkZhi(targetZhi, lookupValue, shenshaName, desc, source) {
+        if (!lookupValue || !targetZhi) return;
+        const key = shenshaName + '-' + targetZhi;
+        if (shown.has(key)) return;
+        const match = Array.isArray(lookupValue) ? lookupValue.includes(targetZhi) : lookupValue === targetZhi;
+        if (match) {
+            shown.add(key);
+            html += makeTag(shenshaName, targetZhi, desc, source);
+        }
+    }
+
+    function checkGan(targetGan, lookupValue, shenshaName, desc, source) {
+        if (!lookupValue || !targetGan) return;
+        const key = shenshaName + '-' + targetGan;
+        if (shown.has(key)) return;
+        if (lookupValue === targetGan) {
+            shown.add(key);
+            html += makeTag(shenshaName, targetGan, desc, source);
+        }
+    }
+
+    // 大運/流年/流月目標
+    const targets = [
+        { gan: dayunGan, zhi: dayunZhi, label: '大運' },
+        { gan: liunianGan, zhi: liunianZhi, label: '流年' }
+    ];
+    if (liuyueGan && liuyueZhi) {
+        targets.push({ gan: liuyueGan, zhi: liuyueZhi, label: '流月' });
+    }
+
+    for (const t of targets) {
+        const src = t.label;
+
+        // 日干 → 地支
+        checkZhi(t.zhi, sc.TIAN_YI_GUI_REN[riGan], '天乙貴人', '最吉之神，遇難呈祥，逢凶化吉', src);
+        checkZhi(t.zhi, sc.TAI_JI_GUI_REN[riGan], '太極貴人', '主研究哲理、玄學、宗教，與神佛有緣', src);
+        checkZhi(t.zhi, sc.WEN_CHANG[riGan], '文昌貴人', '主文藝才能，聰明好學，多才多藝', src);
+        checkZhi(t.zhi, sc.YANG_REN[riGan], '陽刃', '主性格剛烈，膽大妄為，易衝動', src);
+        checkZhi(t.zhi, sc.FEI_REN[riGan], '飛刃', '主意外血光，外傷，手術', src);
+        checkZhi(t.zhi, sc.HONG_YAN[riGan], '紅艷', '主風流多情，人緣佳，異性緣旺', src);
+
+        // 年支 → 地支
+        checkZhi(t.zhi, sc.YI_MA[nianZhi], '驛馬', '主移動、奔波、遠行、變動', src);
+        checkZhi(t.zhi, sc.TAO_HUA[nianZhi], '桃花', '主情慾、人緣、藝術才華', src);
+        checkZhi(t.zhi, sc.JIANG_XING[nianZhi], '將星', '主領導能力，權威', src);
+        checkZhi(t.zhi, sc.HUA_GAI[nianZhi], '華蓋', '主思想獨特，與神佛有緣', src);
+        checkZhi(t.zhi, sc.JIE_SHA[nianZhi], '劫煞', '主破財、劫難', src);
+        checkZhi(t.zhi, sc.WANG_SHEN[nianZhi], '亡神', '主失脫、亡失', src);
+        checkZhi(t.zhi, sc.PI_TOU[nianZhi], '披頭', '主喪事、孝服', src);
+        checkZhi(t.zhi, sc.JIAN_FENG[nianZhi], '劍鋒', '主血光、外傷', src);
+
+        // 日支 → 地支
+        checkZhi(t.zhi, sc.TAO_HUA[riZhi], '桃花', '主情慾、人緣、藝術才華', src);
+        checkZhi(t.zhi, sc.HUA_GAI[riZhi], '華蓋', '主思想獨特，與神佛有緣', src);
+        checkZhi(t.zhi, sc.HONG_LUAN[riZhi], '紅鸞', '主婚喜、喜事', src);
+        checkZhi(t.zhi, sc.TIAN_XI[riZhi], '天喜', '主喜慶、吉祥', src);
+
+        // 月支 → 天干
+        checkGan(t.gan, sc.TIAN_DE[yueZhi], '天德貴人', '至吉之神，主福祿壽考', src);
+        checkGan(t.gan, sc.YUE_DE[yueZhi], '月德貴人', '主福份深，有人緣，貴人多', src);
+        checkGan(t.gan, sc.YUE_DE_HE[yueZhi], '月德合', '主女貴人相助', src);
+    }
+
+    if (!html) html = '<span class="text-stone-400 text-sm">無神煞</span>';
     container.innerHTML = html;
 }
 

@@ -202,12 +202,20 @@
             </div>    {{ macros.render_annotation('sec_8', client_id, annotations) }}
         </section>
 
+        <!-- 大運流年神煞 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
+            <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">大運流年神煞</h3>
+            <div id="dy-ln-shensha" class="flex flex-wrap gap-2">
+                <!-- 動態內容將由 JavaScript 更新 -->
+            </div>    {{ macros.render_annotation('sec_9', client_id, annotations) }}
+        </section>
+
         <!-- 天干五合 -->
         <section class="bg-white rounded-2xl shadow-sm border border-stone-100 p-5">
             <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">天干五合</h3>
             <div id="tian-gan-wu-he" class="flex flex-wrap gap-2">
                 <!-- 动态内容将由 JavaScript 更新 -->
-            </div>    {{ macros.render_annotation('sec_9', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_10', client_id, annotations) }}
         </section>
 
         <!-- 十神性格 -->
@@ -215,7 +223,7 @@
             <h3 class="text-sm font-bold text-stone-500 uppercase tracking-widest mb-4">十神性格</h3>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                 {{ macros.render_shishen_personality(shishen_data) }}
-            </div>    {{ macros.render_annotation('sec_10', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_11', client_id, annotations) }}
         </section>
 
         <!-- 命理精斷（十神組合） - Phase 2 -->
@@ -232,7 +240,7 @@
                     <div class="text-sm text-indigo-800 leading-relaxed">{{ item.斷語 }}</div>
                 </div>
                 {% endfor %}
-            </div>    {{ macros.render_annotation('sec_11', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_12', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -290,7 +298,7 @@
                     {% endfor %}
                 </div>
             </div>
-            {% endif %}    {{ macros.render_annotation('sec_12', client_id, annotations) }}
+            {% endif %}    {{ macros.render_annotation('sec_13', client_id, annotations) }}
         </section>
 
         <!-- 原局格局（先天命格） -->
@@ -333,7 +341,7 @@
                         <div class="text-xs text-red-600">{{ yuan_ju_ge_ju.get('忌神五行', []) | join('、') }}</div>
                     </div>
                 </div>
-            </div>    {{ macros.render_annotation('sec_13', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_14', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -372,7 +380,7 @@
                     <div class="text-sm text-stone-500 font-medium mb-2">斷語</div>
                     <div class="text-sm text-stone-700" id="suiyun-duanyu-display">{{ sui_yun_ge_ju.get('斷語', '') }}</div>
                 </div>
-            </div>    {{ macros.render_annotation('sec_14', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_15', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -432,7 +440,7 @@
                         <!-- 由 JavaScript 動態生成，根據選擇的大運變動 -->
                     </div>
                 </div>
-            </div>    {{ macros.render_annotation('sec_15', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_16', client_id, annotations) }}
         </section>
 
 
@@ -467,7 +475,7 @@
                     <span class="text-stone-500">根氣論斷：</span>
                     <span class="font-medium text-stone-700">{{ gen_qi_lun_duan }}</span>
                 </div>
-            </div>    {{ macros.render_annotation('sec_16', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_17', client_id, annotations) }}
         </section>
 
         <!-- 移花接木 -->
@@ -497,7 +505,7 @@
                     <div class="text-sm text-stone-600">大運中無辰、戌、丑、未四庫，平穩過渡</div>
                 </div>
                 {% endif %}
-            </div>    {{ macros.render_annotation('sec_17', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_18', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -535,7 +543,7 @@
                     {% endfor %}
                 </div>
                 {% endif %}
-            </div>    {{ macros.render_annotation('sec_18', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_19', client_id, annotations) }}
         </section>
 
         <!-- 六十甲子 -->
@@ -559,7 +567,7 @@
                         {% endfor %}
                     </div>
                 </div>
-            </div>    {{ macros.render_annotation('sec_19', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_20', client_id, annotations) }}
         </section>
 
         <!-- 一柱論命 -->
@@ -601,7 +609,7 @@
                     <div class="text-sm text-red-800 leading-relaxed">{{ yi_zhu.get('特殊斷語', '') }}</div>
                 </div>
                 {% endif %}
-            </div>    {{ macros.render_annotation('sec_20', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_21', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -632,7 +640,7 @@
                     {% endfor %}
                 </div>
             </div>
-            {% endif %}    {{ macros.render_annotation('sec_21', client_id, annotations) }}
+            {% endif %}    {{ macros.render_annotation('sec_22', client_id, annotations) }}
         </section>
         {% endif %}
 
@@ -694,7 +702,7 @@
                         </div>
                     </div>
                 </div>
-            </div>    {{ macros.render_annotation('sec_22', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_23', client_id, annotations) }}
         </section>
 
         <!-- 干支象法 -->
@@ -806,7 +814,7 @@
                     </div>
                 </div>
                 {% endif %}
-            </div>    {{ macros.render_annotation('sec_23', client_id, annotations) }}
+            </div>    {{ macros.render_annotation('sec_24', client_id, annotations) }}
         </section>
         {% endif %}
     </main>
@@ -833,6 +841,9 @@
 
         // 歲運格局全部數據（全局變量）
         window.suiyunGejuAll = {{ sui_yun_ge_ju_all_json | safe }};
+
+        // 神煞常量（全局變量）
+        window.shenshaConstants = {{ shensha_constants_json | safe }};
 
         // CRM 功能
         const clientId = "{{ client_id | default('') }}";

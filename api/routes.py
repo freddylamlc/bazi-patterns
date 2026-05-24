@@ -11,7 +11,14 @@ from fastapi.templating import Jinja2Templates
 from pydantic import BaseModel
 
 from bazi import BaZiCalculator
-from bazi.core.constants import TIAN_GAN_YIN_YANG, TIAN_GAN_WU_XING as GAN_WU_XING, ZHI_WU_XING, ZHI_CANG_GAN, TIAN_GAN_ZHANG_SHENG
+from bazi.core.constants import (
+    TIAN_GAN_YIN_YANG, TIAN_GAN_WU_XING as GAN_WU_XING, ZHI_WU_XING, ZHI_CANG_GAN, TIAN_GAN_ZHANG_SHENG,
+    TIAN_YI_GUI_REN, TAI_JI_GUI_REN, HONG_YAN, YANG_REN, FEI_REN,
+    WEN_CHANG, YI_MA, TAO_HUA, JIANG_XING, HUA_GAI,
+    JIE_SHA, WANG_SHEN, PI_TOU, JIAN_FENG,
+    TIAN_DE, YUE_DE, YUE_DE_HE, HONG_LUAN, TIAN_XI,
+    XUE_TANG, YIN_YANG_SHA, SAN_SHA_KU
+)
 from bazi.calculations.shishen import get_shi_shen
 from bazi.db import save_client, get_client, update_annotation, search_clients, delete_client
 
@@ -440,6 +447,30 @@ def prepare_bazi_context(request: Request, res: dict) -> dict:
         "four_pillars_json": json.dumps(ba_zi_parts, ensure_ascii=False),
         "dayun_data_json": json.dumps(da_yun_fen_xi, ensure_ascii=False),
         "sui_yun_ge_ju_all_json": json.dumps(res.get('歲運格局全部', []), ensure_ascii=False),
+        "shensha_constants_json": json.dumps({
+            "TIAN_YI_GUI_REN": TIAN_YI_GUI_REN,
+            "TAI_JI_GUI_REN": TAI_JI_GUI_REN,
+            "HONG_YAN": HONG_YAN,
+            "YANG_REN": YANG_REN,
+            "FEI_REN": FEI_REN,
+            "WEN_CHANG": WEN_CHANG,
+            "YI_MA": YI_MA,
+            "TAO_HUA": TAO_HUA,
+            "JIANG_XING": JIANG_XING,
+            "HUA_GAI": HUA_GAI,
+            "JIE_SHA": JIE_SHA,
+            "WANG_SHEN": WANG_SHEN,
+            "PI_TOU": PI_TOU,
+            "JIAN_FENG": JIAN_FENG,
+            "TIAN_DE": TIAN_DE,
+            "YUE_DE": YUE_DE,
+            "YUE_DE_HE": YUE_DE_HE,
+            "HONG_LUAN": HONG_LUAN,
+            "TIAN_XI": TIAN_XI,
+            "XUE_TANG": XUE_TANG,
+            "YIN_YANG_SHA": YIN_YANG_SHA,
+            "SAN_SHA_KU": SAN_SHA_KU,
+        }, ensure_ascii=False),
         "has_zhi_relations": any(res.get('地支關係', {}).values()),
         "birth_year": res.get('birth_chinese_year', res.get('birth_year', 1990)),
         "current_year": datetime.now().year,

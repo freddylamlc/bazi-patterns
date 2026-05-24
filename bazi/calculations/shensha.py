@@ -54,6 +54,25 @@ def calculate_shensha_for_day_gan(day_gan: str, zhi_list: list) -> list:
     return results
 
 
+def calculate_tian_yi_gui_ren(ri_gan: str, zhi_list: list) -> list:
+    """
+    計算天乙貴人
+
+    Args:
+        ri_gan: 日天干
+        zhi_list: 地支列表
+
+    Returns:
+        神煞列表
+    """
+    results = []
+    tian_yi_zhis = TIAN_YI_GUI_REN.get(ri_gan, [])
+    for zhi in zhi_list:
+        if zhi in tian_yi_zhis:
+            results.append({"神煞": "天乙貴人", "地支": zhi, "位置": zhi, "說明": "最吉之神，主遇難呈祥，逢凶化吉，貴人相助"})
+    return results
+
+
 def calculate_shensha_for_nian_zhi(nian_zhi: str, zhi_list: list) -> list:
     """
     計算年支對應的神煞
@@ -264,6 +283,7 @@ def calculate_shensha(ba_zi: str) -> dict:
 
     # 實用神煞
     shi_yong_shen_sha.extend(calculate_shensha_for_day_gan(ri_gan, zhi_list))
+    shi_yong_shen_sha.extend(calculate_tian_yi_gui_ren(ri_gan, zhi_list))
     shi_yong_shen_sha.extend(calculate_shensha_for_nian_zhi(nian_zhi, zhi_list))
     shi_yong_shen_sha.extend(calculate_shensha_for_ri_zhi(ri_zhi, zhi_list))
     shi_yong_shen_sha.extend(calculate_shensha_for_yue_zhi(yue_zhi, gan_list))
