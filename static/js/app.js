@@ -131,8 +131,18 @@ function selectDayun(index) {
 
     // 更新當前大運柱顯示
     if (window.dayunData[index]) {
-        document.getElementById('current-dayun-gan').textContent = window.dayunData[index]['大運干'];
-        document.getElementById('current-dayun-zhi').textContent = window.dayunData[index]['大運支'];
+        const dyGanWX = ganWuXing[window.dayunData[index]['大運干']] || '土';
+        const dyZhiWX = zhiWuXing[window.dayunData[index]['大運支']] || '土';
+        const dyGanColor = wuXingColors[dyGanWX];
+        const dyZhiColor = wuXingColors[dyZhiWX];
+
+        const dyGanEl = document.getElementById('current-dayun-gan');
+        dyGanEl.textContent = window.dayunData[index]['大運干'];
+        dyGanEl.className = `w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold rounded-full ${dyGanColor.bg} ${dyGanColor.text} border-2 ${dyGanColor.border}`;
+
+        const dyZhiEl = document.getElementById('current-dayun-zhi');
+        dyZhiEl.textContent = window.dayunData[index]['大運支'];
+        dyZhiEl.className = `w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold ${dyZhiColor.text}`;
         document.getElementById('current-dayun-shishen').textContent = window.dayunData[index]['十神'];
 
         // 更新大運藏干
@@ -488,8 +498,18 @@ function updateLiunianDisplay(index) {
     const lnData = liunianList ? liunianList[index] : null;
     if (!lnData) return;
 
-    document.getElementById('current-liunian-gan').textContent = lnData['流年天干'];
-    document.getElementById('current-liunian-zhi').textContent = lnData['流年地支'];
+    const lnGanWX = ganWuXing[lnData['流年天干']] || '土';
+    const lnZhiWX = zhiWuXing[lnData['流年地支']] || '土';
+    const lnGanColor = wuXingColors[lnGanWX];
+    const lnZhiColor = wuXingColors[lnZhiWX];
+
+    const lnGanEl = document.getElementById('current-liunian-gan');
+    lnGanEl.textContent = lnData['流年天干'];
+    lnGanEl.className = `w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold rounded-full ${lnGanColor.bg} ${lnGanColor.text} border-2 ${lnGanColor.border}`;
+
+    const lnZhiEl = document.getElementById('current-liunian-zhi');
+    lnZhiEl.textContent = lnData['流年地支'];
+    lnZhiEl.className = `w-11 h-11 flex items-center justify-center text-2xl font-serif font-bold ${lnZhiColor.text}`;
     document.getElementById('current-liunian-shishen').textContent = lnData['流年十神'];
 
     // 更新流年藏干

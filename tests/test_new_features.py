@@ -68,6 +68,98 @@ class TestYiZhuLunMing:
         assert result['日柱'] == '無效'
         assert result['婚姻斷語'] == '暫無數據'
 
+    def test_yi_zhu_unknown_has_all_keys(self):
+        """測試未知日柱回退 dict 包含所有新鍵"""
+        from bazi.analysis.yizhu import calculate_yi_zhu
+
+        result = calculate_yi_zhu('無效', '男')
+
+        assert '日柱總論' in result
+        assert '干支關係' in result
+        assert '性別' in result
+        assert isinstance(result['干支關係'], dict)
+        assert '關係類型' in result['干支關係']
+
+    def test_yi_zhu_new_keys(self):
+        """測試一柱論命返回新鍵（日柱總論、干支關係、性別）"""
+        from bazi.analysis.yizhu import calculate_yi_zhu
+
+        result = calculate_yi_zhu('甲子', '男')
+
+        assert '日柱總論' in result
+        assert '干支關係' in result
+        assert '性別' in result
+        assert result['性別'] == '男'
+        assert isinstance(result['干支關係'], dict)
+        assert '關係類型' in result['干支關係']
+        assert '關係描述' in result['干支關係']
+        assert '吉凶影響' in result['干支關係']
+
+
+class TestAnalyzeGanZhiRelation:
+    """測試干支關係分析函數"""
+
+    def test_ge_tou(self):
+        """測試蓋頭（天干剋地支）"""
+        from bazi.analysis.yizhu import _analyze_gan_zhi_relation
+
+        # 甲木剋戊土
+        result = _analyze_gan_zhi_relation('甲', '戌')
+        assert result['關係類型'] in ('蓋頭', '干支暗合')  # 戌有辛，可能觸發暗合
+
+    def test_jie_jiao(self):
+        """測試截腳（地支剋天干）"""
+        from bazi.analysis.yizhu import _analyze_gan_zhi_relation
+
+        # 酉金剋甲木（但甲酉無暗合）
+        result = _analyze_gan_zhi_relation('甲', '酉')
+        assert result['關係類型'] == '截腳'
+
+    def test_xie_qi(self):
+        """測試洩氣（天干生地支）"""
+        from bazi.analysis.yizhu import _analyze_gan_zhi_relation
+
+        # 甲木生午火（午藏己丁，甲己合可能觸發暗合）
+        result = _analyze_gan_zhi_relation('甲', '午')
+        assert result['關係類型'] in ('洩氣', '干支暗合')
+
+    def test_zhi_sheng_gan(self):
+        """測試支生干（地支生天干）"""
+        from bazi.analysis.yizhu import _analyze_gan_zhi_relation
+
+        # 子水生甲木
+        result = _analyze_gan_zhi_relation('甲', '子')
+        assert result['關係類型'] == '支生干'
+
+    def test_tong_qi(self):
+        """測試干支同氣"""
+        from bazi.analysis.yizhu import _analyze_gan_zhi_relation
+
+        # 乙木 + 卯木 = 同氣（卯藏乙，可能觸發暗合）
+        result = _analyze_gan_zhi_relation('乙', '卯')
+        assert result['關係類型'] in ('干支同氣', '干支暗合')
+
+    def test_empty_input_no_false_positive(self):
+        """測試空字符串不會產生假陽性「干支同氣」"""
+        from bazi.analysis.yizhu import _analyze_gan_zhi_relation
+
+        result = _analyze_gan_zhi_relation('', '')
+        assert result['關係類型'] != '干支同氣'
+        assert result['關係類型'] == '無特殊關係'
+
+    def test_result_has_all_keys(self):
+        """測試返回 dict 包含所有必要鍵"""
+        from bazi.analysis.yizhu import _analyze_gan_zhi_relation
+
+        result = _analyze_gan_zhi_relation('甲', '子')
+        assert '日干五行' in result
+        assert '日支五行' in result
+        assert '關係類型' in result
+        assert '關係描述' in result
+        assert '吉凶影響' in result
+        assert result['日干五行'] == '木'
+        assert result['日支五行'] == '水'
+
 
 class TestGanZhiXiang:
     """測試干支象法模塊"""

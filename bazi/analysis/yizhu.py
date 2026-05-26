@@ -134,11 +134,13 @@ def _analyze_gan_zhi_relation(day_gan: str, day_zhi: str) -> dict:
 
     # 檢查天干五合（日干與日支藏干）
     cang_gan_data = ZHI_CANG_GAN.get(day_zhi, {})
-    cang_gan_list = [v for v in (cang_gan_data.get('主氣'), cang_gan_data.get('中氣'), cang_gan_data.get('餘氣')) if v]
+    cang_gan_list = [v for v in (cang_gan_data.get('主氣'), cang_gan_data.get('中氣'), cang_gan_data.get('餘氣')) if v is not None]
     for cg in cang_gan_list:
         pair1 = day_gan + cg
         pair2 = cg + day_gan
-        he_info = TIAN_GAN_WU_HE.get(pair1) or TIAN_GAN_WU_HE.get(pair2)
+        he_info = TIAN_GAN_WU_HE.get(pair1)
+        if not he_info:
+            he_info = TIAN_GAN_WU_HE.get(pair2)
         if he_info:
             result["關係類型"] = "干支暗合"
             result["關係描述"] = f"{day_gan}{day_zhi}：日干{day_gan}與日支藏干{cg}暗合（{he_info['合名']}）"
@@ -174,7 +176,7 @@ def _analyze_gan_zhi_relation(day_gan: str, day_zhi: str) -> dict:
         return result
 
     # 干支同五行
-    if gan_wx == zhi_wx:
+    if gan_wx and zhi_wx and gan_wx == zhi_wx:
         result["關係類型"] = "干支同氣"
         result["關係描述"] = f"{day_gan}{day_zhi}：天干{day_gan}與地支{day_zhi}同屬{gan_wx}"
         result["吉凶影響"] = "干支同氣，根基穩固，自我意識強，主觀能動性高"
@@ -495,8 +497,8 @@ def _generate_duan_yu(liu_shi_jia_zi_data: dict, gender: str) -> dict:
     根據六十甲子體象論數據生成斷語
     """
     day_pillar = liu_shi_jia_zi_data.get("日柱", "")
-    day_gan = day_pillar[0] if day_pillar else ""
-    day_zhi = day_pillar[1] if day_pillar else ""
+    day_gan = day_pillar[0] if len(day_pillar) >= 2 else ""
+    day_zhi = day_pillar[1] if len(day_pillar) >= 2 else ""
 
     # 獲取旬信息
     xun_tuple = get_xun(day_pillar) if day_pillar else None
@@ -534,7 +536,7 @@ def _generate_duan_yu(liu_shi_jia_zi_data: dict, gender: str) -> dict:
     personality = "；".join(xingge_parts) if xingge_parts else ""
 
     # ---- 強化婚姻斷語：結合干支關係 ----
-    marriage_parts = liu_qin_analysis["婚姻判斷"]
+    marriage_parts = list(liu_qin_analysis["婚姻判斷"])
     relation_type = gan_zhi_relation["關係類型"]
     if relation_type == "蓋頭":
         marriage_parts.append("日支受剋，婚姻中命主較強勢，配偶壓力大")
@@ -609,8 +611,11 @@ def calculate_yi_zhu(day_pillar: str, gender: str = "男") -> dict:
     Returns:
         {
             "日柱": str,
+            "性別": str,
             "所屬旬": str,
             "空亡": str,
+            "日柱總論": str,
+            "干支關係": dict,
             "婚姻斷語": str,
             "六親斷語": str,
             "健康斷語": str,
@@ -622,8 +627,11 @@ def calculate_yi_zhu(day_pillar: str, gender: str = "男") -> dict:
     if not day_pillar or day_pillar not in LIU_SHI_JIA_ZI_ORDER:
         return {
             "日柱": day_pillar,
+            "性別": gender,
             "所屬旬": "未知",
             "空亡": "未知",
+            "日柱總論": "",
+            "干支關係": {"日干五行": "", "日支五行": "", "關係類型": "", "關係描述": "", "吉凶影響": ""},
             "婚姻斷語": "暫無數據",
             "六親斷語": "暫無數據",
             "健康斷語": "暫無數據",

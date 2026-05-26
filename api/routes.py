@@ -40,6 +40,8 @@ def _get_chinese_year_from_pillar(year_pillar: str) -> int:
 
 router = APIRouter()
 templates = Jinja2Templates(directory="templates")
+templates.env.trim_blocks = True
+templates.env.lstrip_blocks = True
 
 # 提供給 Jinja 的全局常量
 templates.env.globals['GAN_WU_XING'] = GAN_WU_XING
@@ -383,9 +385,6 @@ def prepare_bazi_context(request: Request, res: dict) -> dict:
         "di_zhi_de_gen": res.get('旺衰', {}).get('地支得根', []),
         "wang_shuai": res.get('旺衰', {}),
         "bazi_parts_gan": [p[0] for p in ba_zi_parts],
-        "ri_zhu_gen_qi_zong": res.get('旺衰', {}).get('日主旺衰', {}).get('根氣強度', 0),
-        "gen_qi_lun_duan": res.get('旺衰', {}).get('根氣論斷', '虛浮無根'),
-        
         "yue_ling": xian_tian_bing_yuan.get('月令', {}).get('月支', ''),
         "dang_ling_wu_xing": xian_tian_bing_yuan.get('月令', {}).get('當令五行', ''),
         "wu_xing_fen_bu": xian_tian_bing_yuan.get('五行分布', {}),
@@ -435,9 +434,7 @@ def prepare_bazi_context(request: Request, res: dict) -> dict:
         "yuan_ju_ge_ju": res.get('原局格局', {}),
         "sui_yun_ge_ju": res.get('歲運格局', {}),
         "yi_zhu": res.get('一柱論命', {}),
-        "bazi_gua": res.get('bazi_gua', {}),
         "shishen_combinations": integrated.get('十神組合斷語', []),
-        "health_suggestions": integrated.get('健康分析', {}).get('生活調理', {}),
         "ganzhi_xiang": res.get('干支象法', {}),
         "yi_hua_jie_mu": res.get('移花接木', {}),
         

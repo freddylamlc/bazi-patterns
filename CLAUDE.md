@@ -135,6 +135,16 @@ ln_zhi_idx = (year_zhi_idx + liunian_age) % 12
 - `birthYear` 使用年柱推算的中國年份（非公曆出生年），確保立春前出生者計算正確
 - `app.js` 僅在結果頁執行初始化（通過檢測 `#liunian-pillar-container` 守衛）
 
+### 前端五行顏色更新
+- 點擊大運/流年/流月時，頂部排盤的天干地支需同步更新五行顏色
+- `selectDayun()` 和 `updateLiunianDisplay()` 通過 `className` 設置 Tailwind 五行色類
+- 參照 `updateLiuyueDisplay()` 的模式：查找 `ganWuXing`/`zhiWuXing` → `wuXingColors` → 設置 `className`
+
+### Jinja2 模板注意事項
+- **必須**使用 `{%- ... -%}` 白空格控制，避免宏輸出中的 `\n` 汙染 `class=""` 屬性
+- Jinja2 環境已設置 `trim_blocks=True` 和 `lstrip_blocks=True`
+- 五行顏色宏：`render_wuxing_class(wx)`（天干背景色）和 `render_wuxing_text_class(wx)`（地支文字色）
+
 ## 格局判斷規則
 
 ### 定格優先級
