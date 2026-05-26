@@ -188,7 +188,7 @@ calculator.cang_gan           # 藏干
 calculator.wang_shuai         # 旺衰
 calculator.shi_shen           # 十神
 calculator.ge_ju              # 格局判斷
-calculator.integrated_analysis # 整合分析
+calculator.integrated_analysis # 整合分析（含十神組合斷語、干支生剋斷語、五行斷語、格局斷語）
 calculator.dayun_pan_duan     # 大運判斷
 calculator.liunian_pan_duan   # 流年判斷
 calculator.yi_zhu             # 一柱論命
@@ -198,7 +198,57 @@ calculator.yuan_ju_ge_ju      # 原局格局
 calculator.suiyun_ge_ju       # 歲運格局
 calculator.bazi_gua           # 八字卦象
 calculator.yi_hua_jie_mu      # 移花接木
+calculator.fan_sheng_ke       # 反生為剋/反剋為生
+calculator.get_liuyue(dayun_gz, liunian_gz)  # 流月分析（12 個月，含格局影響）
 ```
+
+## 新增分析功能（2026-05）
+
+### 根氣映射修正
+- `wangshuai.py` 和 `geju.py` 使用 `TIAN_GAN_DE_GEN` 常數取代簡化的 `wuxing_to_zhi`
+- 例：甲根在寅卯辰未亥，不再只取寅卯
+
+### 降格概念（geju.py）
+- 格局成敗三分：成格 / 降格 / 破格
+- 吉神單根被剋但有印星化解 → 降格
+- 凶神單根被剋但有食傷/印星制化 → 降格
+
+### 反生為剋 / 反剋為生（ganzhi.py）
+- `calculate_fan_sheng_ke(ba_zi)` 檢查所有 6 組天干對
+- 反生為剋：目標根氣 ≥3 或 ≥2 且得令
+- 反剋為生：目標根氣 =0 且不得令
+
+### 神煞增強（shensha.py）
+- 新增：孤鸞煞、陰陽差錯、八專（淫慾煞）、九醜（妨害煞）
+- 桃花統一計算，區分墻內（年月）/墻外（日時）
+- `calculate_shensha(ba_zi, gender)` 接受性別參數
+
+### 十二長生關鍵階段（changsheng.py）
+- 7 個關鍵階段標記：長生、臨官、帝旺、墓、絕、沐浴、死
+- 輸出含「是否關鍵階段」和「關鍵階段」列表
+
+### 疾病預測增強（gongwei.py）
+- 藏干入墓：檢查藏干五行對應墓庫是否在四柱
+- 地支沖剋臟腑：六沖配對映射臟腑
+- 日主長生階段：病/死/墓標記體質弱點
+
+### 三刑跨歲運（relations.py + dayun_liunian.py）
+- `check_san_xing_suiyun(natal_zhi, suiyun_zhi)` 檢查丑戌未/寅巳申/子卯/自刑
+- 大運和流年判斷中自動調用
+
+### 斷語數據庫整合（integrated.py）
+- 十神組合斷語改為數據驅動（`SHISHEN_COMBINATION_DUAN_YU`）
+- 新增輸出鍵：干支生剋斷語、五行斷語、格局斷語
+
+### 流月分析（dayun_liunian.py）
+- `calculate_liuyue_pan_duan()` 使用五虎遁計算 12 個月天干
+- 每月含格局影響、吉凶、用神/喜神/忌神到位分析
+- API 路由已整合，前端可展示
+
+### 大運格局轉化（geju.py + dayun_liunian.py）
+- `calculate_dayun_geju_transformation()` 分析大運對格局的影響
+- 類型：用神到位/相神到位/忌神到位/沖動/成格遇忌神/破格遇救神
+- 結果附在 `calculate_dayun_yingdong()` 返回值中
 
 ## 配置系統
 
