@@ -13,7 +13,7 @@ from bazi.core.constants import (
     ZHI_CANG_GAN, TIAN_GAN_ZHANG_SHENG, GAN_ZHI_KONG_WANG, TIAN_GAN_WU_HE,
 )
 from bazi.calculations.shishen import _calculate_shi_shen as get_shi_shen
-from bazi.calculations.relations import check_zhi_damaged
+from bazi.calculations.relations import check_zhi_damaged, check_san_xing_suiyun
 
 # Alias for backward compatibility in this module
 check_sui_yun_damaged = check_zhi_damaged
@@ -207,6 +207,13 @@ def calculate_dayun_pan_duan(ba_zi: str, ge_ju: dict, detailed_dayun: dict,
 
         if genqi_damaged:
             ge_ju_ying_xiang += f"，根氣受損：{','.join(genqi_damaged)}"
+
+        # 9. 三刑跨歲運引動
+        san_xing_results = check_san_xing_suiyun(mingju_zhi_list, [dy_zhi])
+        if san_xing_results:
+            for sx in san_xing_results:
+                sui_yun_ying_xiang.append(f"三刑引動：{sx['說明']}")
+                ge_ju_ying_xiang += f"，三刑引動：{sx['刑']}"
 
         # 綜合判斷
         sui_yun_ying_xiang = []
@@ -483,6 +490,14 @@ def calculate_liunian_pan_duan(ba_zi: str, ge_ju: dict, dayun_pan_duan: dict,
                 elif jixing == "凶":
                     ge_ju_ying_xiang += "，日支受沖，凶上加凶"
 
+            # 三刑跨歲運引動
+            mingju_zhi_list = [p[1] for p in ba_zi_parts]
+            san_xing_results = check_san_xing_suiyun(mingju_zhi_list, [dy_zhi, ln_zhi])
+            if san_xing_results:
+                for sx in san_xing_results:
+                    sui_yun_ying_xiang.append(f"三刑引動：{sx['說明']}")
+                    ge_ju_ying_xiang += f"，三刑引動：{sx['刑']}"
+
             # 原局破格時的判斷
             if is_po_ge and jixing not in ["大吉", "吉"]:
                 jixing = "凶"
@@ -621,6 +636,10 @@ def calculate_dayun_yingdong(
         ying_xiang = "減弱"
         yin_dong_shuo_ming.append(f"大運天干{dayun_gan}剋用神")
 
+    # 格局轉化分析
+    from bazi.analysis.geju import calculate_dayun_geju_transformation
+    geju_transformation = calculate_dayun_geju_transformation(ba_zi, yuan_ju_ge_ju, dayun)
+
     return {
         "大運": dayun_gan_zhi,
         "大運天干": dayun_gan,
@@ -630,6 +649,7 @@ def calculate_dayun_yingdong(
         },
         "對格局影響": ying_xiang,
         "大運十神": dayun_shishen,
+        "格局轉化": geju_transformation,
     }
 
 
@@ -828,3 +848,151 @@ def calculate_suiyun_geju(
         "應事": ying_shi,
         "斷語": duan_yu,
     }
+
+
+# 五虎遁：年干 → 寅月天干起始索引
+WU_HU_DUN = {"甲": 2, "己": 2, "乙": 4, "庚": 4, "丙": 6, "辛": 6, "丁": 8, "壬": 8, "戊": 0, "癸": 0}
+GAN_ORDER = ["甲", "乙", "丙", "丁", "戊", "己", "庚", "辛", "壬", "癸"]
+ZHI_ORDER = ["子", "丑", "寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥"]
+MONTH_NAMES = ["正月", "二月", "三月", "四月", "五月", "六月", "七月", "八月", "九月", "十月", "十一月", "十二月"]
+
+
+def calculate_liuyue_pan_duan(ba_zi: str, ge_ju: dict, dayun_gan_zhi: str,
+                                liunian_gan_zhi: str) -> list:
+    """
+    計算流月判斷（12 個月）
+
+    使用五虎遁計算每月天干，結合流月地支評估格局影響。
+
+    Args:
+        ba_zi: 八字字符串
+        ge_ju: 格局判斷字典
+        dayun_gan_zhi: 大運干支（如 "甲子"）
+        liunian_gan_zhi: 流年干支（如 "丙寅"）
+
+    Returns:
+        12 個流月分析列表
+    """
+    ba_zi_parts = ba_zi.split()
+    day_gan = ba_zi_parts[2][0]
+
+    # 格局信息
+    yong_shen = ge_ju.get("用神", "")
+    yong_shen_wuxing = TIAN_GAN_WU_XING.get(yong_shen, "") if yong_shen else ""
+    xishen_gans = ge_ju.get("喜神", [])
+    xishen_wuxing = ge_ju.get("喜神五行", [])
+    jishen_gans = ge_ju.get("忌神", [])
+    jishen_wuxing = ge_ju.get("忌神五行", [])
+    ge_name = ge_ju.get("格局", "")
+
+    # 流年干支
+    ln_gan = liunian_gan_zhi[0]
+    ln_zhi = liunian_gan_zhi[1]
+
+    # 五虎遁：根據流年天干確定寅月起始天干
+    start_idx = WU_HU_DUN.get(ln_gan, 0)
+
+    # 流月地支順序：寅卯辰巳午未申酉戌亥子丑
+    month_zhi_list = ["寅", "卯", "辰", "巳", "午", "未", "申", "酉", "戌", "亥", "子", "丑"]
+
+    results = []
+    mingju_zhi_list = [p[1] for p in ba_zi_parts]
+
+    for month_idx, month_zhi in enumerate(month_zhi_list):
+        # 計算流月天干
+        month_gan_idx = (start_idx + month_idx) % 10
+        month_gan = GAN_ORDER[month_gan_idx]
+        month_gan_wuxing = TIAN_GAN_WU_XING[month_gan]
+        month_zhi_wuxing = ZHI_WU_XING[month_zhi]
+
+        # 流月對日主的生剋
+        ly_gan_sheng_ke = ""
+        if WU_XING_SHENG.get(month_gan_wuxing) == TIAN_GAN_WU_XING[day_gan]:
+            ly_gan_sheng_ke = "相生"
+        elif WU_XING_SHENG.get(TIAN_GAN_WU_XING[day_gan]) == month_gan_wuxing:
+            ly_gan_sheng_ke = "被生"
+        elif WU_XING_KE.get(month_gan_wuxing) == TIAN_GAN_WU_XING[day_gan]:
+            ly_gan_sheng_ke = "相剋"
+        elif WU_XING_KE.get(TIAN_GAN_WU_XING[day_gan]) == month_gan_wuxing:
+            ly_gan_sheng_ke = "被剋"
+
+        # 用神/忌神分析
+        yong_shen_dao_wei = ""
+        xishen_dao_wei = ""
+        jishen_dao_wei = ""
+
+        if yong_shen and month_gan_wuxing == yong_shen_wuxing:
+            yong_shen_dao_wei = f"用神{yong_shen}到位（天干）"
+        if yong_shen and month_zhi_wuxing == yong_shen_wuxing:
+            yong_shen_dao_wei += f"、" if yong_shen_dao_wei else f"用神{yong_shen}到位（地支）"
+
+        if month_gan in xishen_gans:
+            xishen_dao_wei = f"喜神{month_gan}到位（天干）"
+        if month_gan_wuxing in xishen_wuxing:
+            if not xishen_dao_wei:
+                xishen_dao_wei = f"喜神{month_gan_wuxing}到位（天干五行）"
+
+        if month_gan in jishen_gans:
+            jishen_dao_wei = f"忌神{month_gan}到位（天干）"
+        if month_gan_wuxing in jishen_wuxing:
+            if not jishen_dao_wei:
+                jishen_dao_wei = f"忌神{month_gan_wuxing}到位（天干五行）"
+
+        # 格局影響
+        ge_ju_ying_xiang = "平穩"
+        if yong_shen_dao_wei or xishen_dao_wei:
+            if jishen_dao_wei:
+                ge_ju_ying_xiang = "喜忌交雜"
+            elif yong_shen_dao_wei:
+                ge_ju_ying_xiang = "用神到位"
+            else:
+                ge_ju_ying_xiang = "喜神到位"
+        elif jishen_dao_wei:
+            ge_ju_ying_xiang = "忌神到位"
+
+        # 吉凶判斷
+        if ge_ju_ying_xiang == "用神到位":
+            jixing = "吉"
+        elif ge_ju_ying_xiang == "喜神到位":
+            jixing = "小吉"
+        elif ge_ju_ying_xiang == "忌神到位":
+            jixing = "凶"
+        elif ge_ju_ying_xiang == "喜忌交雜":
+            jixing = "平"
+        else:
+            jixing = "平"
+
+        # 檢查流月地支與原局的沖刑
+        sui_yun_ying_xiang = []
+        for mzhi in mingju_zhi_list:
+            damaged = check_sui_yun_damaged(mzhi, [month_zhi])
+            if damaged:
+                sui_yun_ying_xiang.append(f"{mzhi}被{','.join(damaged)}")
+
+        # 三刑跨歲運
+        san_xing = check_san_xing_suiyun(mingju_zhi_list, [ln_zhi, month_zhi])
+        if san_xing:
+            for sx in san_xing:
+                sui_yun_ying_xiang.append(f"三刑引動：{sx['說明']}")
+
+        if sui_yun_ying_xiang:
+            if jixing in ["吉", "小吉"]:
+                jixing = "吉中帶凶"
+            ge_ju_ying_xiang += f"，{'；'.join(sui_yun_ying_xiang)}"
+
+        results.append({
+            "月份": MONTH_NAMES[month_idx],
+            "流月干支": f"{month_gan}{month_zhi}",
+            "天干": month_gan,
+            "地支": month_zhi,
+            "天干五行": month_gan_wuxing,
+            "地支五行": month_zhi_wuxing,
+            "對日主": ly_gan_sheng_ke,
+            "格局影響": ge_ju_ying_xiang,
+            "吉凶": jixing,
+            "用神到位": yong_shen_dao_wei,
+            "喜神到位": xishen_dao_wei,
+            "忌神到位": jishen_dao_wei,
+        })
+
+    return results

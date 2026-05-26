@@ -472,22 +472,7 @@ def _check_special_conditions(day_pillar: str, liu_qin_analysis: dict, gender: s
             if gender == "男":
                 special.append(f"妻星落空亡（{kong1}{kong2}），婚緣遲或薄")
 
-    # 陰陽差錯煞檢查
-    yin_yang_cha_cuo = ["丙子", "丁丑", "戊寅", "辛卯", "壬辰", "癸巳",
-                        "丙午", "丁未", "戊申", "辛酉", "壬戌", "癸亥"]
-    if day_pillar in yin_yang_cha_cuo:
-        if gender == "男":
-            special.append("陰陽差錯日，與妻家是非寡合")
-        else:
-            special.append("陰陽差錯日，與夫家緣薄")
-
-    # 孤鸞煞檢查
-    gu_luan = ["甲寅", "乙巳", "丙午", "丁巳", "戊午", "戊申", "辛亥", "壬子"]
-    if day_pillar in gu_luan:
-        if gender == "男":
-            special.append("孤鸞煞，剋妻")
-        else:
-            special.append("孤鸞煞，剋夫")
+    # 注意：孤鸞煞、陰陽差錯煞、八專、九醜已移至 shensha.py 統一計算
 
     return special
 
@@ -584,6 +569,36 @@ def _generate_duan_yu(liu_shi_jia_zi_data: dict, gender: str) -> dict:
     # ---- 特殊斷語 ----
     special = "；".join(special_conditions) if special_conditions else ""
 
+    # ---- 旬中六親分析 ----
+    # 同旬者先天上具有親屬關係，他旬者則為外人
+    xun_members = []
+    if xun_tuple:
+        xun_head_idx = LIU_SHI_JIA_ZI_ORDER.index(xun_tuple[0]) if xun_tuple[0] in LIU_SHI_JIA_ZI_ORDER else 0
+        xun_members = [LIU_SHI_JIA_ZI_ORDER[(xun_head_idx + k) % 60] for k in range(10)]
+
+    xun_affinity_parts = []
+    for lq in liu_qin_list:
+        member_gz = lq.get("干支", "")
+        member_name = lq.get("六親", "")
+        if member_gz in xun_members:
+            xun_affinity_parts.append(f"{member_name}（{member_gz}）與日主同旬，緣份較深")
+        else:
+            xun_affinity_parts.append(f"{member_name}（{member_gz}）與日主不同旬，緣份較淺")
+
+    xun_liu_qin = "；".join(xun_affinity_parts) if xun_affinity_parts else ""
+
+    # 增強空亡檢查：檢查所有六親是否落空亡
+    if xun_tuple:
+        kong1 = LIU_SHI_JIA_ZI_ORDER[(xun_idx + 10) % 60][1]
+        kong2_char = LIU_SHI_JIA_ZI_ORDER[(xun_idx + 11) % 60][1]
+        for lq in liu_qin_list:
+            member_zhi = lq.get("干支", "")[1] if lq.get("干支") else ""
+            member_name = lq.get("六親", "")
+            if member_zhi in [kong1, kong2_char]:
+                if f"{member_name}星落空亡" not in special_conditions:
+                    special_conditions.append(f"{member_name}星落空亡（{kong1}{kong2_char}），{member_name}緣份較薄")
+        special = "；".join(special_conditions) if special_conditions else ""
+
     return {
         "日柱": day_pillar,
         "性別": gender,
@@ -597,6 +612,7 @@ def _generate_duan_yu(liu_shi_jia_zi_data: dict, gender: str) -> dict:
         "性格斷語": personality,
         "事業斷語": career,
         "特殊斷語": special,
+        "旬中六親": xun_liu_qin,
     }
 
 

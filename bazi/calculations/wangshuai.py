@@ -38,16 +38,7 @@ def calculate_root_strength(gan: str, zhi_list: list) -> int:
     if not gan_wuxing:
         return 0
 
-    # 五行對應的地支（含藏干）
-    wuxing_to_zhi = {
-        "木": ["寅", "卯"],
-        "火": ["巳", "午"],
-        "土": ["辰", "戌", "丑", "未"],
-        "金": ["申", "酉"],
-        "水": ["亥", "子"],
-    }
-
-    target_zhi = wuxing_to_zhi.get(gan_wuxing, [])
+    target_zhi = TIAN_GAN_DE_GEN.get(gan, [])
 
     # 位置权重（月支=4, 時支=3, 日支=2, 年支=1）
     position_weights = [1, 4, 2, 3]
@@ -169,16 +160,8 @@ def calculate_wangshuai(ba_zi: str) -> dict:
     # 計算地支得根詳情
     position_weights = [1, 4, 2, 3]  # 年、月、日、時的權重
 
-    # 五行對應的地支（含藏干）
-    wuxing_to_zhi = {
-        "木": ["寅", "卯"],
-        "火": ["巳", "午"],
-        "土": ["辰", "戌", "丑", "未"],
-        "金": ["申", "酉"],
-        "水": ["亥", "子"],
-    }
     day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
-    target_zhi = wuxing_to_zhi.get(day_gan_wuxing, [])
+    target_zhi = TIAN_GAN_DE_GEN.get(day_gan, [])
 
     di_zhi_de_gen = []
     for i, zhi in enumerate(zhi_list):

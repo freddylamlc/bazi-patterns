@@ -479,3 +479,69 @@ def check_zhi_damaged(target_zhi: str, other_zhi_list: list) -> list:
                 damaged_by.append(f"{other_zhi}破")
                 break
     return damaged_by
+
+
+def check_san_xing_suiyun(natal_zhi_list: list, suiyun_zhi_list: list) -> list:
+    """
+    檢查三刑是否跨越原局與歲運
+
+    Args:
+        natal_zhi_list: 原局四柱地支列表
+        suiyun_zhi_list: 歲運地支列表（大運支 + 流年支）
+
+    Returns:
+        三刑列表
+    """
+    results = []
+    all_zhi = natal_zhi_list + suiyun_zhi_list
+    all_set = set(all_zhi)
+
+    # 恃勢之刑（丑戌未）
+    shi_shi_xing = {"丑", "戌", "未"}
+    if shi_shi_xing.issubset(all_set):
+        natal_part = [z for z in ["丑", "戌", "未"] if z in natal_zhi_list]
+        suiyun_part = [z for z in ["丑", "戌", "未"] if z in suiyun_zhi_list]
+        if natal_part and suiyun_part:
+            results.append({
+                "刑": "丑戌未恃勢之刑（歲運引動）",
+                "類": "三刑",
+                "原局": natal_part,
+                "歲運": suiyun_part,
+                "說明": f"原局有{''.join(natal_part)}，歲運來{''.join(suiyun_part)}構成三刑"
+            })
+
+    # 無恩之刑（寅巳申）
+    wu_en_xing = {"寅", "巳", "申"}
+    if wu_en_xing.issubset(all_set):
+        natal_part = [z for z in ["寅", "巳", "申"] if z in natal_zhi_list]
+        suiyun_part = [z for z in ["寅", "巳", "申"] if z in suiyun_zhi_list]
+        if natal_part and suiyun_part:
+            results.append({
+                "刑": "寅巳申無恩之刑（歲運引動）",
+                "類": "三刑",
+                "原局": natal_part,
+                "歲運": suiyun_part,
+                "說明": f"原局有{''.join(natal_part)}，歲運來{''.join(suiyun_part)}構成三刑"
+            })
+
+    # 無禮之刑（子卯）- 二刑
+    if "子" in all_set and "卯" in all_set:
+        natal_has = "子" in natal_zhi_list or "卯" in natal_zhi_list
+        suiyun_has = "子" in suiyun_zhi_list or "卯" in suiyun_zhi_list
+        if natal_has and suiyun_has:
+            results.append({
+                "刑": "子卯無禮之刑（歲運引動）",
+                "類": "相刑",
+                "說明": "原局與歲運構成子卯刑"
+            })
+
+    # 自刑（辰辰、午午、酉酉、亥亥）
+    for zhi in ["辰", "午", "酉", "亥"]:
+        if zhi in natal_zhi_list and zhi in suiyun_zhi_list:
+            results.append({
+                "刑": f"{zhi}{zhi}自刑（歲運引動）",
+                "類": "自刑",
+                "說明": f"原局有{zhi}，歲運又來{zhi}，構成自刑"
+            })
+
+    return results

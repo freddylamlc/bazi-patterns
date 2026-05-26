@@ -10,7 +10,7 @@
 from bazi.core.constants import (
     ZHI_CANG_GAN, TIAN_GAN_WU_XING, TIAN_GAN_YIN_YANG, WU_XING_SHENG, WU_XING_KE,
     TIAN_GAN_YANG, TIAN_GAN_YIN, ZHI_LIU_CHONG, ZHI_XING, ZHI_CHUAN, ZHI_PO,
-    ZHI_WU_XING,
+    ZHI_WU_XING, TIAN_GAN_DE_GEN,
 )
 from bazi.calculations.relations import check_zhi_damaged
 
@@ -213,12 +213,7 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
 
     # 檢查日主是否有根
     def day_gan_has_root():
-        day_gan_wuxing = TIAN_GAN_WU_XING.get(day_gan, "")
-        wuxing_to_zhi = {
-            "木": ["寅", "卯"], "火": ["巳", "午"], "土": ["辰", "戌", "丑", "未"],
-            "金": ["申", "酉"], "水": ["亥", "子"],
-        }
-        target_zhi = wuxing_to_zhi.get(day_gan_wuxing, [])
+        target_zhi = TIAN_GAN_DE_GEN.get(day_gan, [])
         return any(z in target_zhi for z in zhi_list)
 
     # 檢查六沖
@@ -236,12 +231,7 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
     def get_yongshen_genqi_zhi(yongshen):
         if not yongshen:
             return []
-        yongshen_wuxing = TIAN_GAN_WU_XING.get(yongshen, "")
-        wuxing_to_zhi = {
-            "木": ["寅", "卯"], "火": ["巳", "午"], "土": ["辰", "戌", "丑", "未"],
-            "金": ["申", "酉"], "水": ["亥", "子"],
-        }
-        target_zhi = wuxing_to_zhi.get(yongshen_wuxing, [])
+        target_zhi = TIAN_GAN_DE_GEN.get(yongshen, [])
         return [z for z in target_zhi if z in zhi_list]
 
     # ========== 各格局成敗判斷 ==========
@@ -551,16 +541,28 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
     root_damage_impact = None
 
     if ge_name in ji_shens:
-        # 吉神：只有一個地支有根氣，但根氣的地支被剋 → 判斷為失敗
+        # 吉神：只有一個地支有根氣，但根氣的地支被剋
         if len(genqi_zhi) == 1 and len(damaged_genqi) == 1:
             zhi, damaged_by = damaged_genqi[0]
-            root_damage_impact = {
-                "狀態": "根氣被剋",
-                "說明": f"吉神唯一根氣「{zhi}」被{', '.join(damaged_by)}，格局失敗",
-                "建議": "需從其他透出天干的十神按優先級別查找替代用神"
-            }
-            conclusion = "破格（根氣被剋）"
-            analysis.append(f"【根氣被剋】吉神唯一根氣「{zhi}」被{', '.join(damaged_by)}")
+            # 檢查是否有化解因素：印星存在
+            has_yin_xing = "正印" in shishen_count or "偏印" in shishen_count
+            if has_yin_xing:
+                # 有印星化解，降格而非破格
+                root_damage_impact = {
+                    "狀態": "根氣被剋（降格）",
+                    "說明": f"吉神唯一根氣「{zhi}」被{', '.join(damaged_by)}，但有印星化解，降格而非破格",
+                    "建議": "格局降低層次，但不至於完全破格"
+                }
+                conclusion = "降格（根氣被剋，印星化解）"
+                analysis.append(f"【降格】吉神唯一根氣「{zhi}」被{', '.join(damaged_by)}，但有印星，降格不破格")
+            else:
+                root_damage_impact = {
+                    "狀態": "根氣被剋",
+                    "說明": f"吉神唯一根氣「{zhi}」被{', '.join(damaged_by)}，格局失敗",
+                    "建議": "需從其他透出天干的十神按優先級別查找替代用神"
+                }
+                conclusion = "破格（根氣被剋）"
+                analysis.append(f"【根氣被剋】吉神唯一根氣「{zhi}」被{', '.join(damaged_by)}")
         # 吉神：根氣多於一個，且只有一個被剋 → 不判斷失敗
         elif len(genqi_zhi) > 1 and len(damaged_genqi) == 1:
             zhi, damaged_by = damaged_genqi[0]
@@ -570,16 +572,29 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
             analysis.append(f"【根氣被剋】多個根氣被剋：{', '.join([z for z, _ in damaged_genqi])}")
 
     elif ge_name in xiong_shens:
-        # 凶神：只有一個地支有根氣，但根氣的地支被剋 → 判斷為損格
+        # 凶神：只有一個地支有根氣，但根氣的地支被剋
         if len(genqi_zhi) == 1 and len(damaged_genqi) == 1:
             zhi, damaged_by = damaged_genqi[0]
-            root_damage_impact = {
-                "狀態": "根氣被剋",
-                "說明": f"凶神唯一根氣「{zhi}」被{', '.join(damaged_by)}，格局受損",
-                "建議": "凶神根氣被剋反而減輕凶性，但仍屬損格"
-            }
-            conclusion = "損格（根氣被剋）"
-            analysis.append(f"【根氣被剋】凶神唯一根氣「{zhi}」被{', '.join(damaged_by)}，格局受損")
+            # 檢查是否有化解因素：食傷制殺或印星
+            has_shi_shang = "食神" in shishen_count or "傷官" in shishen_count
+            has_yin_xing = "正印" in shishen_count or "偏印" in shishen_count
+            if has_shi_shang or has_yin_xing:
+                # 有制化，降格而非損格
+                root_damage_impact = {
+                    "狀態": "根氣被剋（降格）",
+                    "說明": f"凶神唯一根氣「{zhi}」被{', '.join(damaged_by)}，但有制化之神，降格而非損格",
+                    "建議": "格局降低層次，但凶性受控"
+                }
+                conclusion = "降格（根氣被剋，制化得力）"
+                analysis.append(f"【降格】凶神唯一根氣「{zhi}」被{', '.join(damaged_by)}，但有制化，降格不損格")
+            else:
+                root_damage_impact = {
+                    "狀態": "根氣被剋",
+                    "說明": f"凶神唯一根氣「{zhi}」被{', '.join(damaged_by)}，格局受損",
+                    "建議": "凶神根氣被剋反而減輕凶性，但仍屬損格"
+                }
+                conclusion = "損格（根氣被剋）"
+                analysis.append(f"【根氣被剋】凶神唯一根氣「{zhi}」被{', '.join(damaged_by)}，格局受損")
         # 凶神：根氣多於一個，且只有一個被剋 → 不判斷損格
         elif len(genqi_zhi) > 1 and len(damaged_genqi) == 1:
             zhi, damaged_by = damaged_genqi[0]
@@ -595,6 +610,7 @@ def judge_ge_chengbai(ge: str, pillars: list, day_gan: str,
         "根氣地支": genqi_zhi,
         "被剋根氣": damaged_genqi,
         "完好根氣": undamaged_genqi,
+        "降格": "降格" in conclusion,
     }
 
 
@@ -1565,3 +1581,129 @@ def _analyze_side_geju(pillars: list, main_ge_ju: dict) -> dict:
         "成格": cheng_ge,
         "說明": f"{pillars[0]}-{pillars[1]}，主氣{ben_qi}，天干{tian_gan_tou_chu}",
     }
+
+
+def calculate_dayun_geju_transformation(ba_zi: str, yuan_ju_ge_ju: dict, dayun: dict) -> dict:
+    """
+    檢查大運是否引動格局轉化
+
+    判斷大運是否帶來新的格局要素或破壞原有格局：
+    - 大運天干是否為用神/相神/忌神
+    - 大運地支是否增強或削弱格局根氣
+    - 大運是否帶來新的組合改變格局性質
+
+    Args:
+        ba_zi: 八字字符串
+        yuan_ju_ge_ju: 原局格局判斷
+        dayun: 大運字典（含大運干、大運支）
+
+    Returns:
+        格局轉化分析字典
+    """
+    from bazi.core.constants import (
+        TIAN_GAN_WU_XING, ZHI_WU_XING, WU_XING_SHENG, WU_XING_KE,
+        ZHI_CANG_GAN, TIAN_GAN_DE_GEN,
+    )
+
+    ba_zi_parts = ba_zi.split()
+    day_gan = ba_zi_parts[2][0]
+    dy_gan = dayun.get("大運干", "")
+    dy_zhi = dayun.get("大運支", "")
+
+    if not dy_gan or not dy_zhi:
+        return {"轉化": False, "說明": "大運信息不完整"}
+
+    ge_name = yuan_ju_ge_ju.get("格局", "")
+    ge_chengbai = yuan_ju_ge_ju.get("成敗", "")
+    yong_shen = yuan_ju_ge_ju.get("用神", "")
+    xiang_shen = yuan_ju_ge_ju.get("相神", [])
+    ji_shen = yuan_ju_ge_ju.get("忌神", [])
+
+    dy_gan_wuxing = TIAN_GAN_WU_XING.get(dy_gan, "")
+    dy_zhi_wuxing = ZHI_WU_XING.get(dy_zhi, "")
+    yong_shen_wuxing = TIAN_GAN_WU_XING.get(yong_shen, "") if yong_shen else ""
+
+    transformation = {
+        "轉化": False,
+        "類型": "",
+        "說明": "",
+        "大運干支": f"{dy_gan}{dy_zhi}",
+    }
+
+    # 1. 大運天干帶來用神或相神
+    if dy_gan == yong_shen:
+        transformation["轉化"] = True
+        transformation["類型"] = "用神到位"
+        transformation["說明"] = f"大運天干{dy_gan}為格局用神，格局增強"
+    elif dy_gan in xiang_shen:
+        transformation["轉化"] = True
+        transformation["類型"] = "相神到位"
+        transformation["說明"] = f"大運天干{dy_gan}為格局相神，格局護衛增強"
+    elif dy_gan in ji_shen:
+        transformation["轉化"] = True
+        transformation["類型"] = "忌神到位"
+        transformation["說明"] = f"大運天干{dy_gan}為格局忌神，格局受損"
+    elif dy_gan_wuxing == yong_shen_wuxing:
+        transformation["轉化"] = True
+        transformation["類型"] = "用神五行到位"
+        transformation["說明"] = f"大運天干{dy_gan}屬{dy_gan_wuxing}，與用神同五行，格局得力"
+
+    # 2. 大運地支對格局根氣的影響
+    cang_gan = ZHI_CANG_GAN.get(dy_zhi, {})
+    dy_zhi_canggan = []
+    if isinstance(cang_gan, dict):
+        for qi_type in ["主氣", "中氣", "餘氣"]:
+            gan = cang_gan.get(qi_type)
+            if gan:
+                dy_zhi_canggan.append(gan)
+
+    # 檢查大運地支藏干是否帶來用神或忌神
+    if yong_shen and yong_shen in dy_zhi_canggan:
+        if not transformation["轉化"]:
+            transformation["轉化"] = True
+            transformation["類型"] = "用神藏干到位"
+        transformation["說明"] += f"；大運支{dy_zhi}藏干有{yong_shen}（用神）"
+
+    for ji in ji_shen:
+        if ji in dy_zhi_canggan:
+            if not transformation["轉化"]:
+                transformation["轉化"] = True
+                transformation["類型"] = "忌神藏干到位"
+            transformation["說明"] += f"；大運支{dy_zhi}藏干有{ji}（忌神）"
+            break
+
+    # 3. 大運地支與原局地支的組合
+    mingju_zhi = [p[1] for p in ba_zi_parts]
+    from bazi.core.constants import ZHI_LIU_HE, ZHI_LIU_CHONG
+
+    for mzhi in mingju_zhi:
+        pair = mzhi + dy_zhi
+        reverse_pair = dy_zhi + mzhi
+        if pair in ZHI_LIU_HE or reverse_pair in ZHI_LIU_HE:
+            he_name = ZHI_LIU_HE.get(pair, ZHI_LIU_HE.get(reverse_pair, ""))
+            transformation["說明"] += f"；大運支{dy_zhi}與原局{mzhi}六合（{he_name}）"
+
+        for c1, c2 in ZHI_LIU_CHONG:
+            if (dy_zhi == c1 and mzhi == c2) or (dy_zhi == c2 and mzhi == c1):
+                transformation["說明"] += f"；大運支{dy_zhi}沖原局{mzhi}"
+                if not transformation["轉化"]:
+                    transformation["轉化"] = True
+                    transformation["類型"] = "沖動"
+                break
+
+    # 4. 格局破壞判斷
+    if ge_chengbai and "成格" in ge_chengbai:
+        # 原局成格，大運帶來忌神 = 格局可能被破
+        if dy_gan in ji_shen:
+            transformation["類型"] = "成格遇忌神"
+            transformation["說明"] += "；原局成格但大運帶來忌神，格局有損"
+    elif ge_chengbai and "破格" in ge_chengbai:
+        # 原局破格，大運帶來用神 = 格局可能被救
+        if dy_gan == yong_shen or dy_gan in xiang_shen:
+            transformation["類型"] = "破格遇救神"
+            transformation["說明"] += "；原局破格但大運帶來救神，有轉機"
+
+    if not transformation["說明"]:
+        transformation["說明"] = f"大運{dy_gan}{dy_zhi}對格局無特殊影響"
+
+    return transformation

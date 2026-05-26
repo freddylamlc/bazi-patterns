@@ -11,6 +11,7 @@
 from bazi.core.constants import (
     TIAN_GAN_WU_XING, ZHI_WU_XING, WU_XING_KE,
     TIAN_GAN_ZANG_FU, ZHI_ZANG_FU, ZHI_LIU_CHONG,
+    ZHI_CANG_GAN, TIAN_GAN_ZHANG_SHENG,
 )
 
 
@@ -296,6 +297,53 @@ def calculate_ji_bing_lun_duan(ba_zi_parts: list, ji_shen_wuxing: list,
             "說明": "土剋水，易患腎臟、膀胱、泌尿系統疾病",
             "應期": "土旺水弱的年份",
             "建議": "補腎固本，多喝水"
+        })
+
+    # 7. 藏干入墓疾病
+    all_zhis = [p[1] for p in ba_zi_parts]
+    tomb_map = {"木": "未", "火": "戌", "金": "丑", "水": "辰", "土": "戌"}
+    for i, pillar in enumerate(ba_zi_parts):
+        zhi = pillar[1]
+        cang_gan = ZHI_CANG_GAN.get(zhi, {})
+        for qi_name, qi_gan in cang_gan.items():
+            if qi_gan:
+                qi_wuxing = TIAN_GAN_WU_XING.get(qi_gan, "")
+                tomb_zhi = tomb_map.get(qi_wuxing)
+                if tomb_zhi and tomb_zhi in all_zhis and tomb_zhi != zhi:
+                    organ = TIAN_GAN_ZANG_FU.get(qi_gan, "")
+                    ji_bing_list.append({
+                        "類型": "藏干入墓",
+                        "說明": f"{qi_gan}（{qi_name}）入墓於{tomb_zhi}，{organ}易出問題",
+                        "應期": f"{qi_wuxing}受沖剋的大運或流年",
+                        "建議": f"注意{organ}保養"
+                    })
+
+    # 8. 地支沖剋對臟腑的影響
+    for i in range(len(all_zhis)):
+        for j in range(i + 1, len(all_zhis)):
+            zhi1, zhi2 = all_zhis[i], all_zhis[j]
+            # 檢查六沖
+            for c1, c2 in ZHI_LIU_CHONG:
+                if (zhi1 == c1 and zhi2 == c2) or (zhi1 == c2 and zhi2 == c1):
+                    organ1 = ZHI_ZANG_FU.get(zhi1, "")
+                    organ2 = ZHI_ZANG_FU.get(zhi2, "")
+                    ji_bing_list.append({
+                        "類型": "地支沖剋臟腑",
+                        "說明": f"{zhi1}{zhi2}相沖，{organ1}與{organ2}互受影響",
+                        "應期": "沖動之年",
+                        "建議": f"注意{organ1}和{organ2}的保養"
+                    })
+
+    # 9. 日主長生階段疾病
+    day_gan = ba_zi_parts[2][0]
+    day_zhi = ba_zi_parts[2][1]
+    chang_sheng = TIAN_GAN_ZHANG_SHENG.get(day_gan, {}).get(day_zhi, "")
+    if chang_sheng in ["病", "死", "墓"]:
+        ji_bing_list.append({
+            "類型": "日主長生階段",
+            "說明": f"日主{day_gan}坐{day_zhi}為「{chang_sheng}」之地，先天體質較弱",
+            "應期": "逢沖逢剋之年",
+            "建議": "注重養生，增強體質"
         })
 
     return {

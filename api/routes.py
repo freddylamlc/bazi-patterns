@@ -299,6 +299,23 @@ def prepare_bazi_context(request: Request, res: dict) -> dict:
                     '藏干': canggan,
                     '十二長生': chang_sheng
                 })
+
+            # 添加格局影響分析
+            if dayun_idx < len(da_yun_fen_xi):
+                dy = da_yun_fen_xi[dayun_idx]
+                dy_gz = f"{dy.get('大運干', '')}{dy.get('大運支', '')}"
+                ln_gz = f"{liunian.get('流年天干', '')}{liunian.get('流年地支', '')}"
+                if dy_gz and ln_gz and len(dy_gz) == 2 and len(ln_gz) == 2:
+                    try:
+                        liuyue_pan_duan = calculator.get_liuyue(dy_gz, ln_gz)
+                        for i, yd in enumerate(liuyue_pan_duan):
+                            if i < len(yue_list):
+                                yue_list[i]['格局影響'] = yd.get('格局影響', '平穩')
+                                yue_list[i]['吉凶'] = yd.get('吉凶', '平')
+                                yue_list[i]['對日主'] = yd.get('對日主', '')
+                    except Exception:
+                        pass
+
             liuyue_by_liunian[dayun_idx].append(yue_list)
 
     first_liuyue = {}

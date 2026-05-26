@@ -8,7 +8,7 @@ from bazi.core.constants import (
     JIE_SHA, WANG_SHEN, WEN_CHANG, TIAN_DE, YUE_DE,
     HONG_LUAN, TIAN_XI, PI_TOU, JIAN_FENG,
     XUE_TANG, YUE_DE_HE, KUI_GANG, YIN_YANG_SHA, SAN_SHA_KU,
-    GAN_ZHI_KONG_WANG
+    GAN_ZHI_KONG_WANG, GU_LUAN_SHA, YIN_YANG_CHA_CUO, BA_ZHUAN, JIU_CHOU,
 )
 
 
@@ -91,11 +91,7 @@ def calculate_shensha_for_nian_zhi(nian_zhi: str, zhi_list: list) -> list:
     if yi_ma_zhi and yi_ma_zhi in zhi_list:
         results.append({"神煞": "驛馬", "地支": yi_ma_zhi, "位置": yi_ma_zhi, "說明": "主移動、奔波、遠行、變動"})
 
-    # 桃花（年支對照）
-    tao_hua_zhis = TAO_HUA.get(nian_zhi, [])
-    for zhi in zhi_list:
-        if zhi in tao_hua_zhis:
-            results.append({"神煞": "桃花", "地支": zhi, "位置": zhi, "說明": "主情慾、人緣、藝術才華"})
+    # 桃花已移至 calculate_taohua_all_pillars 統一計算（區分墻內/墻外）
 
     # 將星
     jiang_xing_zhi = JIANG_XING.get(nian_zhi, "")
@@ -143,11 +139,7 @@ def calculate_shensha_for_ri_zhi(ri_zhi: str, zhi_list: list) -> list:
     """
     results = []
 
-    # 桃花（日支對照）
-    tao_hua_zhis = TAO_HUA.get(ri_zhi, [])
-    for zhi in zhi_list:
-        if zhi in tao_hua_zhis:
-            results.append({"神煞": "桃花", "地支": zhi, "位置": zhi, "說明": "主情慾、人緣、藝術才華"})
+    # 桃花已移至 calculate_taohua_all_pillars 統一計算（區分墻內/墻外）
 
     # 華蓋（日支對照）
     hua_gai_zhi = HUA_GAI.get(ri_zhi, "")
@@ -256,7 +248,67 @@ def calculate_kong_wang(ri_pillar: str, zhi_list: list) -> list:
     return results
 
 
-def calculate_shensha(ba_zi: str) -> dict:
+def calculate_shensha_for_ri_pillar(ri_pillar: str, gender: str) -> list:
+    """
+    計算日柱對照的參考神煞
+
+    Args:
+        ri_pillar: 日柱（如 "甲子"）
+        gender: 性別（"男" 或 "女"）
+
+    Returns:
+        日柱神煞列表
+    """
+    results = []
+
+    if ri_pillar in GU_LUAN_SHA:
+        eff = "剋妻" if gender == "男" else "剋夫"
+        results.append({"神煞": "孤鸞煞", "日柱": ri_pillar, "說明": f"主{eff}，婚姻不順"})
+
+    if ri_pillar in YIN_YANG_CHA_CUO:
+        eff = "與妻家是非寡合" if gender == "男" else "與夫家緣薄"
+        results.append({"神煞": "陰陽差錯", "日柱": ri_pillar, "說明": eff})
+
+    if ri_pillar in BA_ZHUAN:
+        results.append({"神煞": "八專（淫慾煞）", "日柱": ri_pillar, "說明": "主情慾、桃花"})
+
+    if ri_pillar in JIU_CHOU:
+        results.append({"神煞": "九醜（妨害煞）", "日柱": ri_pillar, "說明": "主妨害、感情波折"})
+
+    return results
+
+
+def calculate_taohua_all_pillars(zhi_list: list) -> list:
+    """
+    計算四柱桃花，區分墻內（年月）和墻外（日時）
+
+    Args:
+        zhi_list: 地支列表 [年支, 月支, 日支, 時支]
+
+    Returns:
+        桃花列表
+    """
+    results = []
+    pillar_names = ["年支", "月支", "日支", "時支"]
+    wall_types = ["墻內", "墻內", "墻外", "墻外"]
+
+    for i, source_zhi in enumerate(zhi_list):
+        tao_hua_zhis = TAO_HUA.get(source_zhi, [])
+        for j, zhi in enumerate(zhi_list):
+            if zhi in tao_hua_zhis and i != j:
+                wall_type = wall_types[i]
+                desc = "主配偶內在魅力，較為含蓄" if wall_type == "墻內" else "主外在人緣、異性緣"
+                results.append({
+                    "神煞": f"桃花（{wall_type}）",
+                    "來源": pillar_names[i],
+                    "地支": zhi,
+                    "位置": zhi,
+                    "說明": f"以{pillar_names[i]}{source_zhi}查，{zhi}為{wall_type}桃花，{desc}"
+                })
+    return results
+
+
+def calculate_shensha(ba_zi: str, gender: str = "男") -> dict:
     """
     計算八字神煞（區分實用神煞和參考神煞）
 
@@ -288,10 +340,14 @@ def calculate_shensha(ba_zi: str) -> dict:
     shi_yong_shen_sha.extend(calculate_shensha_for_ri_zhi(ri_zhi, zhi_list))
     shi_yong_shen_sha.extend(calculate_shensha_for_yue_zhi(yue_zhi, gan_list))
 
+    # 桃花（四柱統一計算，區分墻內/墻外）
+    shi_yong_shen_sha.extend(calculate_taohua_all_pillars(zhi_list))
+
     # 參考神煞
     can_kao_shen_sha.extend(calculate_shensha_for_ri_gan(ri_gan))
     can_kao_shen_sha.extend(calculate_kui_gang(ba_zi_parts[2]))
     can_kao_shen_sha.extend(calculate_kong_wang(ba_zi_parts[2], zhi_list))
+    can_kao_shen_sha.extend(calculate_shensha_for_ri_pillar(ba_zi_parts[2], gender))
 
     # 陰陽煞、三煞庫（參考神煞）
     yin_yang_sha_zhi = YIN_YANG_SHA.get(yue_zhi, "")

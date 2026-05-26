@@ -2,6 +2,15 @@
 整合分析模塊 - 以格局為核心的綜合分析
 """
 
+from bazi.analysis.duanyu_db import (
+    get_shishen_duan_yu,
+    get_geju_duan_yu,
+    get_shensha_duan_yu,
+    SHISHEN_COMBINATION_DUAN_YU,
+    GANZHI_SHENGKE_DUAN_YU,
+    WU_XING_DUAN_YU,
+)
+
 
 def calculate_integrated_analysis(
     ba_zi: str,
@@ -190,42 +199,47 @@ def calculate_integrated_analysis(
 
         return result
 
-    # 1. 提取十神組合斷語 (從 API 返回的數據結構中提取)
+    # 1. 十神組合斷語（數據驅動，來自 duanyu_db）
     combinations = []
-
-    # 獲取各柱天干十神
-    # 結構推導：ge_ju 有時不帶十神，我們直接嘗試從傳入的參數或全局查找
-    # 在 calculator.py 中，shi_shen 已經計算好
-
-    # 嘗試獲取所有柱的天干十神（排除日主）
-    # 這裡我們通過傳入的 ba_zi 計算出的十神來識別
     from bazi.calculations.shishen import get_shi_shen
     tian_gan_shishen = []
-
-    # 年干、月干、時干的十神
     for i in [0, 1, 3]:
         gan = ba_zi_parts[i][0]
         s = get_shi_shen(gan, day_gan)
-        if s: tian_gan_shishen.append(s)
+        if s:
+            tian_gan_shishen.append(s)
 
-    # 邏輯判斷
-    if ("正官" in tian_gan_shishen or "七殺" in tian_gan_shishen) and ("正印" in tian_gan_shishen or "偏印" in tian_gan_shishen):
-        combinations.append({"組合": "官殺配印", "斷語": "柱中有官殺有印星化解或護衛，主為人聰明有謀略，利於公職與名聲。"})
+    shishen_set = set(tian_gan_shishen)
+    has_guan_sha = "正官" in shishen_set or "七殺" in shishen_set
+    has_yin = "正印" in shishen_set or "偏印" in shishen_set
+    has_bi_jie = "比肩" in shishen_set or "劫財" in shishen_set
+    has_cai = "正財" in shishen_set or "偏財" in shishen_set
+    has_shi_shang = "食神" in shishen_set or "傷官" in shishen_set
+    has_shang_guan = "傷官" in shishen_set
 
-    if "傷官" in tian_gan_shishen and ("正官" in tian_gan_shishen or "七殺" in tian_gan_shishen):
-        combinations.append({"組合": "傷官見官", "斷語": "四柱天干傷官與官星並見。主性格清高、不服約束，才華橫溢但工作中需防是非。"})
+    # 數據驅動的組合檢測
+    COMBINATION_CHECKS = [
+        ("官殺剋比劫", lambda: has_guan_sha and has_bi_jie),
+        ("比劫剋財", lambda: has_bi_jie and has_cai),
+        ("食傷制殺", lambda: has_shi_shang and "七殺" in shishen_set),
+        ("印剋食傷", lambda: has_yin and has_shi_shang),
+        ("傷官剋官", lambda: has_shang_guan and "正官" in shishen_set),
+        ("財破印", lambda: has_cai and has_yin),
+        ("食傷洩比劫", lambda: has_shi_shang and has_bi_jie),
+        ("食傷生財", lambda: has_shi_shang and has_cai),
+        ("財生官", lambda: has_cai and has_guan_sha),
+        ("印化官殺", lambda: has_yin and has_guan_sha),
+    ]
 
-    if ("正財" in tian_gan_shishen or "偏財" in tian_gan_shishen) and ("正官" in tian_gan_shishen or "七殺" in tian_gan_shishen):
-        combinations.append({"組合": "財官相生", "斷語": "財能生官，主事業根基穩固，具備領導潛質，財運亦佳。"})
-
-    if "食神" in tian_gan_shishen and ("正財" in tian_gan_shishen or "偏財" in tian_gan_shishen):
-        combinations.append({"組合": "食神生財", "斷語": "食神為財之源。主口才好、食祿豐富，且具備優秀的掙錢能力。"})
-
-    if ("劫財" in tian_gan_shishen or "比肩" in tian_gan_shishen) and ("正財" in tian_gan_shishen or "偏財" in tian_gan_shishen):
-        combinations.append({"組合": "比劫奪財", "斷語": "天干比劫與財星同存。主為人豪爽大方，但日常開支較大，需注意理財規劃。"})
+    for combo_name, check_fn in COMBINATION_CHECKS:
+        if check_fn() and combo_name in SHISHEN_COMBINATION_DUAN_YU:
+            duanyu_list = SHISHEN_COMBINATION_DUAN_YU[combo_name]
+            combinations.append({
+                "組合": combo_name,
+                "斷語": duanyu_list[0] if duanyu_list else "",
+            })
 
     if not combinations:
-        # 如果天干組合不明顯，檢查地支（選配）
         combinations.append({"組合": "格局中和", "斷語": "天干十神搭配勻稱，性格穩健，凡事能持之以恆，一生平穩。"})
 
     # 2. 健康建議邏輯
@@ -237,9 +251,52 @@ def calculate_integrated_analysis(
         else:
             health_suggestions = bing_yuan.get("建議", "注意平衡五行，規律作息。")
 
+    # 3. 干支生剋斷語（蓋頭截腳）
+    ganzhi_shengke = []
+    if gong_wei:
+        for gw in gong_wei.get("宮位吉凶", []):
+            gt_info = gw.get("蓋頭截腳", {})
+            gt_type = gt_info.get("類型", "無")
+            if gt_type in GANZHI_SHENGKE_DUAN_YU:
+                ganzhi_shengke.append({
+                    "柱": gw.get("宮位", ""),
+                    "類型": gt_type,
+                    "說明": gt_info.get("說明", ""),
+                    "斷語": GANZHI_SHENGKE_DUAN_YU[gt_type].get("斷語", ""),
+                })
+
+    # 4. 五行斷語
+    wuxing_duanyu = []
+    if bing_yuan:
+        wx_dist = bing_yuan.get("五行分布", {})
+        for wx, count in wx_dist.items():
+            if count >= 4 and wx in WU_XING_DUAN_YU:
+                wuxing_duanyu.append({
+                    "五行": wx,
+                    "狀態": "過旺",
+                    "斷語": WU_XING_DUAN_YU[wx].get("過旺", ""),
+                    "疾病": WU_XING_DUAN_YU[wx].get("疾病", ""),
+                })
+            elif count == 0 and wx in WU_XING_DUAN_YU:
+                wuxing_duanyu.append({
+                    "五行": wx,
+                    "狀態": "缺失",
+                    "斷語": WU_XING_DUAN_YU[wx].get("過弱", ""),
+                    "疾病": WU_XING_DUAN_YU[wx].get("疾病", ""),
+                })
+
+    # 5. 格局斷語
+    geju_duanyu = ""
+    is_cheng = "成格" in ge_chengbai or "降格" in ge_chengbai
+    if ge_name:
+        geju_duanyu = get_geju_duan_yu(ge_name, is_cheng=is_cheng)
+
     # 構建整合輸出
     integrated = {
         "十神組合斷語": combinations,
+        "干支生剋斷語": ganzhi_shengke,
+        "五行斷語": wuxing_duanyu,
+        "格局斷語": geju_duanyu,
         "健康分析": {
             "生活調理": health_suggestions
         },

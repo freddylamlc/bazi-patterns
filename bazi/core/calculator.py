@@ -39,7 +39,7 @@ from bazi.calculations.wangshuai import calculate_wangshuai
 from bazi.calculations.changsheng import calculate_changsheng
 from bazi.calculations.shishen import calculate_shishen
 from bazi.calculations.shensha import calculate_shensha
-from bazi.calculations.ganzhi import calculate_ganzhi_shengke
+from bazi.calculations.ganzhi import calculate_ganzhi_shengke, calculate_fan_sheng_ke
 from bazi.calculations.jieqi import calculate_jie_qi_info
 from bazi.calculations.dayun import calculate_da_yun_info, calculate_detailed_dayun, calculate_yi_hua_jie_mu
 from bazi.calculations.liushijiazi import calculate_liu_shi_jia_zi
@@ -58,7 +58,7 @@ from bazi.analysis import (
 from bazi.analysis.bazi_gua import calculate_bazi_gua
 
 # 導入歲運格局模塊
-from bazi.analysis.dayun_liunian import calculate_dayun_yingdong, calculate_liunian_yingdong, calculate_suiyun_geju
+from bazi.analysis.dayun_liunian import calculate_dayun_yingdong, calculate_liunian_yingdong, calculate_suiyun_geju, calculate_liuyue_pan_duan
 
 
 class BaZiCalculator:
@@ -130,6 +130,7 @@ class BaZiCalculator:
 
         # 計算干支生剋
         self.gan_zhi_sheng_ke = calculate_ganzhi_shengke(self.ba_zi)
+        self.fan_sheng_ke = calculate_fan_sheng_ke(self.ba_zi)
 
         # 計算旺衰
         self.wang_shuai = calculate_wangshuai(self.ba_zi)
@@ -141,7 +142,7 @@ class BaZiCalculator:
         self.shi_shen = calculate_shishen(self.ba_zi, self.cang_gan)
 
         # 計算神煞
-        self.shen_sha = calculate_shensha(self.ba_zi)
+        self.shen_sha = calculate_shensha(self.ba_zi, self.gender)
 
         # 計算六十甲子體象論
         self.liu_shi_jia_zi = calculate_liu_shi_jia_zi(self.ba_zi, self.gender)
@@ -310,6 +311,24 @@ class BaZiCalculator:
                 })
 
         return result
+
+    def get_liuyue(self, dayun_gan_zhi: str, liunian_gan_zhi: str) -> list:
+        """
+        計算指定大運+流年下的 12 個流月
+
+        Args:
+            dayun_gan_zhi: 大運干支（如 "甲子"）
+            liunian_gan_zhi: 流年干支（如 "丙寅"）
+
+        Returns:
+            12 個流月分析列表
+        """
+        return calculate_liuyue_pan_duan(
+            ba_zi=self.ba_zi,
+            ge_ju=self.ge_ju,
+            dayun_gan_zhi=dayun_gan_zhi,
+            liunian_gan_zhi=liunian_gan_zhi,
+        )
 
     def _calculate_solar_time(self) -> datetime.datetime:
         """
