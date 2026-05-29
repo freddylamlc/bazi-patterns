@@ -1,8 +1,6 @@
 sxtwl
 mcp
-fastapi
+fastapi[standard]
 uvicorn
-python-docx
-jinja2
 pydantic-settings
 pytest
