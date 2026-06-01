@@ -260,6 +260,45 @@
                 </button>
             </form>
         </section>
+
+        <!-- 名人命盤匹配 -->
+        <section id="celebrity-section" class="bg-white rounded-2xl shadow-sm border border-stone-100 overflow-hidden hidden mb-6">
+            <div class="px-5 py-3 border-b border-stone-100 bg-stone-50/50">
+                <h2 class="font-serif font-bold text-stone-800">🌟 名人命盤匹配</h2>
+                <p class="text-xs text-stone-400 mt-1">與您出生日期相同的知名人物</p>
+                <p class="text-xs text-amber-600 mt-1">⚠️ 以上名人資料均來自網上資訊，僅供參考，未必完全準確。</p>
+            </div>
+            <div class="p-5 space-y-5" id="celebrity-content">
+                <!-- 同月同日 -->
+                <div id="celebrity-same-day" class="hidden">
+                    <h3 class="text-sm font-bold text-indigo-700 mb-3 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-indigo-100 rounded-full flex items-center justify-center text-xs">🎂</span>
+                        同月同日出生
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="celebrity-same-day-list"></div>
+                </div>
+                <!-- 同年 -->
+                <div id="celebrity-same-year" class="hidden">
+                    <h3 class="text-sm font-bold text-emerald-700 mb-3 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-emerald-100 rounded-full flex items-center justify-center text-xs">📅</span>
+                        同年出生
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="celebrity-same-year-list"></div>
+                </div>
+                <!-- 同月 -->
+                <div id="celebrity-same-month" class="hidden">
+                    <h3 class="text-sm font-bold text-amber-700 mb-3 flex items-center gap-2">
+                        <span class="w-6 h-6 bg-amber-100 rounded-full flex items-center justify-center text-xs">🌙</span>
+                        同月出生
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3" id="celebrity-same-month-list"></div>
+                </div>
+                <!-- 無匹配 -->
+                <div id="celebrity-none" class="hidden text-center py-6 text-stone-400 text-sm">
+                    暫無匹配的名人記錄
+                </div>
+            </div>
+        </section>
     </main>
     <!-- Map Modal -->
     <div id="map-modal" class="fixed inset-0 bg-stone-900/50 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
@@ -351,7 +390,132 @@
             
             closeMapModal();
         }
+
+        // ========== 名人命盤匹配（即時查詢） ==========
+        (function() {
+            const yearInput = document.querySelector('#date-input-form input[name="year"]');
+            const monthInput = document.querySelector('#date-input-form input[name="month"]');
+            const dayInput = document.querySelector('#date-input-form input[name="day"]');
+            let debounceTimer = null;
+
+            function escapeHtml(str) {
+                const div = document.createElement('div');
+                div.textContent = str;
+                return div.innerHTML;
+            }
+
+            function renderCard(c) {
+                const fieldColors = {
+                    '科技': 'bg-blue-50 text-blue-700 border-blue-200',
+                    '文學藝術': 'bg-purple-50 text-purple-700 border-purple-200',
+                    '政治': 'bg-red-50 text-red-700 border-red-200',
+                    '體育': 'bg-green-50 text-green-700 border-green-200',
+                    '演藝': 'bg-pink-50 text-pink-700 border-pink-200',
+                    '商業': 'bg-amber-50 text-amber-700 border-amber-200',
+                    '哲學宗教': 'bg-indigo-50 text-indigo-700 border-indigo-200',
+                    '社會運動': 'bg-orange-50 text-orange-700 border-orange-200',
+                    '軍事': 'bg-stone-50 text-stone-700 border-stone-200',
+                    '探險': 'bg-teal-50 text-teal-700 border-teal-200',
+                    '醫學': 'bg-cyan-50 text-cyan-700 border-cyan-200',
+                    '教學': 'bg-lime-50 text-lime-700 border-lime-200',
+                };
+                const colorClass = fieldColors[c.field] || 'bg-stone-50 text-stone-700 border-stone-200';
+                const yearDisplay = c.year !== null && c.year !== undefined ? (c.year < 0 ? `西元前${-c.year}` : c.year) : '未知';
+                return `
+                    <div class="bg-stone-50 rounded-xl border border-stone-100 p-3 hover:shadow-md transition">
+                        <div class="flex items-start justify-between gap-2">
+                            <div class="min-w-0">
+                                <div class="font-bold text-stone-800 text-sm truncate">${escapeHtml(c.name)}</div>
+                                <div class="text-xs text-stone-400 truncate">${escapeHtml(c.name_en || '')}</div>
+                            </div>
+                            <span class="shrink-0 text-xs px-2 py-0.5 rounded-full border ${colorClass}">${escapeHtml(c.field)}</span>
+                        </div>
+                        <div class="mt-2 text-xs text-stone-500">${escapeHtml(c.description)}</div>
+                        <div class="mt-2 flex items-center gap-2 text-xs text-stone-400">
+                            <span>📍 ${escapeHtml(c.country)}</span>
+                            <span>📅 ${yearDisplay}年${c.month}月${c.day}日</span>
+                        </div>
+                    </div>`;
+            }
+
+            async function fetchCelebrities() {
+                const year = parseInt(yearInput.value);
+                const month = parseInt(monthInput.value);
+                const day = parseInt(dayInput.value);
+                if (!year || !month || !day) return;
+
+                const section = document.getElementById('celebrity-section');
+                try {
+                    const res = await fetch(`/api/celebrities/match?year=${year}&month=${month}&day=${day}`);
+                    if (!res.ok) { section.classList.add('hidden'); return; }
+                    const data = await res.json();
+
+                    const hasAny = data['同月同日']?.length || data['同年']?.length || data['同月']?.length;
+                    if (!hasAny) {
+                        document.getElementById('celebrity-none').classList.remove('hidden');
+                        ['celebrity-same-day','celebrity-same-year','celebrity-same-month'].forEach(id =>
+                            document.getElementById(id).classList.add('hidden'));
+                        section.classList.remove('hidden');
+                        return;
+                    }
+
+                    document.getElementById('celebrity-none').classList.add('hidden');
+
+                    if (data['同月同日']?.length) {
+                        document.getElementById('celebrity-same-day-list').innerHTML = data['同月同日'].map(renderCard).join('');
+                        document.getElementById('celebrity-same-day').classList.remove('hidden');
+                    } else {
+                        document.getElementById('celebrity-same-day').classList.add('hidden');
+                    }
+                    if (data['同年']?.length) {
+                        document.getElementById('celebrity-same-year-list').innerHTML = data['同年'].map(renderCard).join('');
+                        document.getElementById('celebrity-same-year').classList.remove('hidden');
+                    } else {
+                        document.getElementById('celebrity-same-year').classList.add('hidden');
+                    }
+                    if (data['同月']?.length) {
+                        document.getElementById('celebrity-same-month-list').innerHTML = data['同月'].map(renderCard).join('');
+                        document.getElementById('celebrity-same-month').classList.remove('hidden');
+                    } else {
+                        document.getElementById('celebrity-same-month').classList.add('hidden');
+                    }
+
+                    section.classList.remove('hidden');
+                } catch (e) {
+                    console.error('名人匹配載入失敗:', e);
+                }
+            }
+
+            function debouncedFetch() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(fetchCelebrities, 500);
+            }
+
+            [yearInput, monthInput, dayInput].forEach(input => {
+                input.addEventListener('input', debouncedFetch);
+                input.addEventListener('change', debouncedFetch);
+            });
+
+            // 頁面載入時自動查詢一次
+            fetchCelebrities();
+        })();
     </script>
+    <!-- 免責聲明 -->
+    <footer class="max-w-6xl mx-auto px-4 py-8">
+        <div class="bg-amber-50 border border-amber-200 rounded-xl p-5">
+            <div class="flex items-start gap-3">
+                <span class="text-amber-600 text-lg mt-0.5">⚠️</span>
+                <div class="text-sm text-amber-800 space-y-2">
+                    <p class="font-bold text-amber-900">免責聲明</p>
+                    <p>本系統僅供學習研究及娛樂參考之用，所有分析結果均基於傳統命理學理論自動生成，不構成任何形式的專業建議。</p>
+                    <p>命理分析並非精密科學，其準確性無法保證。使用者不應以本系統的分析結果作為人生重大決策（包括但不限於婚姻、事業、投資、醫療等）的唯一或主要依據。</p>
+                    <p>對於因使用本系統分析結果而直接或間接造成的任何損失或損害，本系統開發者不承擔任何法律責任。</p>
+                    <p class="text-xs text-amber-600 mt-3">本服務尊重各地法律法規，請使用者遵守所在司法管轄區的相關規定。</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script src="/static/js/app.js"></script>
 </body>
 </html>

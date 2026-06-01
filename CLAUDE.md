@@ -32,8 +32,10 @@ bazi/analysis/       geju, gongwei, bingyuan, dayun_liunian, integrated,
 bazi/models/         Pydantic 數據模型
 bazi/validators/     輸入驗證
 bazi/db.py           SQLite CRM (客戶命盤 + 批注)
+bazi/data/           名人數據庫 (celebrities.json + celebrity_matcher.py)
 config/settings.py   pydantic-settings (前綴 BAZI_ / GEJU_)
 api/routes.py        FastAPI 路由 + CRM API
+api/celebrity_routes.py  名人匹配 API
 static/js/app.js     前端：大運流年流月選擇、五行顏色更新
 templates/           result.html, macros.html
 ```
@@ -86,6 +88,19 @@ templates/           result.html, macros.html
 | dayun_liunian.py | 流月分析（五虎遁 + 格局影響）；大運引動含格局轉化 |
 | integrated.py | 數據驅動斷語（duanyu_db） |
 | yizhu.py | 旬中六親分析 |
+
+## 名人命盤匹配
+
+**數據：** `bazi/data/celebrities.json`（246+ 名人，12 領域，51 國家/地區）
+**匹配模塊：** `bazi/data/celebrity_matcher.py` → `find_matching_celebrities(year, month, day)`
+**API：** `GET /api/celebrities/match?year=YYYY&month=M&day=D`
+**前端：** `result.html` 中基本信息下方自動載入，顯示同月同日/同年/同月三類匹配
+
+領域分類：科技、文學藝術、政治、體育、演藝、商業、哲學宗教、社會運動、軍事、探險、醫學、教學
+
+## 免責聲明
+
+`index.html` 和 `result.html` 底部均含免責聲明 footer，說明系統僅供學習研究及娛樂參考。
 
 ## 前端注意
 

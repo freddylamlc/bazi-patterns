@@ -8,6 +8,7 @@ from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 import uvicorn
 from api.routes import router
+from api.celebrity_routes import router as celebrity_router
 from bazi.db import init_db
 
 app = FastAPI(title="八字算命網頁版")
@@ -20,6 +21,7 @@ app.mount("/static", StaticFiles(directory="static"), name="static")
 
 # 包含 API 路由
 app.include_router(router)
+app.include_router(celebrity_router)
 
 if __name__ == "__main__":
     uvicorn.run(app, host="127.0.0.1", port=8080)

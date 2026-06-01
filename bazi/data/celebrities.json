@@ -1,0 +1,2467 @@
+[
+  {
+    "name": "愛因斯坦",
+    "name_en": "Albert Einstein",
+    "year": 1879,
+    "month": 3,
+    "day": 14,
+    "field": "科技",
+    "country": "德國/美國",
+    "description": "相對論創立者，諾貝爾物理學獎得主"
+  },
+  {
+    "name": "牛頓",
+    "name_en": "Isaac Newton",
+    "year": 1643,
+    "month": 1,
+    "day": 4,
+    "field": "科技",
+    "country": "英國",
+    "description": "經典力學奠基人，萬有引力定律發現者"
+  },
+  {
+    "name": "居里夫人",
+    "name_en": "Marie Curie",
+    "year": 1867,
+    "month": 11,
+    "day": 7,
+    "field": "科技",
+    "country": "波蘭/法國",
+    "description": "放射性研究先驅，兩次諾貝爾獎得主"
+  },
+  {
+    "name": "達爾文",
+    "name_en": "Charles Darwin",
+    "year": 1809,
+    "month": 2,
+    "day": 12,
+    "field": "科技",
+    "country": "英國",
+    "description": "進化論創立者，物種起源作者"
+  },
+  {
+    "name": "霍金",
+    "name_en": "Stephen Hawking",
+    "year": 1942,
+    "month": 1,
+    "day": 8,
+    "field": "科技",
+    "country": "英國",
+    "description": "黑洞理論先驅，時間簡史作者"
+  },
+  {
+    "name": "特斯拉",
+    "name_en": "Nikola Tesla",
+    "year": 1856,
+    "month": 7,
+    "day": 10,
+    "field": "科技",
+    "country": "塞爾維亞/美國",
+    "description": "交流電系統發明者，電氣工程先驅"
+  },
+  {
+    "name": "圖靈",
+    "name_en": "Alan Turing",
+    "year": 1912,
+    "month": 6,
+    "day": 23,
+    "field": "科技",
+    "country": "英國",
+    "description": "計算機科學之父，二戰密碼破譯者"
+  },
+  {
+    "name": "張衡",
+    "name_en": "Zhang Heng",
+    "year": 78,
+    "month": 1,
+    "day": 1,
+    "field": "科技",
+    "country": "中國",
+    "description": "東漢天文學家，地動儀發明者",
+    "date_approximate": true
+  },
+  {
+    "name": "畢昇",
+    "name_en": "Bi Sheng",
+    "year": 970,
+    "month": 1,
+    "day": 1,
+    "field": "科技",
+    "country": "中國",
+    "description": "活字印刷術發明者",
+    "date_approximate": true
+  },
+  {
+    "name": "錢學森",
+    "name_en": "Qian Xuesen",
+    "year": 1911,
+    "month": 12,
+    "day": 11,
+    "field": "科技",
+    "country": "中國",
+    "description": "中國航天之父，導彈專家"
+  },
+  {
+    "name": "比爾蓋茲",
+    "name_en": "Bill Gates",
+    "year": 1955,
+    "month": 10,
+    "day": 28,
+    "field": "科技",
+    "country": "美國",
+    "description": "微軟創始人，科技慈善家"
+  },
+  {
+    "name": "史蒂夫賈伯斯",
+    "name_en": "Steve Jobs",
+    "year": 1955,
+    "month": 2,
+    "day": 24,
+    "field": "科技",
+    "country": "美國",
+    "description": "蘋果公司創始人，改變科技產業"
+  },
+  {
+    "name": "馬克祖克柏",
+    "name_en": "Mark Zuckerberg",
+    "year": 1984,
+    "month": 5,
+    "day": 14,
+    "field": "科技",
+    "country": "美國",
+    "description": "Facebook創始人，社交媒體先驅"
+  },
+  {
+    "name": "李白",
+    "name_en": "Li Bai",
+    "year": 701,
+    "month": 2,
+    "day": 8,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "唐代偉大詩人，詩仙"
+  },
+  {
+    "name": "杜甫",
+    "name_en": "Du Fu",
+    "year": 712,
+    "month": 2,
+    "day": 12,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "唐代偉大詩人，詩聖"
+  },
+  {
+    "name": "蘇軾",
+    "name_en": "Su Shi",
+    "year": 1037,
+    "month": 1,
+    "day": 8,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "宋代文學家，唐宋八大家之一"
+  },
+  {
+    "name": "曹雪芹",
+    "name_en": "Cao Xueqin",
+    "year": 1715,
+    "month": 7,
+    "day": 17,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "紅樓夢作者，文學巨匠"
+  },
+  {
+    "name": "魯迅",
+    "name_en": "Lu Xun",
+    "year": 1881,
+    "month": 9,
+    "day": 25,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "現代文學奠基人，思想啟蒙者"
+  },
+  {
+    "name": "莎士比亞",
+    "name_en": "William Shakespeare",
+    "year": 1564,
+    "month": 4,
+    "day": 23,
+    "field": "文學藝術",
+    "country": "英國",
+    "description": "英國戲劇之王，文學巨匠"
+  },
+  {
+    "name": "歌德",
+    "name_en": "Johann Wolfgang von Goethe",
+    "year": 1749,
+    "month": 8,
+    "day": 28,
+    "field": "文學藝術",
+    "country": "德國",
+    "description": "德國文學巨匠，浮士德作者"
+  },
+  {
+    "name": "托爾斯泰",
+    "name_en": "Leo Tolstoy",
+    "year": 1828,
+    "month": 9,
+    "day": 9,
+    "field": "文學藝術",
+    "country": "俄羅斯",
+    "description": "俄國文學巨匠，戰爭與和平作者"
+  },
+  {
+    "name": "雨果",
+    "name_en": "Victor Hugo",
+    "year": 1802,
+    "month": 2,
+    "day": 26,
+    "field": "文學藝術",
+    "country": "法國",
+    "description": "法國浪漫主義文學領袖"
+  },
+  {
+    "name": "泰戈爾",
+    "name_en": "Rabindranath Tagore",
+    "year": 1861,
+    "month": 5,
+    "day": 7,
+    "field": "文學藝術",
+    "country": "印度",
+    "description": "印度文學巨匠，諾貝爾文學獎得主"
+  },
+  {
+    "name": "馬克吐溫",
+    "name_en": "Mark Twain",
+    "year": 1835,
+    "month": 11,
+    "day": 30,
+    "field": "文學藝術",
+    "country": "美國",
+    "description": "美國文學之父，幽默大師"
+  },
+  {
+    "name": "達文西",
+    "name_en": "Leonardo da Vinci",
+    "year": 1452,
+    "month": 4,
+    "day": 15,
+    "field": "文學藝術",
+    "country": "義大利",
+    "description": "文藝復興全才，蒙娜麗莎作者"
+  },
+  {
+    "name": "米開朗基羅",
+    "name_en": "Michelangelo",
+    "year": 1475,
+    "month": 3,
+    "day": 6,
+    "field": "文學藝術",
+    "country": "義大利",
+    "description": "文藝復興雕塑繪畫大師"
+  },
+  {
+    "name": "畢卡索",
+    "name_en": "Pablo Picasso",
+    "year": 1881,
+    "month": 10,
+    "day": 25,
+    "field": "文學藝術",
+    "country": "西班牙",
+    "description": "現代藝術創始人，立體主義大師"
+  },
+  {
+    "name": "梵谷",
+    "name_en": "Vincent van Gogh",
+    "year": 1853,
+    "month": 3,
+    "day": 30,
+    "field": "文學藝術",
+    "country": "荷蘭",
+    "description": "後印象派繪畫大師"
+  },
+  {
+    "name": "莫札特",
+    "name_en": "Wolfgang Amadeus Mozart",
+    "year": 1756,
+    "month": 1,
+    "day": 27,
+    "field": "文學藝術",
+    "country": "奧地利",
+    "description": "古典音樂天才作曲家"
+  },
+  {
+    "name": "貝多芬",
+    "name_en": "Ludwig van Beethoven",
+    "year": 1770,
+    "month": 12,
+    "day": 16,
+    "field": "文學藝術",
+    "country": "德國",
+    "description": "古典音樂巨匠，命運交響曲作者"
+  },
+  {
+    "name": "巴赫",
+    "name_en": "Johann Sebastian Bach",
+    "year": 1685,
+    "month": 3,
+    "day": 21,
+    "field": "文學藝術",
+    "country": "德國",
+    "description": "西方音樂之父"
+  },
+  {
+    "name": "齊白石",
+    "name_en": "Qi Baishi",
+    "year": 1864,
+    "month": 1,
+    "day": 1,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "國畫大師，蝦畫聞名世界"
+  },
+  {
+    "name": "秦始皇",
+    "name_en": "Qin Shi Huang",
+    "year": -259,
+    "month": 1,
+    "day": 1,
+    "field": "政治",
+    "country": "中國",
+    "description": "中國第一位皇帝，統一六國",
+    "date_approximate": true
+  },
+  {
+    "name": "諸葛亮",
+    "name_en": "Zhuge Liang",
+    "year": 181,
+    "month": 7,
+    "day": 23,
+    "field": "政治",
+    "country": "中國",
+    "description": "蜀漢丞相，智慧化身"
+  },
+  {
+    "name": "唐太宗",
+    "name_en": "Emperor Taizong of Tang",
+    "year": 598,
+    "month": 1,
+    "day": 23,
+    "field": "政治",
+    "country": "中國",
+    "description": "唐朝明君，貞觀之治締造者"
+  },
+  {
+    "name": "孫中山",
+    "name_en": "Sun Yat-sen",
+    "year": 1866,
+    "month": 11,
+    "day": 12,
+    "field": "政治",
+    "country": "中國",
+    "description": "中華民國國父，革命先驅"
+  },
+  {
+    "name": "毛澤東",
+    "name_en": "Mao Zedong",
+    "year": 1893,
+    "month": 12,
+    "day": 26,
+    "field": "政治",
+    "country": "中國",
+    "description": "中華人民共和國創建者"
+  },
+  {
+    "name": "鄧小平",
+    "name_en": "Deng Xiaoping",
+    "year": 1904,
+    "month": 8,
+    "day": 22,
+    "field": "政治",
+    "country": "中國",
+    "description": "改革開放總設計師"
+  },
+  {
+    "name": "拿破崙",
+    "name_en": "Napoleon Bonaparte",
+    "year": 1769,
+    "month": 8,
+    "day": 15,
+    "field": "政治",
+    "country": "法國",
+    "description": "法國皇帝，軍事天才"
+  },
+  {
+    "name": "林肯",
+    "name_en": "Abraham Lincoln",
+    "year": 1809,
+    "month": 2,
+    "day": 12,
+    "field": "政治",
+    "country": "美國",
+    "description": "美國第16任總統，廢除奴隸制"
+  },
+  {
+    "name": "邱吉爾",
+    "name_en": "Winston Churchill",
+    "year": 1874,
+    "month": 11,
+    "day": 30,
+    "field": "政治",
+    "country": "英國",
+    "description": "英國戰時首相，諾貝爾文學獎得主"
+  },
+  {
+    "name": "華盛頓",
+    "name_en": "George Washington",
+    "year": 1732,
+    "month": 2,
+    "day": 22,
+    "field": "政治",
+    "country": "美國",
+    "description": "美國國父，首任總統"
+  },
+  {
+    "name": "羅斯福",
+    "name_en": "Franklin D. Roosevelt",
+    "year": 1882,
+    "month": 1,
+    "day": 30,
+    "field": "政治",
+    "country": "美國",
+    "description": "美國第32任總統，新政推行者"
+  },
+  {
+    "name": "曼德拉",
+    "name_en": "Nelson Mandela",
+    "year": 1918,
+    "month": 7,
+    "day": 18,
+    "field": "政治",
+    "country": "南非",
+    "description": "南非首位黑人總統，反種族隔離鬥士"
+  },
+  {
+    "name": "甘地",
+    "name_en": "Mahatma Gandhi",
+    "year": 1869,
+    "month": 10,
+    "day": 2,
+    "field": "政治",
+    "country": "印度",
+    "description": "印度獨立運動領袖，非暴力之父"
+  },
+  {
+    "name": "伊莉莎白二世",
+    "name_en": "Queen Elizabeth II",
+    "year": 1926,
+    "month": 4,
+    "day": 21,
+    "field": "政治",
+    "country": "英國",
+    "description": "英國在位最久君主"
+  },
+  {
+    "name": "柴契爾夫人",
+    "name_en": "Margaret Thatcher",
+    "year": 1925,
+    "month": 10,
+    "day": 13,
+    "field": "政治",
+    "country": "英國",
+    "description": "英國首位女首相，鐵娘子"
+  },
+  {
+    "name": "李光耀",
+    "name_en": "Lee Kuan Yew",
+    "year": 1923,
+    "month": 9,
+    "day": 16,
+    "field": "政治",
+    "country": "新加坡",
+    "description": "新加坡建國總理"
+  },
+  {
+    "name": "成吉思汗",
+    "name_en": "Genghis Khan",
+    "year": 1162,
+    "month": 5,
+    "day": 31,
+    "field": "軍事",
+    "country": "蒙古",
+    "description": "蒙古帝國創建者，征服歐亞"
+  },
+  {
+    "name": "亞歷山大大帝",
+    "name_en": "Alexander the Great",
+    "year": -356,
+    "month": 7,
+    "day": 20,
+    "field": "軍事",
+    "country": "馬其頓",
+    "description": "古代世界征服者，建立大帝國"
+  },
+  {
+    "name": "凱撒",
+    "name_en": "Julius Caesar",
+    "year": -100,
+    "month": 7,
+    "day": 12,
+    "field": "軍事",
+    "country": "羅馬",
+    "description": "羅馬共和國獨裁者，軍事天才"
+  },
+  {
+    "name": "孫武",
+    "name_en": "Sun Tzu",
+    "year": -544,
+    "month": 1,
+    "day": 1,
+    "field": "軍事",
+    "country": "中國",
+    "description": "兵法家，孫子兵法作者",
+    "date_approximate": true
+  },
+  {
+    "name": "岳飛",
+    "name_en": "Yue Fei",
+    "year": 1103,
+    "month": 3,
+    "day": 24,
+    "field": "軍事",
+    "country": "中國",
+    "description": "南宋抗金名將，民族英雄"
+  },
+  {
+    "name": "艾森豪",
+    "name_en": "Dwight D. Eisenhower",
+    "year": 1890,
+    "month": 10,
+    "day": 14,
+    "field": "軍事",
+    "country": "美國",
+    "description": "二戰盟軍統帥，美國第34任總統"
+  },
+  {
+    "name": "巴頓",
+    "name_en": "George S. Patton",
+    "year": 1885,
+    "month": 11,
+    "day": 11,
+    "field": "軍事",
+    "country": "美國",
+    "description": "二戰美國名將，裝甲戰專家"
+  },
+  {
+    "name": "麥可喬丹",
+    "name_en": "Michael Jordan",
+    "year": 1963,
+    "month": 2,
+    "day": 17,
+    "field": "體育",
+    "country": "美國",
+    "description": "籃球之神，NBA歷史最偉大球員"
+  },
+  {
+    "name": "貝利",
+    "name_en": "Pelé",
+    "year": 1940,
+    "month": 10,
+    "day": 23,
+    "field": "體育",
+    "country": "巴西",
+    "description": "足球之王，三屆世界盃冠軍"
+  },
+  {
+    "name": "馬拉度納",
+    "name_en": "Diego Maradona",
+    "year": 1960,
+    "month": 10,
+    "day": 30,
+    "field": "體育",
+    "country": "阿根廷",
+    "description": "阿根廷足球傳奇"
+  },
+  {
+    "name": "梅西",
+    "name_en": "Lionel Messi",
+    "year": 1987,
+    "month": 6,
+    "day": 24,
+    "field": "體育",
+    "country": "阿根廷",
+    "description": "當代足球巨星，金球獎多次得主"
+  },
+  {
+    "name": "C羅",
+    "name_en": "Cristiano Ronaldo",
+    "year": 1985,
+    "month": 2,
+    "day": 5,
+    "field": "體育",
+    "country": "葡萄牙",
+    "description": "葡萄牙足球巨星，進球紀錄保持者"
+  },
+  {
+    "name": "老虎伍茲",
+    "name_en": "Tiger Woods",
+    "year": 1975,
+    "month": 12,
+    "day": 30,
+    "field": "體育",
+    "country": "美國",
+    "description": "高爾夫傳奇球員"
+  },
+  {
+    "name": "費德勒",
+    "name_en": "Roger Federer",
+    "year": 1981,
+    "month": 8,
+    "day": 8,
+    "field": "體育",
+    "country": "瑞士",
+    "description": "網球天王，大滿貫紀錄保持者"
+  },
+  {
+    "name": "林丹",
+    "name_en": "Lin Dan",
+    "year": 1983,
+    "month": 10,
+    "day": 14,
+    "field": "體育",
+    "country": "中國",
+    "description": "羽毛球大滿貫選手，超級丹"
+  },
+  {
+    "name": "李寧",
+    "name_en": "Li Ning",
+    "year": 1963,
+    "month": 3,
+    "day": 10,
+    "field": "體育",
+    "country": "中國",
+    "description": "體操王子，奧運金牌得主"
+  },
+  {
+    "name": "姚明",
+    "name_en": "Yao Ming",
+    "year": 1980,
+    "month": 9,
+    "day": 12,
+    "field": "體育",
+    "country": "中國",
+    "description": "NBA中國球星，籃球大使"
+  },
+  {
+    "name": "博爾特",
+    "name_en": "Usain Bolt",
+    "year": 1986,
+    "month": 8,
+    "day": 21,
+    "field": "體育",
+    "country": "牙買加",
+    "description": "短跑飛人，奧運八金得主"
+  },
+  {
+    "name": "阿里",
+    "name_en": "Muhammad Ali",
+    "year": 1942,
+    "month": 1,
+    "day": 17,
+    "field": "體育",
+    "country": "美國",
+    "description": "拳王阿里，重量級拳擊傳奇"
+  },
+  {
+    "name": "奧黛麗赫本",
+    "name_en": "Audrey Hepburn",
+    "year": 1929,
+    "month": 5,
+    "day": 4,
+    "field": "演藝",
+    "country": "英國",
+    "description": "好萊塢優雅女神，慈善大使"
+  },
+  {
+    "name": "瑪麗蓮夢露",
+    "name_en": "Marilyn Monroe",
+    "year": 1926,
+    "month": 6,
+    "day": 1,
+    "field": "演藝",
+    "country": "美國",
+    "description": "好萊塢傳奇女星"
+  },
+  {
+    "name": "李小龍",
+    "name_en": "Bruce Lee",
+    "year": 1940,
+    "month": 11,
+    "day": 27,
+    "field": "演藝",
+    "country": "美國/香港",
+    "description": "功夫巨星，武術哲學家"
+  },
+  {
+    "name": "成龍",
+    "name_en": "Jackie Chan",
+    "year": 1954,
+    "month": 4,
+    "day": 7,
+    "field": "演藝",
+    "country": "香港",
+    "description": "國際功夫巨星，動作喜劇大師"
+  },
+  {
+    "name": "周潤發",
+    "name_en": "Chow Yun-fat",
+    "year": 1955,
+    "month": 5,
+    "day": 18,
+    "field": "演藝",
+    "country": "香港",
+    "description": "香港影帝，國際巨星"
+  },
+  {
+    "name": "張國榮",
+    "name_en": "Leslie Cheung",
+    "year": 1956,
+    "month": 9,
+    "day": 12,
+    "field": "演藝",
+    "country": "香港",
+    "description": "香港天王巨星，藝術全才"
+  },
+  {
+    "name": "梅艷芳",
+    "name_en": "Anita Mui",
+    "year": 1963,
+    "month": 10,
+    "day": 10,
+    "field": "演藝",
+    "country": "香港",
+    "description": "香港百變天后"
+  },
+  {
+    "name": "周星馳",
+    "name_en": "Stephen Chow",
+    "year": 1962,
+    "month": 6,
+    "day": 22,
+    "field": "演藝",
+    "country": "香港",
+    "description": "喜劇之王，無厘頭電影大師"
+  },
+  {
+    "name": "李安",
+    "name_en": "Ang Lee",
+    "year": 1954,
+    "month": 10,
+    "day": 23,
+    "field": "演藝",
+    "country": "台灣",
+    "description": "奧斯卡最佳導演，臥虎藏龍導演"
+  },
+  {
+    "name": "史蒂芬史匹柏",
+    "name_en": "Steven Spielberg",
+    "year": 1946,
+    "month": 12,
+    "day": 18,
+    "field": "演藝",
+    "country": "美國",
+    "description": "好萊塢傳奇導演"
+  },
+  {
+    "name": "黑澤明",
+    "name_en": "Akira Kurosawa",
+    "year": 1910,
+    "month": 3,
+    "day": 23,
+    "field": "演藝",
+    "country": "日本",
+    "description": "日本電影天皇，影響世界影壇"
+  },
+  {
+    "name": "披頭四約翰藍儂",
+    "name_en": "John Lennon",
+    "year": 1940,
+    "month": 10,
+    "day": 9,
+    "field": "演藝",
+    "country": "英國",
+    "description": "披頭四樂隊創始人，音樂傳奇"
+  },
+  {
+    "name": "貓王",
+    "name_en": "Elvis Presley",
+    "year": 1935,
+    "month": 1,
+    "day": 8,
+    "field": "演藝",
+    "country": "美國",
+    "description": "搖滾樂之王"
+  },
+  {
+    "name": "米高積遜",
+    "name_en": "Michael Jackson",
+    "year": 1958,
+    "month": 8,
+    "day": 29,
+    "field": "演藝",
+    "country": "美國",
+    "description": "流行音樂之王"
+  },
+  {
+    "name": "鄧麗君",
+    "name_en": "Teresa Teng",
+    "year": 1953,
+    "month": 1,
+    "day": 29,
+    "field": "演藝",
+    "country": "台灣",
+    "description": "華語歌壇天后，永恆巨星"
+  },
+  {
+    "name": "周杰倫",
+    "name_en": "Jay Chou",
+    "year": 1979,
+    "month": 1,
+    "day": 18,
+    "field": "演藝",
+    "country": "台灣",
+    "description": "亞洲流行天王，音樂才子"
+  },
+  {
+    "name": "安藤忠雄",
+    "name_en": "Tadao Ando",
+    "year": 1941,
+    "month": 9,
+    "day": 13,
+    "field": "文學藝術",
+    "country": "日本",
+    "description": "日本建築大師，普利茲克獎得主"
+  },
+  {
+    "name": "孔子",
+    "name_en": "Confucius",
+    "year": -551,
+    "month": 9,
+    "day": 28,
+    "field": "哲學宗教",
+    "country": "中國",
+    "description": "儒家創始人，萬世師表"
+  },
+  {
+    "name": "老子",
+    "name_en": "Laozi",
+    "year": -601,
+    "month": 1,
+    "day": 1,
+    "field": "哲學宗教",
+    "country": "中國",
+    "description": "道家創始人，道德經作者",
+    "date_approximate": true
+  },
+  {
+    "name": "釋迦牟尼",
+    "name_en": "Siddhartha Gautama",
+    "year": -563,
+    "month": 5,
+    "day": 1,
+    "field": "哲學宗教",
+    "country": "印度/尼泊爾",
+    "description": "佛教創始人"
+  },
+  {
+    "name": "耶穌基督",
+    "name_en": "Jesus Christ",
+    "year": -4,
+    "month": 12,
+    "day": 25,
+    "field": "哲學宗教",
+    "country": "以色列",
+    "description": "基督教創始人"
+  },
+  {
+    "name": "穆罕默德",
+    "name_en": "Prophet Muhammad",
+    "year": 570,
+    "month": 4,
+    "day": 20,
+    "field": "哲學宗教",
+    "country": "沙烏地阿拉伯",
+    "description": "伊斯蘭教創始人"
+  },
+  {
+    "name": "亞里斯多德",
+    "name_en": "Aristotle",
+    "year": -384,
+    "month": 1,
+    "day": 1,
+    "field": "哲學宗教",
+    "country": "希臘",
+    "description": "古希臘哲學家，百科全書式學者",
+    "date_approximate": true
+  },
+  {
+    "name": "柏拉圖",
+    "name_en": "Plato",
+    "year": -427,
+    "month": 5,
+    "day": 21,
+    "field": "哲學宗教",
+    "country": "希臘",
+    "description": "古希臘哲學家，理想國作者"
+  },
+  {
+    "name": "蘇格拉底",
+    "name_en": "Socrates",
+    "year": -469,
+    "month": 6,
+    "day": 1,
+    "field": "哲學宗教",
+    "country": "希臘",
+    "description": "西方哲學奠基人"
+  },
+  {
+    "name": "康德",
+    "name_en": "Immanuel Kant",
+    "year": 1724,
+    "month": 4,
+    "day": 22,
+    "field": "哲學宗教",
+    "country": "德國",
+    "description": "德國古典哲學創始人"
+  },
+  {
+    "name": "尼采",
+    "name_en": "Friedrich Nietzsche",
+    "year": 1844,
+    "month": 10,
+    "day": 15,
+    "field": "哲學宗教",
+    "country": "德國",
+    "description": "德國哲學家，超人理論"
+  },
+  {
+    "name": "王陽明",
+    "name_en": "Wang Yangming",
+    "year": 1472,
+    "month": 10,
+    "day": 31,
+    "field": "哲學宗教",
+    "country": "中國",
+    "description": "心學集大成者，知行合一"
+  },
+  {
+    "name": "洛克斐勒",
+    "name_en": "John D. Rockefeller",
+    "year": 1839,
+    "month": 7,
+    "day": 8,
+    "field": "商業",
+    "country": "美國",
+    "description": "石油大王，標準石油創始人"
+  },
+  {
+    "name": "卡內基",
+    "name_en": "Andrew Carnegie",
+    "year": 1835,
+    "month": 11,
+    "day": 25,
+    "field": "商業",
+    "country": "美國",
+    "description": "鋼鐵大王，慈善家"
+  },
+  {
+    "name": "亨利福特",
+    "name_en": "Henry Ford",
+    "year": 1863,
+    "month": 7,
+    "day": 30,
+    "field": "商業",
+    "country": "美國",
+    "description": "汽車工業先驅，福特創始人"
+  },
+  {
+    "name": "華特迪士尼",
+    "name_en": "Walt Disney",
+    "year": 1901,
+    "month": 12,
+    "day": 5,
+    "field": "商業",
+    "country": "美國",
+    "description": "迪士尼帝國創建者"
+  },
+  {
+    "name": "李嘉誠",
+    "name_en": "Li Ka-shing",
+    "year": 1928,
+    "month": 7,
+    "day": 29,
+    "field": "商業",
+    "country": "香港",
+    "description": "香港首富，亞洲商業傳奇"
+  },
+  {
+    "name": "巴菲特",
+    "name_en": "Warren Buffett",
+    "year": 1930,
+    "month": 8,
+    "day": 30,
+    "field": "商業",
+    "country": "美國",
+    "description": "股神，投資大師"
+  },
+  {
+    "name": "馬雲",
+    "name_en": "Jack Ma",
+    "year": 1964,
+    "month": 9,
+    "day": 10,
+    "field": "商業",
+    "country": "中國",
+    "description": "阿里巴巴創始人"
+  },
+  {
+    "name": "馬斯克",
+    "name_en": "Elon Musk",
+    "year": 1971,
+    "month": 6,
+    "day": 28,
+    "field": "商業",
+    "country": "美國",
+    "description": "特斯拉和SpaceX創始人"
+  },
+  {
+    "name": "杰夫貝佐斯",
+    "name_en": "Jeff Bezos",
+    "year": 1964,
+    "month": 1,
+    "day": 12,
+    "field": "商業",
+    "country": "美國",
+    "description": "亞馬遜創始人"
+  },
+  {
+    "name": "稻盛和夫",
+    "name_en": "Kazuo Inamori",
+    "year": 1932,
+    "month": 1,
+    "day": 30,
+    "field": "商業",
+    "country": "日本",
+    "description": "京瓷創始人，經營之聖"
+  },
+  {
+    "name": "盛田昭夫",
+    "name_en": "Akio Morita",
+    "year": 1921,
+    "month": 1,
+    "day": 26,
+    "field": "商業",
+    "country": "日本",
+    "description": "索尼公司共同創始人"
+  },
+  {
+    "name": "哥倫布",
+    "name_en": "Christopher Columbus",
+    "year": 1451,
+    "month": 10,
+    "day": 31,
+    "field": "探險",
+    "country": "義大利",
+    "description": "發現美洲大陸的探險家"
+  },
+  {
+    "name": "麥哲倫",
+    "name_en": "Ferdinand Magellan",
+    "year": 1480,
+    "month": 4,
+    "day": 19,
+    "field": "探險",
+    "country": "葡萄牙",
+    "description": "環球航行先驅"
+  },
+  {
+    "name": "鄭和",
+    "name_en": "Zheng He",
+    "year": 1371,
+    "month": 1,
+    "day": 1,
+    "field": "探險",
+    "country": "中國",
+    "description": "明代航海家，七下西洋",
+    "date_approximate": true
+  },
+  {
+    "name": "阿姆斯壯",
+    "name_en": "Neil Armstrong",
+    "year": 1930,
+    "month": 8,
+    "day": 5,
+    "field": "探險",
+    "country": "美國",
+    "description": "第一位登月太空人"
+  },
+  {
+    "name": "阿蒙森",
+    "name_en": "Roald Amundsen",
+    "year": 1872,
+    "month": 7,
+    "day": 16,
+    "field": "探險",
+    "country": "挪威",
+    "description": "第一位到達南極點的探險家"
+  },
+  {
+    "name": "希拉蕊",
+    "name_en": "Edmund Hillary",
+    "year": 1919,
+    "month": 7,
+    "day": 20,
+    "field": "探險",
+    "country": "紐西蘭",
+    "description": "第一位登上聖母峰的人"
+  },
+  {
+    "name": "扁鵲",
+    "name_en": "Bian Que",
+    "year": -407,
+    "month": 1,
+    "day": 1,
+    "field": "醫學",
+    "country": "中國",
+    "description": "中醫學開山鼻祖",
+    "date_approximate": true
+  },
+  {
+    "name": "華佗",
+    "name_en": "Hua Tuo",
+    "year": 145,
+    "month": 1,
+    "day": 1,
+    "field": "醫學",
+    "country": "中國",
+    "description": "東漢神醫，外科手術先驅",
+    "date_approximate": true
+  },
+  {
+    "name": "李時珍",
+    "name_en": "Li Shizhen",
+    "year": 1518,
+    "month": 7,
+    "day": 3,
+    "field": "醫學",
+    "country": "中國",
+    "description": "本草綱目作者，藥聖"
+  },
+  {
+    "name": "巴斯德",
+    "name_en": "Louis Pasteur",
+    "year": 1822,
+    "month": 12,
+    "day": 27,
+    "field": "醫學",
+    "country": "法國",
+    "description": "微生物學之父，疫苗先驅"
+  },
+  {
+    "name": "南丁格爾",
+    "name_en": "Florence Nightingale",
+    "year": 1820,
+    "month": 5,
+    "day": 12,
+    "field": "醫學",
+    "country": "英國",
+    "description": "現代護理學創始人"
+  },
+  {
+    "name": "白求恩",
+    "name_en": "Norman Bethune",
+    "year": 1890,
+    "month": 3,
+    "day": 4,
+    "field": "醫學",
+    "country": "加拿大",
+    "description": "國際主義戰士，外科醫生"
+  },
+  {
+    "name": "張仲景",
+    "name_en": "Zhang Zhongjing",
+    "year": 150,
+    "month": 1,
+    "day": 1,
+    "field": "醫學",
+    "country": "中國",
+    "description": "醫聖，傷寒雜病論作者",
+    "date_approximate": true
+  },
+  {
+    "name": "馬丁路德金恩",
+    "name_en": "Martin Luther King Jr.",
+    "year": 1929,
+    "month": 1,
+    "day": 15,
+    "field": "社會運動",
+    "country": "美國",
+    "description": "民權運動領袖，諾貝爾和平獎得主"
+  },
+  {
+    "name": "德蕾莎修女",
+    "name_en": "Mother Teresa",
+    "year": 1910,
+    "month": 8,
+    "day": 26,
+    "field": "社會運動",
+    "country": "印度",
+    "description": "慈善事業家，諾貝爾和平獎得主"
+  },
+  {
+    "name": "海倫凱勒",
+    "name_en": "Helen Keller",
+    "year": 1880,
+    "month": 6,
+    "day": 27,
+    "field": "社會運動",
+    "country": "美國",
+    "description": "殘障權益先驅，作家"
+  },
+  {
+    "name": "宋慶齡",
+    "name_en": "Soong Ching-ling",
+    "year": 1893,
+    "month": 1,
+    "day": 27,
+    "field": "社會運動",
+    "country": "中國",
+    "description": "國母，婦女兒童事業先驅"
+  },
+  {
+    "name": "馬拉拉",
+    "name_en": "Malala Yousafzai",
+    "year": 1997,
+    "month": 7,
+    "day": 12,
+    "field": "社會運動",
+    "country": "巴基斯坦",
+    "description": "最年輕諾貝爾和平獎得主"
+  },
+  {
+    "name": "蔡元培",
+    "name_en": "Cai Yuanpei",
+    "year": 1868,
+    "month": 1,
+    "day": 11,
+    "field": "教學",
+    "country": "中國",
+    "description": "北京大學校長，教育改革家"
+  },
+  {
+    "name": "陶行知",
+    "name_en": "Tao Xingzhi",
+    "year": 1891,
+    "month": 10,
+    "day": 18,
+    "field": "教學",
+    "country": "中國",
+    "description": "平民教育家，生活教育理論"
+  },
+  {
+    "name": "杜威",
+    "name_en": "John Dewey",
+    "year": 1859,
+    "month": 10,
+    "day": 20,
+    "field": "教學",
+    "country": "美國",
+    "description": "美國實用主義教育家"
+  },
+  {
+    "name": "蒙特梭利",
+    "name_en": "Maria Montessori",
+    "year": 1870,
+    "month": 8,
+    "day": 31,
+    "field": "教學",
+    "country": "義大利",
+    "description": "蒙特梭利教育法創始人"
+  },
+  {
+    "name": "福澤諭吉",
+    "name_en": "Fukuzawa Yukichi",
+    "year": 1835,
+    "month": 1,
+    "day": 10,
+    "field": "教學",
+    "country": "日本",
+    "description": "日本近代教育之父"
+  },
+  {
+    "name": "南懷瑾",
+    "name_en": "Nan Huai-Chin",
+    "year": 1918,
+    "month": 3,
+    "day": 18,
+    "field": "教學",
+    "country": "中國",
+    "description": "國學大師，禪學大師"
+  },
+  {
+    "name": "雷鋒",
+    "name_en": "Lei Feng",
+    "year": 1940,
+    "month": 12,
+    "day": 18,
+    "field": "社會運動",
+    "country": "中國",
+    "description": "解放軍模範，為人民服務"
+  },
+  {
+    "name": "梅蘭芳",
+    "name_en": "Mei Lanfang",
+    "year": 1894,
+    "month": 10,
+    "day": 22,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "京劇大師，四大名旦之首"
+  },
+  {
+    "name": "郎朗",
+    "name_en": "Lang Lang",
+    "year": 1982,
+    "month": 6,
+    "day": 14,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "國際鋼琴巨星"
+  },
+  {
+    "name": "馬友友",
+    "name_en": "Yo-Yo Ma",
+    "year": 1955,
+    "month": 10,
+    "day": 7,
+    "field": "文學藝術",
+    "country": "美國",
+    "description": "華裔大提琴演奏大師"
+  },
+  {
+    "name": "張大千",
+    "name_en": "Zhang Daqian",
+    "year": 1899,
+    "month": 5,
+    "day": 10,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "國畫大師，五百年來一大千"
+  },
+  {
+    "name": "羅丹",
+    "name_en": "Auguste Rodin",
+    "year": 1840,
+    "month": 11,
+    "day": 12,
+    "field": "文學藝術",
+    "country": "法國",
+    "description": "近代雕塑之父"
+  },
+  {
+    "name": "武則天",
+    "name_en": "Wu Zetian",
+    "year": 624,
+    "month": 2,
+    "day": 17,
+    "field": "政治",
+    "country": "中國",
+    "description": "中國唯一女皇帝"
+  },
+  {
+    "name": "康熙",
+    "name_en": "Emperor Kangxi",
+    "year": 1654,
+    "month": 5,
+    "day": 4,
+    "field": "政治",
+    "country": "中國",
+    "description": "清朝盛世明君"
+  },
+  {
+    "name": "乾隆",
+    "name_en": "Emperor Qianlong",
+    "year": 1711,
+    "month": 9,
+    "day": 25,
+    "field": "政治",
+    "country": "中國",
+    "description": "清朝全盛時期皇帝"
+  },
+  {
+    "name": "甘迺迪",
+    "name_en": "John F. Kennedy",
+    "year": 1917,
+    "month": 5,
+    "day": 29,
+    "field": "政治",
+    "country": "美國",
+    "description": "美國第35任總統"
+  },
+  {
+    "name": "戴高樂",
+    "name_en": "Charles de Gaulle",
+    "year": 1890,
+    "month": 11,
+    "day": 22,
+    "field": "政治",
+    "country": "法國",
+    "description": "法國自由法國領袖，第五共和創建者"
+  },
+  {
+    "name": "俾斯麥",
+    "name_en": "Otto von Bismarck",
+    "year": 1815,
+    "month": 4,
+    "day": 1,
+    "field": "政治",
+    "country": "德國",
+    "description": "德國統一鐵血宰相"
+  },
+  {
+    "name": "彼得大帝",
+    "name_en": "Peter the Great",
+    "year": 1672,
+    "month": 6,
+    "day": 9,
+    "field": "政治",
+    "country": "俄羅斯",
+    "description": "俄羅斯現代化改革者"
+  },
+  {
+    "name": "列寧",
+    "name_en": "Vladimir Lenin",
+    "year": 1870,
+    "month": 4,
+    "day": 22,
+    "field": "政治",
+    "country": "俄羅斯",
+    "description": "蘇聯創建者"
+  },
+  {
+    "name": "馬克思",
+    "name_en": "Karl Marx",
+    "year": 1818,
+    "month": 5,
+    "day": 5,
+    "field": "哲學宗教",
+    "country": "德國",
+    "description": "馬克思主義創始人"
+  },
+  {
+    "name": "伏爾泰",
+    "name_en": "Voltaire",
+    "year": 1694,
+    "month": 11,
+    "day": 21,
+    "field": "哲學宗教",
+    "country": "法國",
+    "description": "法國啟蒙運動領袖"
+  },
+  {
+    "name": "笛卡爾",
+    "name_en": "René Descartes",
+    "year": 1596,
+    "month": 3,
+    "day": 31,
+    "field": "哲學宗教",
+    "country": "法國",
+    "description": "近代哲學之父，我思故我在"
+  },
+  {
+    "name": "黑格爾",
+    "name_en": "Georg Wilhelm Friedrich Hegel",
+    "year": 1770,
+    "month": 8,
+    "day": 27,
+    "field": "哲學宗教",
+    "country": "德國",
+    "description": "德國古典哲學集大成者"
+  },
+  {
+    "name": "達賴喇嘛",
+    "name_en": "Dalai Lama",
+    "year": 1935,
+    "month": 7,
+    "day": 6,
+    "field": "哲學宗教",
+    "country": "西藏",
+    "description": "藏傳佛教精神領袖"
+  },
+  {
+    "name": "弘一法師",
+    "name_en": "Master Hongyi",
+    "year": 1880,
+    "month": 10,
+    "day": 23,
+    "field": "哲學宗教",
+    "country": "中國",
+    "description": "律宗高僧，藝術全才"
+  },
+  {
+    "name": "高斯",
+    "name_en": "Carl Friedrich Gauss",
+    "year": 1777,
+    "month": 4,
+    "day": 30,
+    "field": "科技",
+    "country": "德國",
+    "description": "數學王子，數學之王"
+  },
+  {
+    "name": "尤拉",
+    "name_en": "Leonhard Euler",
+    "year": 1707,
+    "month": 4,
+    "day": 15,
+    "field": "科技",
+    "country": "瑞士",
+    "description": "數學史上最多產數學家"
+  },
+  {
+    "name": "阿基米德",
+    "name_en": "Archimedes",
+    "year": -287,
+    "month": 1,
+    "day": 1,
+    "field": "科技",
+    "country": "希臘",
+    "description": "古代數學物理學家",
+    "date_approximate": true
+  },
+  {
+    "name": "伽利略",
+    "name_en": "Galileo Galilei",
+    "year": 1564,
+    "month": 2,
+    "day": 15,
+    "field": "科技",
+    "country": "義大利",
+    "description": "現代科學之父"
+  },
+  {
+    "name": "瓦特",
+    "name_en": "James Watt",
+    "year": 1736,
+    "month": 1,
+    "day": 19,
+    "field": "科技",
+    "country": "英國",
+    "description": "蒸汽機改良者，工業革命推動者"
+  },
+  {
+    "name": "愛迪生",
+    "name_en": "Thomas Edison",
+    "year": 1847,
+    "month": 2,
+    "day": 11,
+    "field": "科技",
+    "country": "美國",
+    "description": "發明大王，電燈發明者"
+  },
+  {
+    "name": "貝爾",
+    "name_en": "Alexander Graham Bell",
+    "year": 1847,
+    "month": 3,
+    "day": 3,
+    "field": "科技",
+    "country": "英國/美國",
+    "description": "電話發明者"
+  },
+  {
+    "name": "沈括",
+    "name_en": "Shen Kuo",
+    "year": 1031,
+    "month": 1,
+    "day": 1,
+    "field": "科技",
+    "country": "中國",
+    "description": "宋代科學家，夢溪筆談作者",
+    "date_approximate": true
+  },
+  {
+    "name": "祖沖之",
+    "name_en": "Zu Chongzhi",
+    "year": 429,
+    "month": 1,
+    "day": 1,
+    "field": "科技",
+    "country": "中國",
+    "description": "南北朝數學家，精算圓周率",
+    "date_approximate": true
+  },
+  {
+    "name": "南仁東",
+    "name_en": "Nan Rendong",
+    "year": 1945,
+    "month": 2,
+    "day": 19,
+    "field": "科技",
+    "country": "中國",
+    "description": "FAST天眼望遠鏡之父"
+  },
+  {
+    "name": "袁隆平",
+    "name_en": "Yuan Longping",
+    "year": 1930,
+    "month": 9,
+    "day": 7,
+    "field": "科技",
+    "country": "中國",
+    "description": "雜交水稻之父"
+  },
+  {
+    "name": "屠呦呦",
+    "name_en": "Tu Youyou",
+    "year": 1930,
+    "month": 12,
+    "day": 30,
+    "field": "醫學",
+    "country": "中國",
+    "description": "青蒿素發現者，諾貝爾獎得主"
+  },
+  {
+    "name": "鍾南山",
+    "name_en": "Zhong Nanshan",
+    "year": 1936,
+    "month": 10,
+    "day": 20,
+    "field": "醫學",
+    "country": "中國",
+    "description": "呼吸病學專家，抗疫領袖"
+  },
+  {
+    "name": "弗洛伊德",
+    "name_en": "Sigmund Freud",
+    "year": 1856,
+    "month": 5,
+    "day": 6,
+    "field": "醫學",
+    "country": "奧地利",
+    "description": "精神分析學創始人"
+  },
+  {
+    "name": "詹納",
+    "name_en": "Edward Jenner",
+    "year": 1749,
+    "month": 5,
+    "day": 17,
+    "field": "醫學",
+    "country": "英國",
+    "description": "天花疫苗發明者，免疫學之父"
+  },
+  {
+    "name": "倫琴",
+    "name_en": "Wilhelm Röntgen",
+    "year": 1845,
+    "month": 3,
+    "day": 27,
+    "field": "醫學",
+    "country": "德國",
+    "description": "X射線發現者，首屆諾貝爾物理學獎"
+  },
+  {
+    "name": "洛克",
+    "name_en": "John Locke",
+    "year": 1632,
+    "month": 8,
+    "day": 29,
+    "field": "哲學宗教",
+    "country": "英國",
+    "description": "英國經驗主義哲學家"
+  },
+  {
+    "name": "斯賓諾莎",
+    "name_en": "Baruch Spinoza",
+    "year": 1632,
+    "month": 11,
+    "day": 24,
+    "field": "哲學宗教",
+    "country": "荷蘭",
+    "description": "理性主義哲學家"
+  },
+  {
+    "name": "盧梭",
+    "name_en": "Jean-Jacques Rousseau",
+    "year": 1712,
+    "month": 6,
+    "day": 28,
+    "field": "哲學宗教",
+    "country": "法國",
+    "description": "法國啟蒙思想家，社會契約論"
+  },
+  {
+    "name": "朱熹",
+    "name_en": "Zhu Xi",
+    "year": 1130,
+    "month": 10,
+    "day": 18,
+    "field": "哲學宗教",
+    "country": "中國",
+    "description": "理學集大成者"
+  },
+  {
+    "name": "孟子",
+    "name_en": "Mencius",
+    "year": -372,
+    "month": 1,
+    "day": 1,
+    "field": "哲學宗教",
+    "country": "中國",
+    "description": "儒家亞聖",
+    "date_approximate": true
+  },
+  {
+    "name": "莊子",
+    "name_en": "Zhuangzi",
+    "year": -369,
+    "month": 1,
+    "day": 1,
+    "field": "哲學宗教",
+    "country": "中國",
+    "description": "道家代表人物",
+    "date_approximate": true
+  },
+  {
+    "name": "李顯龍",
+    "name_en": "Lee Hsien Loong",
+    "year": 1952,
+    "month": 2,
+    "day": 10,
+    "field": "政治",
+    "country": "新加坡",
+    "description": "新加坡第三任總理"
+  },
+  {
+    "name": "安倍晉三",
+    "name_en": "Shinzo Abe",
+    "year": 1954,
+    "month": 9,
+    "day": 21,
+    "field": "政治",
+    "country": "日本",
+    "description": "日本任期最長首相"
+  },
+  {
+    "name": "朴正熙",
+    "name_en": "Park Chung-hee",
+    "year": 1917,
+    "month": 11,
+    "day": 14,
+    "field": "政治",
+    "country": "韓國",
+    "description": "韓國現代化推動者"
+  },
+  {
+    "name": "金日成",
+    "name_en": "Kim Il-sung",
+    "year": 1912,
+    "month": 4,
+    "day": 15,
+    "field": "政治",
+    "country": "朝鮮",
+    "description": "朝鮮民主主義人民共和國創建者"
+  },
+  {
+    "name": "胡志明",
+    "name_en": "Ho Chi Minh",
+    "year": 1890,
+    "month": 5,
+    "day": 19,
+    "field": "政治",
+    "country": "越南",
+    "description": "越南民主共和國創建者"
+  },
+  {
+    "name": "甘地夫人",
+    "name_en": "Indira Gandhi",
+    "year": 1917,
+    "month": 11,
+    "day": 19,
+    "field": "政治",
+    "country": "印度",
+    "description": "印度首位女總理"
+  },
+  {
+    "name": "納爾遜",
+    "name_en": "Horatio Nelson",
+    "year": 1758,
+    "month": 9,
+    "day": 29,
+    "field": "軍事",
+    "country": "英國",
+    "description": "英國海軍傳奇名將"
+  },
+  {
+    "name": "隆美爾",
+    "name_en": "Erwin Rommel",
+    "year": 1891,
+    "month": 11,
+    "day": 15,
+    "field": "軍事",
+    "country": "德國",
+    "description": "二戰沙漠之狐"
+  },
+  {
+    "name": "朱可夫",
+    "name_en": "Georgy Zhukov",
+    "year": 1896,
+    "month": 12,
+    "day": 1,
+    "field": "軍事",
+    "country": "俄羅斯",
+    "description": "二戰蘇聯傳奇元帥"
+  },
+  {
+    "name": "彭德懷",
+    "name_en": "Peng Dehuai",
+    "year": 1898,
+    "month": 10,
+    "day": 24,
+    "field": "軍事",
+    "country": "中國",
+    "description": "中國開國元帥，志願軍總司令"
+  },
+  {
+    "name": "麥克阿瑟",
+    "name_en": "Douglas MacArthur",
+    "year": 1880,
+    "month": 1,
+    "day": 26,
+    "field": "軍事",
+    "country": "美國",
+    "description": "二戰太平洋戰區盟軍統帥"
+  },
+  {
+    "name": "徐悲鴻",
+    "name_en": "Xu Beihong",
+    "year": 1895,
+    "month": 7,
+    "day": 19,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "國畫大師，畫馬聞名"
+  },
+  {
+    "name": "林風眠",
+    "name_en": "Lin Fengmian",
+    "year": 1900,
+    "month": 11,
+    "day": 22,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "中西繪畫融合先驅"
+  },
+  {
+    "name": "村上春樹",
+    "name_en": "Haruki Murakami",
+    "year": 1949,
+    "month": 1,
+    "day": 12,
+    "field": "文學藝術",
+    "country": "日本",
+    "description": "日本當代文學大師"
+  },
+  {
+    "name": "川端康成",
+    "name_en": "Yasunari Kawabata",
+    "year": 1899,
+    "month": 6,
+    "day": 11,
+    "field": "文學藝術",
+    "country": "日本",
+    "description": "日本首位諾貝爾文學獎得主"
+  },
+  {
+    "name": "三島由紀夫",
+    "name_en": "Yukio Mishima",
+    "year": 1925,
+    "month": 1,
+    "day": 14,
+    "field": "文學藝術",
+    "country": "日本",
+    "description": "日本文學巨匠"
+  },
+  {
+    "name": "奧運科維奇",
+    "name_en": "Novak Djokovic",
+    "year": 1987,
+    "month": 5,
+    "day": 22,
+    "field": "體育",
+    "country": "塞爾維亞",
+    "description": "網球天王，大滿貫紀錄保持者"
+  },
+  {
+    "name": "拉斐爾納達爾",
+    "name_en": "Rafael Nadal",
+    "year": 1986,
+    "month": 6,
+    "day": 3,
+    "field": "體育",
+    "country": "西班牙",
+    "description": "紅土之王，網球傳奇"
+  },
+  {
+    "name": "科比布萊恩",
+    "name_en": "Kobe Bryant",
+    "year": 1978,
+    "month": 8,
+    "day": 23,
+    "field": "體育",
+    "country": "美國",
+    "description": "NBA洛杉磯湖人傳奇球星"
+  },
+  {
+    "name": "勒布朗詹姆斯",
+    "name_en": "LeBron James",
+    "year": 1984,
+    "month": 12,
+    "day": 30,
+    "field": "體育",
+    "country": "美國",
+    "description": "NBA現役最偉大球員之一"
+  },
+  {
+    "name": "舒馬克",
+    "name_en": "Michael Schumacher",
+    "year": 1969,
+    "month": 1,
+    "day": 3,
+    "field": "體育",
+    "country": "德國",
+    "description": "F1賽車七屆世界冠軍"
+  },
+  {
+    "name": "馬龍",
+    "name_en": "Ma Long",
+    "year": 1988,
+    "month": 10,
+    "day": 20,
+    "field": "體育",
+    "country": "中國",
+    "description": "乒乓球大滿貫選手"
+  },
+  {
+    "name": "孫楊",
+    "name_en": "Sun Yang",
+    "year": 1991,
+    "month": 12,
+    "day": 1,
+    "field": "體育",
+    "country": "中國",
+    "description": "奧運游泳冠軍"
+  },
+  {
+    "name": "Lady Gaga",
+    "name_en": "Lady Gaga",
+    "year": 1986,
+    "month": 3,
+    "day": 28,
+    "field": "演藝",
+    "country": "美國",
+    "description": "流行音樂天后，演藝全才"
+  },
+  {
+    "name": "碧昂絲",
+    "name_en": "Beyoncé",
+    "year": 1981,
+    "month": 9,
+    "day": 4,
+    "field": "演藝",
+    "country": "美國",
+    "description": "R&B天后，流行文化偶像"
+  },
+  {
+    "name": "艾德希蘭",
+    "name_en": "Ed Sheeran",
+    "year": 1991,
+    "month": 2,
+    "day": 17,
+    "field": "演藝",
+    "country": "英國",
+    "description": "英國創作歌手，全球暢銷"
+  },
+  {
+    "name": "泰勒絲",
+    "name_en": "Taylor Swift",
+    "year": 1989,
+    "month": 12,
+    "day": 13,
+    "field": "演藝",
+    "country": "美國",
+    "description": "鄉村音樂轉型流行天后"
+  },
+  {
+    "name": "劉德華",
+    "name_en": "Andy Lau",
+    "year": 1961,
+    "month": 9,
+    "day": 27,
+    "field": "演藝",
+    "country": "香港",
+    "description": "香港天王巨星，四大天王之一"
+  },
+  {
+    "name": "張學友",
+    "name_en": "Jacky Cheung",
+    "year": 1961,
+    "month": 7,
+    "day": 10,
+    "field": "演藝",
+    "country": "香港",
+    "description": "歌神，四大天王之一"
+  },
+  {
+    "name": "王菲",
+    "name_en": "Faye Wong",
+    "year": 1969,
+    "month": 8,
+    "day": 8,
+    "field": "演藝",
+    "country": "中國/香港",
+    "description": "華語樂壇天后"
+  },
+  {
+    "name": "坂本龍一",
+    "name_en": "Ryuichi Sakamoto",
+    "year": 1952,
+    "month": 1,
+    "day": 17,
+    "field": "文學藝術",
+    "country": "日本",
+    "description": "日本音樂大師，奧斯卡最佳配樂"
+  },
+  {
+    "name": "宮崎駿",
+    "name_en": "Hayao Miyazaki",
+    "year": 1941,
+    "month": 1,
+    "day": 5,
+    "field": "演藝",
+    "country": "日本",
+    "description": "動畫大師，吉卜力工作室創始人"
+  },
+  {
+    "name": "沃茲尼亞克",
+    "name_en": "Steve Wozniak",
+    "year": 1950,
+    "month": 8,
+    "day": 11,
+    "field": "科技",
+    "country": "美國",
+    "description": "蘋果公司聯合創始人"
+  },
+  {
+    "name": "李彥宏",
+    "name_en": "Robin Li",
+    "year": 1968,
+    "month": 11,
+    "day": 17,
+    "field": "商業",
+    "country": "中國",
+    "description": "百度創始人"
+  },
+  {
+    "name": "馬化騰",
+    "name_en": "Pony Ma",
+    "year": 1971,
+    "month": 10,
+    "day": 29,
+    "field": "商業",
+    "country": "中國",
+    "description": "騰訊創始人"
+  },
+  {
+    "name": "任正非",
+    "name_en": "Ren Zhengfei",
+    "year": 1944,
+    "month": 10,
+    "day": 25,
+    "field": "商業",
+    "country": "中國",
+    "description": "華為創始人"
+  },
+  {
+    "name": "孫正義",
+    "name_en": "Masayoshi Son",
+    "year": 1957,
+    "month": 8,
+    "day": 11,
+    "field": "商業",
+    "country": "日本",
+    "description": "軟銀集團創始人"
+  },
+  {
+    "name": "三星李健熙",
+    "name_en": "Lee Kun-hee",
+    "year": 1942,
+    "month": 1,
+    "day": 9,
+    "field": "商業",
+    "country": "韓國",
+    "description": "三星集團前會長"
+  },
+  {
+    "name": "畢加索",
+    "name_en": "Pablo Picasso",
+    "year": 1881,
+    "month": 10,
+    "day": 25,
+    "field": "文學藝術",
+    "country": "西班牙",
+    "description": "現代藝術巨匠"
+  },
+  {
+    "name": "高迪",
+    "name_en": "Antoni Gaudí",
+    "year": 1852,
+    "month": 6,
+    "day": 25,
+    "field": "文學藝術",
+    "country": "西班牙",
+    "description": "西班牙建築天才"
+  },
+  {
+    "name": "柯比意",
+    "name_en": "Le Corbusier",
+    "year": 1887,
+    "month": 10,
+    "day": 6,
+    "field": "文學藝術",
+    "country": "法國/瑞士",
+    "description": "現代建築之父"
+  },
+  {
+    "name": "卡夫卡",
+    "name_en": "Franz Kafka",
+    "year": 1883,
+    "month": 7,
+    "day": 3,
+    "field": "文學藝術",
+    "country": "捷克",
+    "description": "現代主義文學先驅"
+  },
+  {
+    "name": "海明威",
+    "name_en": "Ernest Hemingway",
+    "year": 1899,
+    "month": 7,
+    "day": 21,
+    "field": "文學藝術",
+    "country": "美國",
+    "description": "美國文學巨匠，諾貝爾文學獎得主"
+  },
+  {
+    "name": "加繆",
+    "name_en": "Albert Camus",
+    "year": 1913,
+    "month": 11,
+    "day": 7,
+    "field": "文學藝術",
+    "country": "法國",
+    "description": "法國存在主義文學家"
+  },
+  {
+    "name": "波赫士",
+    "name_en": "Jorge Luis Borges",
+    "year": 1899,
+    "month": 8,
+    "day": 24,
+    "field": "文學藝術",
+    "country": "阿根廷",
+    "description": "拉丁美洲文學巨匠"
+  },
+  {
+    "name": "馬奎斯",
+    "name_en": "Gabriel García Márquez",
+    "year": 1927,
+    "month": 3,
+    "day": 6,
+    "field": "文學藝術",
+    "country": "哥倫比亞",
+    "description": "魔幻現實主義大師"
+  },
+  {
+    "name": "聶魯達",
+    "name_en": "Pablo Neruda",
+    "year": 1904,
+    "month": 7,
+    "day": 12,
+    "field": "文學藝術",
+    "country": "智利",
+    "description": "智利詩人，諾貝爾文學獎得主"
+  },
+  {
+    "name": "柴可夫斯基",
+    "name_en": "Pyotr Ilyich Tchaikovsky",
+    "year": 1840,
+    "month": 5,
+    "day": 7,
+    "field": "文學藝術",
+    "country": "俄羅斯",
+    "description": "俄羅斯音樂巨匠"
+  },
+  {
+    "name": "蕭邦",
+    "name_en": "Frédéric Chopin",
+    "year": 1810,
+    "month": 3,
+    "day": 1,
+    "field": "文學藝術",
+    "country": "波蘭",
+    "description": "鋼琴詩人"
+  },
+  {
+    "name": "李斯特",
+    "name_en": "Franz Liszt",
+    "year": 1811,
+    "month": 10,
+    "day": 22,
+    "field": "文學藝術",
+    "country": "匈牙利",
+    "description": "鋼琴之王"
+  },
+  {
+    "name": "華格納",
+    "name_en": "Richard Wagner",
+    "year": 1813,
+    "month": 5,
+    "day": 22,
+    "field": "文學藝術",
+    "country": "德國",
+    "description": "歌劇巨匠"
+  },
+  {
+    "name": "德布西",
+    "name_en": "Claude Debussy",
+    "year": 1862,
+    "month": 8,
+    "day": 22,
+    "field": "文學藝術",
+    "country": "法國",
+    "description": "印象派音樂大師"
+  },
+  {
+    "name": "海頓",
+    "name_en": "Joseph Haydn",
+    "year": 1732,
+    "month": 3,
+    "day": 31,
+    "field": "文學藝術",
+    "country": "奧地利",
+    "description": "交響曲之父"
+  },
+  {
+    "name": "帕華洛帝",
+    "name_en": "Luciano Pavarotti",
+    "year": 1935,
+    "month": 10,
+    "day": 12,
+    "field": "文學藝術",
+    "country": "義大利",
+    "description": "世界三大男高音之一"
+  },
+  {
+    "name": "神舟楊利偉",
+    "name_en": "Yang Liwei",
+    "year": 1965,
+    "month": 6,
+    "day": 21,
+    "field": "探險",
+    "country": "中國",
+    "description": "中國首位太空人"
+  },
+  {
+    "name": "加加林",
+    "name_en": "Yuri Gagarin",
+    "year": 1934,
+    "month": 3,
+    "day": 9,
+    "field": "探險",
+    "country": "俄羅斯",
+    "description": "世界首位太空人"
+  },
+  {
+    "name": "萊特兄弟",
+    "name_en": "Wright Brothers",
+    "year": 1867,
+    "month": 4,
+    "day": 16,
+    "field": "科技",
+    "country": "美國",
+    "description": "飛機發明者"
+  },
+  {
+    "name": "庫克船長",
+    "name_en": "Captain James Cook",
+    "year": 1728,
+    "month": 10,
+    "day": 27,
+    "field": "探險",
+    "country": "英國",
+    "description": "英國航海探險家"
+  },
+  {
+    "name": "玄奘",
+    "name_en": "Xuanzang",
+    "year": 602,
+    "month": 4,
+    "day": 6,
+    "field": "探險",
+    "country": "中國",
+    "description": "唐代高僧，西天取經"
+  },
+  {
+    "name": "哥白尼",
+    "name_en": "Nicolaus Copernicus",
+    "year": 1473,
+    "month": 2,
+    "day": 19,
+    "field": "科技",
+    "country": "波蘭",
+    "description": "日心說創立者"
+  },
+  {
+    "name": "克卜勒",
+    "name_en": "Johannes Kepler",
+    "year": 1571,
+    "month": 12,
+    "day": 27,
+    "field": "科技",
+    "country": "德國",
+    "description": "行星運動定律發現者"
+  },
+  {
+    "name": "法拉第",
+    "name_en": "Michael Faraday",
+    "year": 1791,
+    "month": 9,
+    "day": 22,
+    "field": "科技",
+    "country": "英國",
+    "description": "電磁學之父"
+  },
+  {
+    "name": "馬可尼",
+    "name_en": "Guglielmo Marconi",
+    "year": 1874,
+    "month": 4,
+    "day": 25,
+    "field": "科技",
+    "country": "義大利",
+    "description": "無線電通信先驅"
+  },
+  {
+    "name": "薛丁格",
+    "name_en": "Erwin Schrödinger",
+    "year": 1887,
+    "month": 8,
+    "day": 12,
+    "field": "科技",
+    "country": "奧地利",
+    "description": "量子力學奠基人"
+  },
+  {
+    "name": "海森堡",
+    "name_en": "Werner Heisenberg",
+    "year": 1901,
+    "month": 12,
+    "day": 5,
+    "field": "科技",
+    "country": "德國",
+    "description": "量子力學創始人之一"
+  },
+  {
+    "name": "狄拉克",
+    "name_en": "Paul Dirac",
+    "year": 1902,
+    "month": 8,
+    "day": 8,
+    "field": "科技",
+    "country": "英國",
+    "description": "量子力學奠基人"
+  },
+  {
+    "name": "費曼",
+    "name_en": "Richard Feynman",
+    "year": 1918,
+    "month": 5,
+    "day": 11,
+    "field": "科技",
+    "country": "美國",
+    "description": "量子電動力學奠基人"
+  },
+  {
+    "name": "楊振寧",
+    "name_en": "Chen-Ning Yang",
+    "year": 1922,
+    "month": 9,
+    "day": 22,
+    "field": "科技",
+    "country": "中國/美國",
+    "description": "諾貝爾物理學獎得主，宇稱不守恆"
+  },
+  {
+    "name": "李政道",
+    "name_en": "Tsung-Dao Lee",
+    "year": 1926,
+    "month": 11,
+    "day": 24,
+    "field": "科技",
+    "country": "中國/美國",
+    "description": "諾貝爾物理學獎得主"
+  },
+  {
+    "name": "丁肇中",
+    "name_en": "Samuel C. C. Ting",
+    "year": 1936,
+    "month": 1,
+    "day": 27,
+    "field": "科技",
+    "country": "中國/美國",
+    "description": "諾貝爾物理學獎得主，J粒子發現者"
+  },
+  {
+    "name": "李遠哲",
+    "name_en": "Yuan T. Lee",
+    "year": 1936,
+    "month": 11,
+    "day": 19,
+    "field": "科技",
+    "country": "台灣",
+    "description": "諾貝爾化學獎得主"
+  },
+  {
+    "name": "高行健",
+    "name_en": "Gao Xingjian",
+    "year": 1940,
+    "month": 1,
+    "day": 4,
+    "field": "文學藝術",
+    "country": "中國/法國",
+    "description": "諾貝爾文學獎得主"
+  },
+  {
+    "name": "莫言",
+    "name_en": "Mo Yan",
+    "year": 1955,
+    "month": 2,
+    "day": 17,
+    "field": "文學藝術",
+    "country": "中國",
+    "description": "諾貝爾文學獎得主"
+  }
+]

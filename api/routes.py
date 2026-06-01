@@ -111,6 +111,9 @@ def compute_bazi(data: dict):
         "bazi_gua": calculator.bazi_gua,
         "birth_year": calculator.year,
         "birth_chinese_year": _get_chinese_year_from_pillar(calculator.ba_zi.split()[0]),
+        "birth_solar_year": calculator.solar_time.year,
+        "birth_solar_month": calculator.solar_time.month,
+        "birth_solar_day": calculator.solar_time.day,
     }
 
 
@@ -488,6 +491,9 @@ def prepare_bazi_context(request: Request, res: dict) -> dict:
         "has_zhi_relations": any(res.get('地支關係', {}).values()),
         "birth_year": res.get('birth_chinese_year', res.get('birth_year', 1990)),
         "current_year": datetime.now().year,
+        "birth_solar_year": res.get('birth_solar_year', 1990),
+        "birth_solar_month": res.get('birth_solar_month', 1),
+        "birth_solar_day": res.get('birth_solar_day', 1),
     }
 
 
